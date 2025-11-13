@@ -1,0 +1,56 @@
+\documentclass[11pt,letterpaper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+
+% Formatting
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{10pt}
+
+\begin{document}
+
+% Header
+\begin{flushleft}
+    {\large\bfseries {{ candidate_name }}}\\
+    {% if candidate_email %}{{ candidate_email }}{% endif %}
+    {% if candidate_phone %} $\cdot$ {{ candidate_phone }}{% endif %}\\
+    {% if candidate_location %}{{ candidate_location }}{% endif %}
+\end{flushleft}
+
+\vspace{12pt}
+
+% Date
+{{ date }}
+
+\vspace{12pt}
+
+% Recipient (if available)
+{% if company %}
+Hiring Manager\\
+{{ company }}
+{% if job_title %}\\{{ job_title }} Position{% endif %}
+{% endif %}
+
+\vspace{12pt}
+
+% Opening
+{{ opening }}
+
+% Body
+{{ body }}
+
+% Closing
+{{ closing }}
+
+\vspace{12pt}
+
+Sincerely,
+
+\vspace{24pt}
+
+{{ candidate_name }}
+
+\end{document}

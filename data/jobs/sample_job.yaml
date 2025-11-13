@@ -1,0 +1,20 @@
+job_id: "job-123"
+title: "Machine Learning Engineer"
+company: "ExampleTech"
+location: "Remote"
+seniority: "Junior"
+required_skills:
+  - Python
+  - Machine Learning
+  - NLP
+  - SQL
+nice_to_have_skills:
+  - Docker
+  - AWS
+responsibilities:
+  - "Build and maintain machine learning pipelines for NLP use cases."
+  - "Collaborate with data scientists to deploy models to production."
+  - "Write clean, maintainable Python code and SQL queries."
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2025-10-01"

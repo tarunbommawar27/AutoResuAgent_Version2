@@ -1,0 +1,37 @@
+job_id: "ml-engineer-techcorp-2024"
+title: "Senior Machine Learning Engineer"
+company: "TechCorp AI"
+location: "San Francisco, CA (Hybrid)"
+
+responsibilities:
+  - Design and deploy production-scale machine learning models
+  - Lead ML infrastructure and MLOps initiatives
+  - Collaborate with data scientists and engineers on model development
+  - Optimize model performance and reduce latency
+  - Mentor junior engineers and conduct code reviews
+
+required_skills:
+  - Python
+  - TensorFlow
+  - PyTorch
+  - AWS
+  - Docker
+  - Kubernetes
+  - SQL
+  - Machine Learning
+  - Deep Learning
+
+nice_to_have_skills:
+  - MLOps tools (MLflow, Kubeflow)
+  - Spark
+  - Airflow
+  - CI/CD pipelines
+  - Model monitoring and observability
+
+seniority: "Senior"
+
+extra_metadata:
+  salary_range: "$150k - $200k"
+  team_size: 12
+  remote_policy: "Hybrid - 3 days in office"
+  interview_rounds: 4

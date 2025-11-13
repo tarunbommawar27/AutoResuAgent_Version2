@@ -1,0 +1,82 @@
+{
+  "candidate_id": "jane-doe-2024",
+  "name": "Jane Doe",
+  "email": "jane.doe@email.com",
+  "phone": "+1-555-0123",
+  "location": "San Francisco, CA",
+  "skills": [
+    "Python",
+    "Machine Learning",
+    "TensorFlow",
+    "PyTorch",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "SQL",
+    "Spark",
+    "FastAPI",
+    "MLOps",
+    "CI/CD"
+  ],
+  "experiences": [
+    {
+      "id": "exp-001",
+      "role": "ML Engineer",
+      "company": "DataTech Inc",
+      "start_date": "2021-06",
+      "end_date": null,
+      "bullets": [
+        "Built and deployed recommendation system serving 2M+ daily users, increasing engagement by 35%",
+        "Reduced model inference latency from 500ms to 120ms through optimization and caching strategies",
+        "Implemented MLOps pipeline using MLflow and Kubernetes, reducing deployment time by 60%",
+        "Led migration of ML infrastructure to AWS, saving $50k annually in cloud costs"
+      ]
+    },
+    {
+      "id": "exp-002",
+      "role": "Data Scientist",
+      "company": "StartupAI",
+      "start_date": "2019-01",
+      "end_date": "2021-05",
+      "bullets": [
+        "Developed NLP model for sentiment analysis achieving 92% accuracy on customer reviews",
+        "Created data pipelines processing 10M+ records daily using Spark and Airflow",
+        "Collaborated with engineering team to productionize 5 ML models",
+        "Reduced data processing time by 70% through pipeline optimization"
+      ]
+    },
+    {
+      "id": "exp-003",
+      "role": "Software Engineering Intern",
+      "company": "BigTech Corp",
+      "start_date": "2018-06",
+      "end_date": "2018-08",
+      "bullets": [
+        "Implemented feature extraction pipeline for computer vision model",
+        "Contributed to open-source ML framework with 10k+ GitHub stars",
+        "Automated testing suite reducing bug detection time by 40%"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "institution": "Stanford University",
+      "year": 2019,
+      "details": [
+        "Specialization: Machine Learning and AI",
+        "GPA: 3.9/4.0",
+        "Thesis: Deep Learning for Time Series Forecasting"
+      ]
+    },
+    {
+      "degree": "Bachelor of Science in Mathematics",
+      "institution": "UC Berkeley",
+      "year": 2017,
+      "details": [
+        "Minor: Computer Science",
+        "Summa Cum Laude"
+      ]
+    }
+  ]
+}

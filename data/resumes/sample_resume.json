@@ -1,0 +1,54 @@
+{
+  "candidate_id": "cand-001",
+  "name": "Tarun Bommawar",
+  "email": "tarun@example.com",
+  "phone": "+1-555-123-4567",
+  "location": "Fairfax, VA",
+  "summary": "Graduate CS student with experience in NLP, ML, and backend development, focusing on building intelligent tools for resume and job matching.",
+  "skills": [
+    "Python",
+    "Machine Learning",
+    "NLP",
+    "Pandas",
+    "NumPy",
+    "SQL",
+    "Docker",
+    "Collaboration"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Data Science Intern",
+      "company": "AnalyticsCo",
+      "start_date": "2024-06-01",
+      "end_date": "2024-12-31",
+      "bullets": [
+        "Built NLP pipelines in Python to classify customer support tickets.",
+        "Trained and evaluated machine learning models using scikit-learn.",
+        "Created SQL queries and dashboards to monitor model performance."
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Software Engineer Intern",
+      "company": "DevSolutions",
+      "start_date": "2023-05-01",
+      "end_date": "2023-08-31",
+      "bullets": [
+        "Developed REST APIs in Python for internal data tools.",
+        "Containerized services using Docker for easier deployment.",
+        "Collaborated with a small team using Git and code reviews."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "M.S. in Computer Science",
+      "institution": "George Mason University",
+      "year": 2026,
+      "details": [
+        "Coursework: NLP, Machine Learning, Distributed Systems"
+      ]
+    }
+  ]
+}

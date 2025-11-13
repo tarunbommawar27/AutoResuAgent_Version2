@@ -1,0 +1,85 @@
+\documentclass[11pt,letterpaper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+
+% Formatting
+\setlist[itemize]{left=0pt, itemsep=2pt, parsep=0pt, topsep=4pt}
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{8pt}{4pt}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+% Header
+\begin{center}
+    {\LARGE\bfseries {{ candidate_name }}}\\[4pt]
+    {% if candidate_email %}{{ candidate_email }}{% endif %}
+    {% if candidate_phone %} $\cdot$ {{ candidate_phone }}{% endif %}
+    {% if candidate_location %} $\cdot$ {{ candidate_location }}{% endif %}
+\end{center}
+
+\vspace{8pt}
+
+% Professional Summary (if available)
+{% if summary %}
+\section*{Professional Summary}
+{{ summary }}
+{% endif %}
+
+% Skills
+{% if skills %}
+\section*{Technical Skills}
+{{ skills|join(', ') }}
+{% endif %}
+
+% Experience with tailored bullets
+\section*{Professional Experience}
+
+{% for experience in experiences %}
+\textbf{{ '{' }}{{ experience.role }}{{ '}' }}%
+{% if experience.start_date or experience.end_date %}%
+    \hfill
+    {% if experience.start_date %}{{ experience.start_date }}{% endif %}
+    {% if experience.end_date %} -- {{ experience.end_date }}{% endif %}
+{% endif %}\\
+\textit{{ '{' }}{{ experience.company }}{{ '}' }}%
+{% if experience.location %}, {{ experience.location }}{% endif %}
+
+{% if experience.bullets %}
+\begin{itemize}
+    {% for bullet in experience.bullets %}
+    \item {{ bullet }}
+    {% endfor %}
+\end{itemize}
+{% endif %}
+
+{% if not loop.last %}\vspace{4pt}{% endif %}
+{% endfor %}
+
+% Education
+{% if education %}
+\section*{Education}
+
+{% for edu in education %}
+\textbf{{ '{' }}{{ edu.degree }}{{ '}' }}%
+\hfill {{ edu.year or 'Expected' }}\\
+\textit{{ '{' }}{{ edu.institution }}{{ '}' }}
+{% if edu.details %}
+\begin{itemize}
+    {% for detail in edu.details %}
+    \item {{ detail }}
+    {% endfor %}
+\end{itemize}
+{% endif %}
+
+{% if not loop.last %}\vspace{4pt}{% endif %}
+{% endfor %}
+{% endif %}
+
+\end{document}
