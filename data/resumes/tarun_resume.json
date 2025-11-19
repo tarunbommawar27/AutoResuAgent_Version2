@@ -1,0 +1,154 @@
+{
+  "candidate_id": "tarun-bommawar-2025",
+  "name": "Tarun Bommawar",
+  "email": "bommawartarun027@gmail.com",
+  "phone": "(571) 672-2400",
+  "location": "Fairfax, VA",
+  "summary": "Computer Science graduate student with experience in full-stack development, DevOps automation, cloud infrastructure, and machine learning. Skilled in building scalable data-driven applications, implementing CI/CD pipelines, and developing intelligent NLP systems.",
+  "skills": [
+    "Python",
+    "Java",
+    "C++",
+    "C#",
+    "R",
+    "SQL",
+    "JavaScript",
+    "Shell Scripting",
+    "React",
+    "Spring Boot",
+    "TensorFlow",
+    "PyTorch",
+    "scikit-learn",
+    "Node.js",
+    "Express.js",
+    "PowerBI",
+    "Confluence",
+    "Jira",
+    "AWS",
+    "EC2",
+    "S3",
+    "Lambda",
+    "RDS",
+    "GCP",
+    "Docker",
+    "Kubernetes",
+    "Terraform",
+    "Jenkins",
+    "Linux",
+    "MySQL",
+    "PostgreSQL",
+    "MongoDB",
+    "Oracle",
+    "Hadoop",
+    "Hive",
+    "Databricks",
+    "Data Visualization",
+    "Excel",
+    "Machine Learning",
+    "Deep Learning",
+    "Data Analytics",
+    "Business Intelligence",
+    "Agile",
+    "RESTful APIs",
+    "Web Services",
+    "CI/CD",
+    "Secure Coding",
+    "Git",
+    "NLP",
+    "FAISS",
+    "Langchain",
+    "Sentence-BERT",
+    "Ansible"
+  ],
+  "experiences": [
+    {
+      "id": "exp-001",
+      "role": "Full Stack Developer Intern",
+      "company": "IntelliCloud Apps",
+      "location": "Hyderabad, India",
+      "start_date": "2023-12",
+      "end_date": "2024-05",
+      "bullets": [
+        "Designed and implemented RESTful APIs and microservices in Python and React for data-driven applications, optimizing response times by 30%.",
+        "Managed MySQL and Oracle databases for backend systems, developing SQL queries to enhance reporting and business intelligence analytics.",
+        "Collaborated in an Agile environment using Jira and Confluence to manage sprints, track deliverables, and ensure feature completeness.",
+        "Built PowerBI dashboards and data visualization reports for client insights and KPI monitoring, improving decision-making efficiency.",
+        "Automated testing pipelines using Docker and Jenkins, improving build stability and code quality for production releases."
+      ]
+    },
+    {
+      "id": "exp-002",
+      "role": "DevOps (Linux and Ansible Automation) Intern",
+      "company": "ROSTRIS VERSE PRIVATE LIMITED",
+      "location": "Remote",
+      "start_date": "2022-07",
+      "end_date": "2022-08",
+      "bullets": [
+        "Automated web server deployments (Apache/Nginx) using Ansible playbooks across AWS and GCP environments for scalable hosting.",
+        "Developed Bash and Python scripts to monitor server health, GPU utilization, and logs in Linux environments for faster diagnostics.",
+        "Configured Hadoop and Hive clusters for distributed data processing, improving automation and reducing manual intervention.",
+        "Implemented CI/CD pipelines and integration testing via Jenkins to maintain consistent multi-cloud deployments.",
+        "Documented DevOps workflows and API integrations in Confluence, enhancing collaboration between development teams."
+      ]
+    },
+    {
+      "id": "exp-003",
+      "role": "Research Project - RL LoadBalancer",
+      "company": "George Mason University",
+      "location": "Fairfax, VA",
+      "start_date": "2025-01",
+      "end_date": "2025-05",
+      "bullets": [
+        "Developed a reinforcement learning-based system (DQN) to distribute network traffic dynamically across multiple servers.",
+        "Leveraged GPU acceleration for faster training, achieving 40% latency reduction and improving resource utilization efficiency.",
+        "Deployed Dockerized microservices with Kubernetes, integrating PowerBI visual dashboards for performance insights."
+      ]
+    },
+    {
+      "id": "exp-004",
+      "role": "Research Project - AI-Based Autograder",
+      "company": "George Mason University",
+      "location": "Fairfax, VA",
+      "start_date": "2024-09",
+      "end_date": "2024-11",
+      "bullets": [
+        "Built an intelligent grading engine using GPT-4 API and Python, providing automated evaluation and feedback in JSON format.",
+        "Integrated PowerBI and Excel-based dashboards for reporting and visualization of grading performance metrics.",
+        "Reduced manual grading time by 80% while maintaining 95% accuracy through automated analysis and data science techniques."
+      ]
+    },
+    {
+      "id": "exp-005",
+      "role": "Research Project - AutoResuAgent",
+      "company": "George Mason University",
+      "location": "Fairfax, VA",
+      "start_date": "2024-08",
+      "end_date": "2024-10",
+      "bullets": [
+        "Developed an end-to-end agentic NLP pipeline (Python, LLMs, Sentence-BERT) to automate resume tailoring, improving skill-coverage accuracy by 15% using FAISS semantic retrieval.",
+        "Integrated asynchronous concurrency (asyncio.Semaphore) to process 10+ applications in parallel, achieving a 10x throughput gain over sequential execution.",
+        "Conducted baseline vs. agentic model analysis, demonstrating a 30% reduction in hallucination and achieving a 99% validation pass rate using Pydantic schemas."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "institution": "George Mason University",
+      "year": 2026,
+      "details": [
+        "GPA: 3.72/4.0",
+        "Coursework: Advanced Natural Language Processing, Software Engineering, Data Structures and Algorithms, Computer Systems and Systems Programming, Database Systems, Mathematical Foundations of CS, Theory/Application Data Mining, Network Security, Secure Software Design/Programming"
+      ]
+    },
+    {
+      "degree": "Bachelor of Technology in Computer and Information Science",
+      "institution": "GH Raisoni Institute of Engineering and Technology",
+      "year": 2024,
+      "details": [
+        "CGPA: 8.29/10.0",
+        "Publication: Data Fragmentation for Enhanced Cloud Security - International Journal IJARSCT, 2024"
+      ]
+    }
+  ]
+}

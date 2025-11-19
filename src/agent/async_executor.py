@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ..models import FullGeneratedPackage
     from ..llm import BaseLLMClient
+    from ..orchestration.config import Config
 
 from .executor import AgentExecutor
 
@@ -61,7 +62,7 @@ async def run_jobs_concurrently(
     async def process_single_job_with_semaphore(
         job_path: Path,
         resume_path: Path
-    ) -> tuple["FullGeneratedPackage | None", list[str]]:
+    ) -> tuple["FullGeneratedPackage | None", list[str], dict | None]:
         """Process a single job with semaphore control."""
         async with semaphore:
             logger.info(f"Processing: {job_path.name}")
@@ -130,7 +131,7 @@ class AsyncJobExecutor:
             try:
                 logger.info(f"Processing: {job_path.name}")
 
-                package, errors = await self.agent_executor.run_single_job(
+                package, errors, metrics = await self.agent_executor.run_single_job(
                     job_path, resume_path
                 )
 
@@ -213,3 +214,174 @@ class AsyncJobExecutor:
         logger.info(f"Completed: {successful}/{len(processed_results)} successful")
 
         return processed_results
+
+
+class AgentBatchExecutor:
+    """
+    Batch executor for processing multiple (job, resume) pairs with controlled concurrency.
+
+    This class provides a high-level interface for batch processing jobs using the
+    agent pipeline with semantic retrieval, generation, and validation.
+
+    Example:
+        >>> from ..orchestration.config import Config
+        >>> config = Config()
+        >>> pairs = [
+        ...     (Path("data/jobs/job1.yaml"), Path("data/resumes/resume.json")),
+        ...     (Path("data/jobs/job2.yaml"), Path("data/resumes/resume.json")),
+        ... ]
+        >>> batch_executor = AgentBatchExecutor(pairs, config, max_concurrent=3)
+        >>> results = await batch_executor.run_all()
+        >>> for job_path, resume_path, success, errors in results:
+        ...     print(f"{job_path.name}: {'SUCCESS' if success else 'FAILED'}")
+    """
+
+    def __init__(
+        self,
+        jobs: list[tuple[Path, Path]],
+        config: "Config",
+        max_concurrent: int = 3
+    ):
+        """
+        Initialize batch executor.
+
+        Args:
+            jobs: List of (job_path, resume_path) tuples to process
+            config: Application configuration object
+            max_concurrent: Maximum number of concurrent jobs (default: 3)
+        """
+        self.jobs = jobs
+        self.config = config
+        self.max_concurrent = max_concurrent
+        self.semaphore = asyncio.Semaphore(max_concurrent)
+
+        # Initialize shared components
+        from ..embeddings import SentenceBertEncoder
+        self.encoder = SentenceBertEncoder()
+
+        # Get LLM client from config
+        self.llm = config.get_llm_client()
+
+        logger.info(
+            f"Initialized AgentBatchExecutor with {len(jobs)} jobs, "
+            f"max_concurrent={max_concurrent}"
+        )
+
+    async def _process_single_pair(
+        self,
+        job_path: Path,
+        resume_path: Path,
+        index: int
+    ) -> tuple[Path, Path, bool, list[str]]:
+        """
+        Process a single (job, resume) pair with semaphore control.
+
+        Args:
+            job_path: Path to job description YAML
+            resume_path: Path to resume JSON
+            index: Index of this job in the batch (for logging)
+
+        Returns:
+            Tuple of (job_path, resume_path, success_flag, errors)
+        """
+        async with self.semaphore:
+            try:
+                logger.info(
+                    f"[{index + 1}/{len(self.jobs)}] Processing: "
+                    f"job={job_path.name}, resume={resume_path.name}"
+                )
+
+                # Create a fresh AgentExecutor for this job
+                executor = AgentExecutor(
+                    self.llm,
+                    self.encoder,
+                    max_retries=self.config.max_retries
+                )
+
+                # Run the pipeline for this job
+                package, errors, metrics = await executor.run_single_job(job_path, resume_path)
+
+                if package and not errors:
+                    logger.info(
+                        f"[{index + 1}/{len(self.jobs)}] SUCCESS: "
+                        f"job={job_path.name}, resume={resume_path.name}"
+                    )
+                    return (job_path, resume_path, True, [])
+                elif package and errors:
+                    logger.warning(
+                        f"[{index + 1}/{len(self.jobs)}] SUCCESS WITH WARNINGS: "
+                        f"job={job_path.name}, resume={resume_path.name}, "
+                        f"warnings={len(errors)}"
+                    )
+                    return (job_path, resume_path, True, errors)
+                else:
+                    logger.error(
+                        f"[{index + 1}/{len(self.jobs)}] FAILED: "
+                        f"job={job_path.name}, resume={resume_path.name}, "
+                        f"errors={len(errors)}"
+                    )
+                    return (job_path, resume_path, False, errors)
+
+            except Exception as e:
+                logger.error(
+                    f"[{index + 1}/{len(self.jobs)}] EXCEPTION: "
+                    f"job={job_path.name}, resume={resume_path.name}, "
+                    f"error={str(e)}"
+                )
+                return (job_path, resume_path, False, [f"Exception: {str(e)}"])
+
+    async def run_all(self) -> list[tuple[Path, Path, bool, list[str]]]:
+        """
+        Run all jobs concurrently with controlled concurrency.
+
+        Uses asyncio.gather with a semaphore to limit concurrent execution.
+        Each job reuses the same encoder and LLM client but creates its own
+        AgentExecutor to avoid state conflicts.
+
+        Returns:
+            List of tuples: (job_path, resume_path, success_flag, errors)
+            - job_path: Path to the job description
+            - resume_path: Path to the resume
+            - success_flag: True if successful, False otherwise
+            - errors: List of error/warning messages
+
+        Example:
+            >>> results = await batch_executor.run_all()
+            >>> successful = [r for r in results if r[2]]  # r[2] is success_flag
+            >>> print(f"{len(successful)}/{len(results)} jobs succeeded")
+        """
+        logger.info(f"Starting batch execution of {len(self.jobs)} jobs")
+        logger.info(f"Concurrency limit: {self.max_concurrent}")
+
+        # Create tasks for all job pairs
+        tasks = [
+            self._process_single_pair(job_path, resume_path, i)
+            for i, (job_path, resume_path) in enumerate(self.jobs)
+        ]
+
+        # Run all tasks concurrently (semaphore limits actual concurrency)
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Handle any exceptions from gather
+        final_results = []
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                job_path, resume_path = self.jobs[i]
+                logger.error(
+                    f"[{i + 1}/{len(self.jobs)}] Unexpected exception: "
+                    f"job={job_path.name}, error={str(result)}"
+                )
+                final_results.append(
+                    (job_path, resume_path, False, [f"Unexpected error: {str(result)}"])
+                )
+            else:
+                final_results.append(result)
+
+        # Log summary
+        successful = sum(1 for r in final_results if r[2])
+        failed = len(final_results) - successful
+        logger.info(
+            f"Batch execution completed: {successful} succeeded, {failed} failed"
+        )
+
+        return final_results

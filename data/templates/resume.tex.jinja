@@ -54,7 +54,7 @@
 {% if experience.bullets %}
 \begin{itemize}
     {% for bullet in experience.bullets %}
-    \item {{ bullet }}
+    \item {{ bullet.text }}
     {% endfor %}
 \end{itemize}
 {% endif %}

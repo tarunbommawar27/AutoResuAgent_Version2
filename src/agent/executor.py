@@ -64,7 +64,7 @@ class AgentExecutor:
         self,
         job_path: Path,
         resume_path: Path
-    ) -> tuple["FullGeneratedPackage | None", list[str]]:
+    ) -> tuple["FullGeneratedPackage | None", list[str], dict | None]:
         """
         Run the complete agentic loop for a single job.
 
@@ -76,18 +76,19 @@ class AgentExecutor:
         5. Generate cover letter
         6. Build full package
         7. Validate package
-        8. Return (package, errors)
+        8. Compute metrics
+        9. Return (package, errors, metrics)
 
         Args:
             job_path: Path to job description YAML file
             resume_path: Path to resume JSON file
 
         Returns:
-            Tuple of (FullGeneratedPackage or None, list of error messages)
+            Tuple of (FullGeneratedPackage or None, list of error messages, dict of metrics or None)
 
         Example:
             >>> executor = AgentExecutor(llm, encoder)
-            >>> pkg, errors = await executor.run_single_job(
+            >>> pkg, errors, metrics = await executor.run_single_job(
             ...     Path("data/jobs/ml-engineer.yaml"),
             ...     Path("data/resumes/jane-doe.json")
             ... )
@@ -124,7 +125,7 @@ class AgentExecutor:
             if not bullets:
                 error_msg = "Failed to generate valid bullets after retries"
                 logger.error(error_msg)
-                return None, [error_msg]
+                return None, [error_msg], None
 
             logger.info(f"Generated {len(bullets)} bullets successfully")
 
@@ -152,13 +153,25 @@ class AgentExecutor:
             else:
                 logger.info("Package validated successfully!")
 
-            return package, errors
+            # Step 8: Compute metrics
+            logger.debug("Computing package metrics")
+            from ..evaluation.metrics import compute_package_metrics
+            metrics = compute_package_metrics(package, job, resume)
+
+            # Log a concise metrics summary
+            logger.info(
+                f"Metrics: {metrics['num_bullets']} bullets, "
+                f"avg length {metrics['avg_bullet_length_chars']:.1f} chars, "
+                f"required skill coverage {metrics['required_skill_coverage_ratio']:.2%}"
+            )
+
+            return package, errors, metrics
 
         except Exception as e:
             logger.error(f"Job execution failed: {e}")
             import traceback
             traceback.print_exc()
-            return None, [f"Execution error: {str(e)}"]
+            return None, [f"Execution error: {str(e)}"], None
 
     async def _generate_bullets_with_retry(
         self,

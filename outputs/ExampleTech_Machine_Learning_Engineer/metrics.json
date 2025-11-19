@@ -1,0 +1,23 @@
+{
+  "job_file": "data\\jobs\\sample_job.yaml",
+  "resume_file": "data\\resumes\\sample_resume.json",
+  "metrics": {
+    "num_bullets": 6,
+    "avg_bullet_length_chars": 118.33333333333333,
+    "avg_bullet_length_words": 16.5,
+    "min_bullet_length_chars": 113,
+    "max_bullet_length_chars": 125,
+    "num_required_skills": 4,
+    "num_required_skills_covered_in_bullets": 4,
+    "required_skill_coverage_ratio": 1.0,
+    "num_resume_skills": 8,
+    "num_resume_skills_used_in_bullets": 5,
+    "resume_skill_usage_ratio": 0.625,
+    "hallucinated_skills_count": 0,
+    "cover_letter_word_count": 232,
+    "cover_letter_paragraph_count": 6
+  },
+  "validation_errors": [
+    "Package has no cover letter"
+  ]
+}

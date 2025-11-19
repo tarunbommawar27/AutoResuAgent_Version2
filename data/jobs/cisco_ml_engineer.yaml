@@ -1,0 +1,31 @@
+job_id: cisco_ml_engineer_early_career
+title: Software Engineer – Data & AI Platforms (Early Career)
+company: Cisco
+location: USA (Multiple Locations)
+summary: >
+  Early-career software engineer role focused on building scalable data pipelines,
+  machine learning infrastructure, and analytics platforms to power Cisco’s
+  AI-driven platforms and data infrastructure across business groups such as S&TO,
+  Supply Chain, and Infrastructure Engineering.
+
+responsibilities:
+  - Design, implement, and maintain scalable data pipelines and analytics services that support AI/ML workloads.
+  - Build and improve infrastructure used for training, validating, and deploying machine learning models.
+  - Collaborate with cross-functional teams to integrate data and ML capabilities into production systems.
+  - Ensure reliability, observability, and performance of data and ML platforms used by internal teams.
+  - Contribute to tooling and automation that improves developer productivity and data/ML experimentation speed.
+
+requirements:
+  must_have:
+    - Proficiency in Python with strong understanding of core data structures and algorithms.
+    - Hands-on experience with at least one ML framework such as TensorFlow, PyTorch, or scikit-learn.
+    - Familiarity with distributed data processing technologies like Apache Spark, Hadoop (MapReduce), or Apache Flink.
+    - Experience with containerization using Docker and basic understanding of Kubernetes-based deployment.
+    - Recently completed or currently enrolled in a relevant degree or certification program (CS, Data, AI/ML, or similar).
+
+  nice_to_have:
+    - Practical experience building or supporting AI/ML solutions end-to-end (data prep, training, evaluation, deployment).
+    - Exposure to at least one major cloud platform such as AWS, Azure, or Google Cloud.
+    - Understanding of distributed systems concepts: scalability, reliability, fault tolerance, and data consistency.
+    - Familiarity with distributed computing patterns such as load balancing and inter-service communication.
+    - Interest in working on large-scale data and intelligent automation platforms in an enterprise environment.

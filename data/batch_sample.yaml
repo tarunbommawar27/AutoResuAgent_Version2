@@ -1,0 +1,17 @@
+# Sample batch configuration file for AutoResuAgent
+# This file defines multiple (job, resume) pairs for batch processing
+
+# Maximum number of concurrent jobs to process (default: 3)
+max_concurrent: 3
+
+# List of job-resume pairs to process
+pairs:
+  - job: data/jobs/sample_job.yaml
+    resume: data/resumes/sample_resume.json
+
+  # Add more pairs as needed:
+  # - job: data/jobs/other_job.yaml
+  #   resume: data/resumes/other_resume.json
+  #
+  # - job: data/jobs/third_job.yaml
+  #   resume: data/resumes/another_resume.json

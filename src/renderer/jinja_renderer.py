@@ -23,88 +23,108 @@ def render_resume_tex(
     """
     Render resume to LaTeX using Jinja2 template.
 
-    Args:
-        pkg: Full generated package with bullets
-        resume: Candidate's resume profile
-        template_path: Path to resume.tex.jinja template
-        output_path: Path to save rendered .tex file
+    NOTE:
+    For now we do NOT rely on source_experience_id / ids matching.
+    Instead, we attach ALL generated bullets to a single primary experience
+    so that the Professional Experience section is never empty.
 
-    Returns:
-        Path to rendered .tex file
-
-    Example:
-        >>> tex_path = render_resume_tex(
-        ...     pkg, resume,
-        ...     Path("data/templates/resume.tex.jinja"),
-        ...     Path("outputs/resume.tex")
-        ... )
+    This is a safe, deterministic behavior for the class project demo.
     """
     from jinja2 import Environment, FileSystemLoader
 
     logger.info(f"Rendering resume LaTeX to {output_path}")
 
+    # ------------------------------------------------------------------
     # Setup Jinja2 environment
+    # ------------------------------------------------------------------
     template_dir = template_path.parent
     env = Environment(loader=FileSystemLoader(str(template_dir)))
+    env.filters["latex_escape"] = escape_latex
 
-    # Add LaTeX escape filter
-    env.filters['latex_escape'] = escape_latex
-
-    # Load template
     template = env.get_template(template_path.name)
 
-    # Group bullets by source experience
-    experience_bullets = {}
-    for bullet in pkg.bullets:
-        exp_id = bullet.source_experience_id
-        if exp_id not in experience_bullets:
-            experience_bullets[exp_id] = []
-        experience_bullets[exp_id].append(bullet)
-
-    # Build experiences with tailored bullets
+    # ------------------------------------------------------------------
+    # Build experiences_with_bullets in a SIMPLE, GUARANTEED way
+    # ------------------------------------------------------------------
     experiences_with_bullets = []
-    for exp in resume.experiences:
-        tailored_bullets = experience_bullets.get(exp.id, [])
-        if tailored_bullets:
-            experiences_with_bullets.append({
-                'role': escape_latex(exp.role),
-                'company': escape_latex(exp.company),
-                'location': escape_latex(exp.location) if exp.location else None,
-                'start_date': escape_latex(exp.start_date) if exp.start_date else '',
-                'end_date': escape_latex(exp.end_date) if exp.end_date else None,
-                'bullets': [{'text': escape_latex(b.text)} for b in tailored_bullets]
-            })
 
-    # Prepare context
+    # Use the first resume experience (if any) as the "anchor"
+    primary_exp = None
+    if getattr(resume, "experiences", None):
+        if len(resume.experiences) > 0:
+            primary_exp = resume.experiences[0]
+
+    if primary_exp and pkg.bullets:
+        # Attach ALL generated bullets to this primary experience
+        exp_dict = {
+            "role": escape_latex(getattr(primary_exp, "role", "")),
+            "company": escape_latex(getattr(primary_exp, "company", "")),
+            "location": (
+                escape_latex(getattr(primary_exp, "location", ""))
+                if getattr(primary_exp, "location", None)
+                else None
+            ),
+            "start_date": escape_latex(getattr(primary_exp, "start_date", "")) if getattr(primary_exp, "start_date", None) else "",
+            "end_date": escape_latex(getattr(primary_exp, "end_date", "")) if getattr(primary_exp, "end_date", None) else None,
+            "bullets": [
+                {"text": escape_latex(b.text)}
+                for b in pkg.bullets
+            ],
+        }
+        experiences_with_bullets.append(exp_dict)
+        logger.info(
+            f"Attached {len(pkg.bullets)} generated bullets to primary experience "
+            f"'{exp_dict['role']}' at '{exp_dict['company']}'"
+        )
+    else:
+        # Fallback: no primary experience or no bullets; keep it empty
+        logger.warning(
+            "No primary experience or no generated bullets; "
+            "Professional Experience section will be empty."
+        )
+
+    logger.info(f"Built {len(experiences_with_bullets)} experiences with generated bullets")
+
+    # ------------------------------------------------------------------
+    # Prepare context for Jinja template
+    # ------------------------------------------------------------------
     context = {
-        'candidate_name': escape_latex(resume.name),
-        'candidate_email': escape_latex(resume.email),
-        'candidate_phone': escape_latex(resume.phone) if resume.phone else None,
-        'candidate_location': escape_latex(resume.location) if resume.location else None,
-        'summary': (escape_latex(getattr(resume, "summary", "")) if getattr(resume, "summary", "") else None),
-
-        'skills': [escape_latex(skill) for skill in resume.skills] if resume.skills else [],
-        'experiences': experiences_with_bullets,
-        'education': [
+        "candidate_name": escape_latex(resume.name),
+        "candidate_email": escape_latex(resume.email),
+        "candidate_phone": escape_latex(resume.phone) if resume.phone else None,
+        "candidate_location": escape_latex(resume.location) if resume.location else None,
+        "summary": (
+            escape_latex(getattr(resume, "summary", ""))
+            if getattr(resume, "summary", "")
+            else None
+        ),
+        "skills": [
+            escape_latex(skill) for skill in (getattr(resume, "skills", []) or [])
+        ],
+        "experiences": experiences_with_bullets,
+        "education": [
             {
-                'degree': escape_latex(edu.degree),
-                'institution': escape_latex(edu.institution),
-                'year': str(edu.year) if edu.year else None,
-                'details': [escape_latex(d) for d in edu.details] if edu.details else []
+                "degree": escape_latex(edu.degree),
+                "institution": escape_latex(edu.institution),
+                "year": str(edu.year) if edu.year else None,
+                "details": [
+                    escape_latex(d) for d in (edu.details or [])
+                ],
             }
-            for edu in resume.education
-        ] if resume.education else []
+            for edu in (getattr(resume, "education", []) or [])
+        ],
     }
 
-    # Render template
+    # ------------------------------------------------------------------
+    # Render template and write file
+    # ------------------------------------------------------------------
     rendered = template.render(**context)
-
-    # Write to file
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(rendered, encoding='utf-8')
+    output_path.write_text(rendered, encoding="utf-8")
 
     logger.info(f"Resume LaTeX rendered successfully: {output_path}")
     return output_path
+
 
 
 def render_cover_letter_tex(

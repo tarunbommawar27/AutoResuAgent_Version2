@@ -1,0 +1,23 @@
+{
+  "job_file": "data\\jobs\\cisco_ml_engineer.yaml",
+  "resume_file": "data\\resumes\\tarun_resume.json",
+  "metrics": {
+    "num_bullets": 7,
+    "avg_bullet_length_chars": 146.85714285714286,
+    "avg_bullet_length_words": 19.0,
+    "min_bullet_length_chars": 140,
+    "max_bullet_length_chars": 154,
+    "num_required_skills": 0,
+    "num_required_skills_covered_in_bullets": 0,
+    "required_skill_coverage_ratio": 1.0,
+    "num_resume_skills": 53,
+    "num_resume_skills_used_in_bullets": 7,
+    "resume_skill_usage_ratio": 0.1320754716981132,
+    "hallucinated_skills_count": 11,
+    "cover_letter_word_count": 252,
+    "cover_letter_paragraph_count": 6
+  },
+  "validation_errors": [
+    "Package has no cover letter"
+  ]
+}

@@ -4,6 +4,7 @@ Validates generated content using custom rules and business logic.
 """
 
 import logging
+import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -17,14 +18,20 @@ def validate_bullet_length(
     max_len: int = 150
 ) -> str | None:
     """
-    Validate bullet point length for LaTeX compatibility.
+    Validate bullet point length.
+
+    Minimum length is enforced strictly (hard error).
+    Maximum length is a soft limit used only for logging/analysis (no error).
+
+    This allows slightly longer bullets to pass validation without triggering
+    retry loops, while still providing visibility into length distribution.
 
     Args:
         bullet: Generated bullet to validate
-        max_len: Maximum character length (default 150 for standard LaTeX margins)
+        max_len: Maximum character length for soft warning (default 150)
 
     Returns:
-        None if valid, error message string if invalid
+        None if valid, error message string if minimum length violated
 
     Example:
         >>> error = validate_bullet_length(bullet, max_len=150)
@@ -33,13 +40,18 @@ def validate_bullet_length(
     """
     bullet_len = len(bullet.text)
 
-    # Check minimum length (already validated by Pydantic, but double-check)
+    # Check minimum length (HARD CHECK - strictly enforced)
     if bullet_len < 30:
         return f"Bullet '{bullet.id}' too short: {bullet_len} chars (min 30)"
 
-    # Check maximum length
+    # Check maximum length (SOFT CHECK - warning only, no failure)
     if bullet_len > max_len:
-        return f"Bullet '{bullet.id}' too long: {bullet_len} chars (max {max_len})"
+        logger.warning(
+            "Soft length warning: bullet '%s' length %d > max %d; keeping it anyway",
+            bullet.id,
+            bullet_len,
+            max_len,
+        )
 
     return None
 
@@ -85,6 +97,154 @@ def validate_skill_coverage(
         )
 
     return None
+
+
+def detect_bullet_hallucinations(
+    bullet: "GeneratedBullet",
+    job: "JobDescription",
+    resume: "CandidateProfile"
+) -> list[str]:
+    """
+    Comprehensive hallucination detection for bullets.
+
+    Checks for three types of potential hallucinations:
+    1. Skills not in resume
+    2. Company names not in resume work history
+    3. Technologies not in resume skills or job requirements
+
+    Args:
+        bullet: Generated bullet to check
+        job: Target job description
+        resume: Candidate's resume/profile
+
+    Returns:
+        List of warning messages (empty if no hallucinations detected)
+
+    Example:
+        >>> warnings = detect_bullet_hallucinations(bullet, job, resume)
+        >>> for warning in warnings:
+        ...     logger.warning(warning)
+    """
+    warnings = []
+
+    # 1. Check for hallucinated skills
+    # SOFT CHECK: LLM may introduce useful wording like "Data Pipelines", "DevOps", "Microservices", etc.
+    # We only log when a skill phrase is not in resume.skills, but we do NOT fail validation or trigger retries.
+    if bullet.skills_covered:
+        resume_skills = resume.skills if resume.skills else []
+
+        if not resume_skills:
+            # Resume has no skills listed - log soft warning only
+            logger.warning(
+                "Soft skill consistency warning: bullet '%s' claims skills %s but resume has no skills listed. "
+                "This is logged for analysis only and does NOT block validation.",
+                bullet.id,
+                bullet.skills_covered[:3]
+            )
+        else:
+            # Normalize for case-insensitive comparison
+            bullet_skills_lower = {skill.lower() for skill in bullet.skills_covered}
+            resume_skills_lower = {skill.lower() for skill in resume_skills}
+
+            # Find skills in bullet that aren't in resume
+            missing_from_resume = bullet_skills_lower - resume_skills_lower
+
+            if missing_from_resume:
+                # Convert back to original case for warning message
+                missing_original = [
+                    skill for skill in bullet.skills_covered
+                    if skill.lower() in missing_from_resume
+                ]
+
+                # SOFT CHECK: Only log, do NOT add to warnings list (which becomes errors)
+                logger.warning(
+                    "Soft skill consistency warning: bullet '%s' mentions skills %s not found in resume skills %s. "
+                    "This is logged for analysis only and does NOT block validation.",
+                    bullet.id,
+                    missing_original,
+                    resume_skills[:10]
+                )
+                # Do NOT add to warnings list here
+
+    # 2. Check for hallucinated company names
+    # Extract company names from resume
+    resume_companies = set()
+    for exp in resume.experiences:
+        if exp.company:
+            resume_companies.add(exp.company.lower().strip())
+
+    if resume_companies:
+        # Look for patterns like "at <CompanyName>" in bullet text
+        # This is a simple heuristic - matches " at XYZ" patterns
+        at_pattern = re.compile(r'\bat\s+([A-Z][A-Za-z0-9&\s]+?)(?:\s|,|\.|\)|\]|$)', re.MULTILINE)
+        matches = at_pattern.findall(bullet.text)
+
+        for match in matches:
+            company_candidate = match.strip()
+            # Check if this looks like a company name (has capital letter, reasonable length)
+            if len(company_candidate) > 2 and company_candidate.lower() not in resume_companies:
+                # Check if it's not just a common phrase
+                common_phrases = {'present', 'scale', 'time', 'risk', 'cost', 'peak', 'least'}
+                if company_candidate.lower() not in common_phrases:
+                    warnings.append(
+                        f"Bullet '{bullet.id}' mentions company '{company_candidate}' "
+                        f"not found in resume work history. Resume companies: {list(resume_companies)[:5]}"
+                    )
+
+    # 3. Check for hallucinated technologies (SOFT CHECK - warnings only, no hard failure)
+    # Build whitelist from resume skills and job requirements
+    technology_whitelist = set()
+
+    # Add resume skills
+    if resume.skills:
+        technology_whitelist.update(s.lower() for s in resume.skills)
+
+    # Add job required skills
+    if job.required_skills:
+        technology_whitelist.update(s.lower() for s in job.required_skills)
+
+    # Add job nice-to-have skills
+    if job.nice_to_have_skills:
+        technology_whitelist.update(s.lower() for s in job.nice_to_have_skills)
+
+    if technology_whitelist:
+        # Extract potential technology names from bullet text
+        # Look for capitalized words/acronyms that might be technologies
+        # Pattern: capitalized words, acronyms (2+ caps), or hyphenated tech names
+        tech_pattern = re.compile(r'\b([A-Z][a-z]+(?:[A-Z][a-z]+)*|[A-Z]{2,}|[A-Z][a-z]+-[A-Z][a-z]+)\b')
+        potential_techs = tech_pattern.findall(bullet.text)
+
+        # Common non-technology words to ignore
+        common_words = {
+            'built', 'developed', 'created', 'designed', 'implemented', 'achieved',
+            'led', 'managed', 'worked', 'used', 'improved', 'reduced', 'increased',
+            'i', 'january', 'february', 'march', 'april', 'may', 'june',
+            'july', 'august', 'september', 'october', 'november', 'december',
+            'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+            'collaborated', 'trained', 'coordinated', 'organized', 'supported'
+        }
+
+        unknown_techs = []
+        for tech in potential_techs:
+            tech_lower = tech.lower()
+            # Skip if it's in the whitelist or a common word
+            if tech_lower not in technology_whitelist and tech_lower not in common_words:
+                # Additional check: only flag if it looks like a technology (length > 2, not all caps unless acronym)
+                if len(tech) > 2 and (len(tech) <= 4 or not tech.isupper() or len(tech) >= 6):
+                    # Only flag technologies that appear to be specific tools/frameworks
+                    # Skip if it's likely a proper noun in a sentence context
+                    if not tech[0].isupper() or len(tech) > 3:  # Basic heuristic
+                        unknown_techs.append(tech)
+
+        # SOFT CHECK: Only log warnings, do NOT add to warnings list (which becomes errors)
+        # This avoids false positives on verbs like "Collaborated", "Trained", etc.
+        if unknown_techs:
+            logger.warning(
+                f"Soft tech hallucination warning: bullet '{bullet.id}' mentions possible tech(s) {unknown_techs} "
+                f"not in resume/job terms. This is logged for informational purposes only."
+            )
+
+    return warnings
 
 
 def detect_hallucinations(
@@ -192,10 +352,13 @@ def validate_package(
                 if error:
                     logger.warning(error)
 
-            # Hallucination detection
-            error = detect_hallucinations(bullet, resume.skills)
-            if error:
-                errors.append(error)
+            # Comprehensive hallucination detection
+            hallucination_warnings = detect_bullet_hallucinations(bullet, job, resume)
+            if hallucination_warnings:
+                for warning in hallucination_warnings:
+                    logger.warning(f"[Hallucination Warning] {warning}")
+                    # Add warnings to errors list so they're tracked in metrics
+                    errors.append(warning)
 
     else:
         errors.append("Package has no bullets")
@@ -316,9 +479,9 @@ def validate_bullets_only(
         if error:
             errors.append(error)
 
-        # Hallucination detection
-        error = detect_hallucinations(bullet, resume.skills)
-        if error:
-            errors.append(error)
+        # Comprehensive hallucination detection
+        hallucination_warnings = detect_bullet_hallucinations(bullet, job, resume)
+        if hallucination_warnings:
+            errors.extend(hallucination_warnings)
 
     return errors

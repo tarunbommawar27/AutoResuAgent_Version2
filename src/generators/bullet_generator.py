@@ -94,9 +94,36 @@ Respond with valid JSON only."""
         from ..models import GeneratedBullet
 
         # Convert to GeneratedBullet objects (Pydantic will validate)
-        bullets = [GeneratedBullet(**bullet_dict) for bullet_dict in bullets_data]
+        # Post-process to ensure source_experience_id is set
+        bullets = []
+        for bullet_dict in bullets_data:
+            # If LLM didn't provide source_experience_id, infer it from retrieved context
+            llm_provided_id = bullet_dict.get("source_experience_id")
+
+            if not llm_provided_id:
+                # Try to match bullet to retrieved context based on skills/content
+                source_exp_id = _infer_source_experience_id(bullet_dict, retrieved, resume)
+                if source_exp_id:
+                    bullet_dict["source_experience_id"] = source_exp_id
+                    logger.info(f"✓ Inferred source_experience_id={source_exp_id} for bullet {bullet_dict.get('id', '?')}")
+                else:
+                    logger.warning(f"✗ Could not infer source_experience_id for bullet {bullet_dict.get('id', '?')}")
+            else:
+                logger.info(f"✓ LLM provided source_experience_id={llm_provided_id} for bullet {bullet_dict.get('id', '?')}")
+
+            bullets.append(GeneratedBullet(**bullet_dict))
 
         logger.info(f"Generated {len(bullets)} bullets successfully")
+
+        # Log summary of source_experience_id distribution
+        exp_id_counts = {}
+        for b in bullets:
+            exp_id = b.source_experience_id
+            if exp_id:
+                exp_id_counts[exp_id] = exp_id_counts.get(exp_id, 0) + 1
+
+        logger.info(f"Bullet distribution by source_experience_id: {exp_id_counts}")
+
         return bullets
 
     except json.JSONDecodeError as e:
@@ -105,6 +132,54 @@ Respond with valid JSON only."""
     except Exception as e:
         logger.error(f"Bullet generation failed: {e}")
         raise
+
+
+def _infer_source_experience_id(
+    bullet_dict: dict,
+    retrieved: dict[str, list[dict]],
+    resume: "CandidateProfile"
+) -> str | None:
+    """
+    Infer the source_experience_id for a bullet when LLM doesn't provide it.
+
+    Uses heuristics:
+    1. Find the most common experience_id in retrieved context
+    2. Default to first experience if no clear match
+
+    Args:
+        bullet_dict: The bullet dictionary from LLM (may have skills_covered)
+        retrieved: Retrieved context used for generation
+        resume: Candidate's resume
+
+    Returns:
+        Inferred experience_id or None
+    """
+    # Count experience_id occurrences in retrieved context
+    exp_id_counts: dict[str, int] = {}
+
+    for responsibility, items in retrieved.items():
+        for item in items:
+            exp_id = item.get("experience_id")
+            if exp_id:
+                exp_id_counts[exp_id] = exp_id_counts.get(exp_id, 0) + 1
+                logger.debug(f"Found experience_id={exp_id} in retrieved item for '{responsibility[:50]}...'")
+
+    logger.debug(f"Experience ID counts from retrieval: {exp_id_counts}")
+
+    # Return most common experience_id
+    if exp_id_counts:
+        most_common_exp_id = max(exp_id_counts.items(), key=lambda x: x[1])[0]
+        logger.debug(f"Most common experience_id: {most_common_exp_id}")
+        return most_common_exp_id
+
+    # Fallback: use first experience from resume
+    if resume.experiences:
+        fallback_id = resume.experiences[0].id
+        logger.debug(f"No experience_ids in retrieval, using fallback: {fallback_id}")
+        return fallback_id
+
+    logger.warning("Could not infer experience_id: no retrieval data and no resume experiences")
+    return None
 
 
 def _build_bullet_generation_prompt(
