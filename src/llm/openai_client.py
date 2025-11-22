@@ -4,7 +4,7 @@ Async client for OpenAI's GPT models with JSON mode support.
 """
 
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 from .base import BaseLLMClient
 
@@ -20,47 +20,99 @@ class OpenAILLMClient(BaseLLMClient):
     Features:
     - Native JSON mode via response_format
     - Automatic retry with exponential backoff
-    - Configuration from Config object
+    - Configuration from Config object OR direct parameters
     - Async generation
 
-    Example:
+    Can be initialized two ways:
+
+    1. With Config object (legacy):
         >>> from src.orchestration import get_config
         >>> config = get_config()
         >>> client = OpenAILLMClient(config)
-        >>> result = await client.generate(
-        ...     system_prompt="You are a helpful assistant",
-        ...     user_prompt="Write a haiku about Python",
-        ...     json_mode=False
+
+    2. With direct parameters:
+        >>> client = OpenAILLMClient(
+        ...     api_key="sk-...",
+        ...     model="gpt-4o-mini",
+        ...     max_tokens=4096,
+        ...     temperature=0.0
         ... )
     """
 
-    def __init__(self, config: "Config"):
+    def __init__(
+        self,
+        config_or_api_key: Union["Config", str, None] = None,
+        *,
+        api_key: Optional[str] = None,
+        model: str = "gpt-4o-mini",
+        max_tokens: int = 4096,
+        temperature: float = 0.0,
+        max_retries: int = 3,
+    ):
         """
         Initialize OpenAI client.
 
         Args:
-            config: Application configuration with openai_api_key and model_openai
+            config_or_api_key: Either a Config object (legacy) or API key string
+            api_key: OpenAI API key (keyword-only, alternative to config_or_api_key)
+            model: Model name (default: gpt-4o-mini)
+            max_tokens: Maximum tokens for generation (default: 4096)
+            temperature: Temperature for generation (default: 0.0)
+            max_retries: Maximum retry attempts (default: 3)
 
         Raises:
-            ValueError: If openai_api_key not set in config
-        """
-        super().__init__(config)
+            ValueError: If no API key is provided
 
-        if not config.openai_api_key:
+        Examples:
+            # Using Config object
+            >>> client = OpenAILLMClient(config)
+
+            # Using direct parameters
+            >>> client = OpenAILLMClient(
+            ...     api_key="sk-...",
+            ...     model="gpt-4o-mini",
+            ...     max_tokens=1024
+            ... )
+        """
+        # Determine if config_or_api_key is a Config object or string
+        config = None
+        resolved_api_key = api_key
+
+        if config_or_api_key is not None:
+            # Check if it's a Config object (has openai_api_key attribute)
+            if hasattr(config_or_api_key, 'openai_api_key'):
+                config = config_or_api_key
+                resolved_api_key = config.openai_api_key
+                model = config.model_openai
+                temperature = config.llm_temperature
+                max_tokens = config.llm_max_tokens
+                max_retries = config.max_retries
+            elif isinstance(config_or_api_key, str):
+                # It's an API key string
+                resolved_api_key = config_or_api_key
+
+        # Initialize base class
+        super().__init__(config, max_retries=max_retries)
+
+        # Validate API key
+        if not resolved_api_key:
             raise ValueError(
-                "OpenAI API key not found in config. "
-                "Set OPENAI_API_KEY environment variable or in .env file."
+                "OpenAI API key required. Either pass a Config object, "
+                "provide api_key parameter, or set OPENAI_API_KEY environment variable."
             )
+
+        # Store parameters
+        self.api_key = resolved_api_key
+        self.model = model
+        self.temperature = temperature
+        self.max_tokens = max_tokens
 
         # Lazy import to avoid dependency at module load
         from openai import AsyncOpenAI
 
         self.client: "AsyncOpenAI" = AsyncOpenAI(
-            api_key=config.openai_api_key,
+            api_key=self.api_key,
         )
-        self.model = config.model_openai
-        self.temperature = config.llm_temperature
-        self.max_tokens = config.llm_max_tokens
 
     async def generate(
         self,

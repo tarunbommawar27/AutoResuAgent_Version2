@@ -192,16 +192,18 @@ class Config(BaseSettings):
         if provider == "openai":
             return OpenAILLMClient(
                 api_key=self.openai_api_key,
-                model_name=self.model_openai,
+                model=self.model_openai,
                 temperature=self.llm_temperature,
                 max_tokens=self.llm_max_tokens,
+                max_retries=self.max_retries,
             )
         elif provider == "anthropic":
             return AnthropicLLMClient(
                 api_key=self.anthropic_api_key,
-                model_name=self.model_anthropic,
+                model=self.model_anthropic,
                 temperature=self.llm_temperature,
                 max_tokens=self.llm_max_tokens,
+                max_retries=self.max_retries,
             )
         else:
             raise ValueError(f"Unknown LLM provider: {provider}")

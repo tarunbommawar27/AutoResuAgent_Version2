@@ -1,0 +1,36 @@
+# Example batch configuration file for AutoResuAgent
+# This file defines multiple (job, resume) pairs for concurrent batch processing.
+#
+# Usage:
+#   python main.py --batch-config data/batches/example_batch.yaml --provider openai
+#
+# Output Structure:
+#   outputs/batch_cisco-eval-batch-01/
+#   ├── <job_id>__<candidate_id>/
+#   │   ├── resume.tex
+#   │   ├── cover_letter.tex
+#   │   ├── resume.pdf (if pdflatex installed)
+#   │   └── cover_letter.pdf
+#   └── metrics.jsonl
+
+# Unique identifier for this batch run
+batch_id: "cisco-eval-batch-01"
+
+# List of (job, resume) pairs to process
+pairs:
+  - job: "data/jobs/sample_job.yaml"
+    resume: "data/resumes/sample_resume.json"
+
+  - job: "data/jobs/cisco_ml_engineer.yaml"
+    resume: "data/resumes/tarun_resume.json"
+
+  # Add more pairs as needed:
+  # - job: "data/jobs/another_job.yaml"
+  #   resume: "data/resumes/another_resume.json"
+
+# Maximum number of concurrent jobs (default: 3)
+# Increase for faster processing, decrease to avoid API rate limits
+max_concurrent: 3
+
+# Output directory for generated files (default: outputs/batch_<batch_id>)
+output_dir: "outputs/batch_cisco_eval"

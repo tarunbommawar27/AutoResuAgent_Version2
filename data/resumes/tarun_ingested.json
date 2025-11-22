@@ -1,0 +1,96 @@
+{
+  "candidate_id": "tarun-bommawar-2024",
+  "name": "TARUN BOMMAWAR",
+  "email": "bommawartarun027@gmail.com",
+  "phone": "+1-571-672-2400",
+  "location": "Fairfax, VA",
+  "skills": [
+    "Python",
+    "Java",
+    "C++",
+    "C#",
+    "R",
+    "SQL",
+    "JavaScript",
+    "Shell Scripting",
+    "React",
+    "Spring Boot",
+    "TensorFlow",
+    "PyTorch",
+    "scikit-learn",
+    "Node.js",
+    "Express.js",
+    "PowerBI",
+    "Confluence",
+    "Jira",
+    "Docker",
+    "Kubernetes",
+    "Terraform",
+    "Jenkins",
+    "Linux",
+    "AWS (EC2, S3, Lambda, RDS)",
+    "GCP",
+    "MySQL",
+    "PostgreSQL",
+    "MongoDB",
+    "Oracle",
+    "Hadoop",
+    "Hive",
+    "Databricks",
+    "Machine Learning",
+    "Deep Learning",
+    "Data Analytics",
+    "Business Intelligence",
+    "Agile",
+    "RESTful APIs",
+    "Web Services",
+    "CI/CD",
+    "Secure Coding",
+    "Git",
+    "NLP",
+    "FAISS",
+    "Langchain",
+    "Sentence-BERT",
+    "Ansible"
+  ],
+  "experiences": [
+    {
+      "id": "exp-001",
+      "role": "Full Stack Developer Intern",
+      "company": "IntelliCloud Apps",
+      "start_date": "2023-12",
+      "end_date": "2024-05",
+      "bullets": [
+        "Designed and maintained scalable data processing pipelines using Hadoop and Hive, enhancing automation and reducing manual effort by 50%.",
+        "Implemented CI/CD pipelines with Jenkins for multi-cloud deployments, ensuring consistent integration and reducing deployment time by 40%.",
+        "Developed RESTful APIs and microservices in Python, optimizing response times by 30% and enhancing data-driven application performance.",
+        "Automated testing pipelines using Docker and Jenkins, improving build stability and increasing code quality metrics by 25%.",
+        "Leveraged GPU acceleration for machine learning models, achieving a 40% reduction in training latency and optimizing resource utilization.",
+        "Built an intelligent grading engine using GPT-4 API, automating evaluation processes and reducing manual grading time by 80% with 95% accuracy.",
+        "Developed an NLP pipeline to automate resume tailoring, achieving a 15% increase in skill-coverage accuracy through advanced semantic retrieval.",
+        "Collaborated with cross-functional teams in Agile environments to integrate ML capabilities into production systems, enhancing overall system efficiency."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Technology in Computer and Information Science",
+      "institution": "GH Raisoni Institute of Engineering and Technology",
+      "year": 2024,
+      "details": [
+        "CGPA: 8.29/10.0",
+        "Publication: Data Fragmentation for Enhanced Cloud Security - International Journal IJARSCT, 2024"
+      ]
+    },
+    {
+      "degree": "Master of Science in Computer Science",
+      "institution": "George Mason University",
+      "year": 2026,
+      "details": [
+        "GPA: 3.72/4.0",
+        "Relevant Coursework: Advanced Natural Language Processing, Software Engineering, Data Structures and Algorithms, Computer Systems and Systems Programming, Database Systems, Mathematical Foundations of CS, Theory/Application Data Mining, Network Security, Secure Software Design/Programming"
+      ]
+    }
+  ],
+  "summary": "Computer Science graduate student with experience in full-stack development, DevOps automation, cloud infrastructure, and machine learning. Skilled in building scalable data-driven applications, implementing CI/CD pipelines, and developing intelligent NLP systems."
+}

@@ -16,7 +16,7 @@ if sys.platform == "win32":
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.orchestration import run_pipeline, run_batch
+from src.orchestration import run_pipeline, run_batch, run_batch_pipeline
 import yaml
 
 
@@ -307,16 +307,15 @@ async def main_compare_async(args):
 
 
 async def main_batch_async(args):
-    """Async main function for batch processing."""
+    """Async main function for batch processing using run_batch_pipeline."""
     batch_config_path = Path(args.batch_config)
-    output_dir = Path(args.output) if args.output else Path("outputs")
 
     # Validate batch config file
     if not batch_config_path.exists():
         print(f"\n❌ Error: Batch config file not found: {batch_config_path}")
         sys.exit(1)
 
-    # Load batch config
+    # Load batch config for display
     try:
         with open(batch_config_path, 'r', encoding='utf-8') as f:
             batch_config = yaml.safe_load(f)
@@ -324,12 +323,12 @@ async def main_batch_async(args):
         print(f"\n❌ Error loading batch config: {e}")
         sys.exit(1)
 
-    # Parse job-resume pairs
+    # Validate pairs exist
     if "pairs" not in batch_config:
         print(f"\n❌ Error: Batch config must contain 'pairs' key")
         sys.exit(1)
 
-    job_resume_pairs = []
+    # Validate each pair's files exist
     for i, pair in enumerate(batch_config["pairs"]):
         if "job" not in pair or "resume" not in pair:
             print(f"\n❌ Error: Pair {i+1} missing 'job' or 'resume' key")
@@ -346,39 +345,43 @@ async def main_batch_async(args):
             print(f"\n❌ Error: Resume file not found: {resume_path}")
             sys.exit(1)
 
-        job_resume_pairs.append((job_path, resume_path))
-
-    # Get max_concurrent from config or use default
+    # Extract config values for display
+    batch_id = batch_config.get("batch_id", "batch")
     max_concurrent = batch_config.get("max_concurrent", 3)
+    output_dir = batch_config.get("output_dir", f"outputs/batch_{batch_id}")
 
     # Print configuration
     print(f"\n📋 Batch Configuration:")
-    print(f"   Batch config:  {batch_config_path}")
-    print(f"   Job pairs:     {len(job_resume_pairs)}")
+    print(f"   Batch config:   {batch_config_path}")
+    print(f"   Batch ID:       {batch_id}")
+    print(f"   Job pairs:      {len(batch_config['pairs'])}")
     print(f"   Max concurrent: {max_concurrent}")
-    print(f"   Output dir:    {output_dir}")
-    print(f"   LLM Provider:  {args.provider}")
-    print(f"   Verbose:       {args.verbose}")
+    print(f"   Output dir:     {output_dir}")
+    print(f"   LLM Provider:   {args.provider}")
+    print(f"   Verbose:        {args.verbose}")
 
     print(f"\n📝 Jobs to process:")
-    for i, (job_path, resume_path) in enumerate(job_resume_pairs, 1):
-        print(f"   {i}. {job_path.name} + {resume_path.name}")
+    for i, pair in enumerate(batch_config["pairs"], 1):
+        job_name = Path(pair["job"]).name
+        resume_name = Path(pair["resume"]).name
+        print(f"   {i}. {job_name} + {resume_name}")
 
     # Run batch pipeline
     print(f"\n🚀 Starting batch processing...")
     print(f"   (This may take several minutes depending on the number of jobs)")
 
     try:
-        results = await run_batch(
-            job_resume_pairs=job_resume_pairs,
-            provider=args.provider,
-            output_dir=output_dir,
-            verbose=args.verbose,
-            max_concurrent=max_concurrent
+        # Use the new run_batch_pipeline function
+        results = await run_batch_pipeline(
+            batch_config_path=batch_config_path,
+            provider=args.provider
         )
 
         # Print results
         print_batch_results(results)
+
+        # Print metrics file location
+        print(f"\n📊 Metrics written to: {output_dir}/metrics.jsonl")
 
         # Exit code (fail if any job failed)
         all_success = all(r["success"] for r in results)

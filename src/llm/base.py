@@ -6,7 +6,7 @@ Abstract class for language model clients with async support.
 from abc import ABC, abstractmethod
 import asyncio
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..orchestration import Config
@@ -22,21 +22,31 @@ class BaseLLMClient(ABC):
     - Async generation
     - JSON mode support
     - Automatic retries
-    - Configuration integration
+    - Configuration integration (optional)
+
+    Can be initialized with either:
+    - A Config object (legacy pattern)
+    - Direct parameters: api_key, model, max_tokens, temperature
     """
 
-    def __init__(self, config: "Config"):
+    def __init__(
+        self,
+        config: Optional["Config"] = None,
+        *,
+        max_retries: int = 3,
+    ):
         """
-        Initialize LLM client with configuration.
+        Initialize LLM client.
 
         Args:
-            config: Application configuration object
+            config: Application configuration object (optional, for backwards compatibility)
+            max_retries: Maximum retry attempts (default: 3)
 
         Note:
             Subclasses should initialize their specific API clients
         """
         self.config = config
-        self.max_retries = config.max_retries
+        self.max_retries = config.max_retries if config else max_retries
         self.logger = logging.getLogger(self.__class__.__name__)
 
     @abstractmethod

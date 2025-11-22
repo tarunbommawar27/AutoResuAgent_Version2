@@ -1,0 +1,47 @@
+Machine Learning Engineer - Early Career
+Cisco Systems
+San Jose, CA (Hybrid)
+
+About the Role:
+We are looking for an Early Career Machine Learning Engineer to join our AI/ML team at Cisco. You will work on developing and deploying machine learning models that power our next-generation networking and security solutions.
+
+What You'll Do:
+- Design, develop, and deploy machine learning models for network analytics and security applications
+- Build and maintain scalable data pipelines for model training and inference
+- Collaborate with cross-functional teams to integrate ML capabilities into production systems
+- Implement CI/CD pipelines for ML model deployment and monitoring
+- Conduct experiments and analyze results to improve model performance
+- Work with large-scale distributed systems and cloud infrastructure
+- Participate in code reviews and contribute to engineering best practices
+- Document models, experiments, and findings for knowledge sharing
+
+Minimum Qualifications:
+- Bachelor's or Master's degree in Computer Science, Machine Learning, or related field
+- 0-2 years of experience in machine learning or data science
+- Strong programming skills in Python
+- Experience with machine learning frameworks (TensorFlow, PyTorch, scikit-learn)
+- Familiarity with data processing tools (Hadoop, Spark, or similar)
+- Understanding of deep learning concepts and neural network architectures
+- Experience with SQL and relational databases
+- Strong problem-solving and analytical skills
+- Excellent communication and collaboration abilities
+
+Preferred Qualifications:
+- Experience with NLP or computer vision applications
+- Knowledge of MLOps practices and tools (MLflow, Kubeflow, etc.)
+- Experience with cloud platforms (AWS, GCP, Azure)
+- Familiarity with containerization (Docker, Kubernetes)
+- Experience with CI/CD tools (Jenkins, GitHub Actions)
+- Publications in machine learning or related conferences
+- Open source contributions
+
+What We Offer:
+- Competitive salary: $95,000 - $130,000 depending on experience
+- Comprehensive health, dental, and vision insurance
+- 401(k) matching
+- Flexible work arrangements (hybrid)
+- Professional development and learning opportunities
+- Collaborative and innovative work environment
+
+Employment Type: Full-time
+Remote Policy: Hybrid (3 days in office)

@@ -1,0 +1,55 @@
+TARUN BOMMAWAR
+Email: bommawartarun027@gmail.com
+Phone: (571) 672-2400
+Location: Fairfax, VA
+
+PROFESSIONAL SUMMARY
+Computer Science graduate student with experience in full-stack development, DevOps automation, cloud infrastructure, and machine learning. Skilled in building scalable data-driven applications, implementing CI/CD pipelines, and developing intelligent NLP systems.
+
+EDUCATION
+
+Master of Science in Computer Science
+George Mason University, Expected 2026
+GPA: 3.72/4.0
+Relevant Coursework: Advanced Natural Language Processing, Software Engineering, Data Structures and Algorithms, Computer Systems and Systems Programming, Database Systems, Mathematical Foundations of CS, Theory/Application Data Mining, Network Security, Secure Software Design/Programming
+
+Bachelor of Technology in Computer and Information Science
+GH Raisoni Institute of Engineering and Technology, 2024
+CGPA: 8.29/10.0
+Publication: Data Fragmentation for Enhanced Cloud Security - International Journal IJARSCT, 2024
+
+TECHNICAL SKILLS
+Languages: Python, Java, C++, C#, R, SQL, JavaScript, Shell Scripting
+Frameworks: React, Spring Boot, TensorFlow, PyTorch, scikit-learn, Node.js, Express.js
+Tools: PowerBI, Confluence, Jira, Docker, Kubernetes, Terraform, Jenkins, Linux
+Cloud: AWS (EC2, S3, Lambda, RDS), GCP
+Databases: MySQL, PostgreSQL, MongoDB, Oracle, Hadoop, Hive, Databricks
+Other: Machine Learning, Deep Learning, Data Analytics, Business Intelligence, Agile, RESTful APIs, Web Services, CI/CD, Secure Coding, Git, NLP, FAISS, Langchain, Sentence-BERT, Ansible
+
+PROFESSIONAL EXPERIENCE
+
+Full Stack Developer Intern
+IntelliCloud Apps, Hyderabad, India
+December 2023 - May 2024
+
+- Designed and maintained scalable data processing pipelines using Hadoop and Hive, enhancing automation and reducing manual effort by 50%.
+- Implemented CI/CD pipelines with Jenkins for multi-cloud deployments, ensuring consistent integration and reducing deployment time by 40%.
+- Developed RESTful APIs and microservices in Python, optimizing response times by 30% and enhancing data-driven application performance.
+- Automated testing pipelines using Docker and Jenkins, improving build stability and increasing code quality metrics by 25%.
+- Leveraged GPU acceleration for machine learning models, achieving a 40% reduction in training latency and optimizing resource utilization.
+- Built an intelligent grading engine using GPT-4 API, automating evaluation processes and reducing manual grading time by 80% with 95% accuracy.
+- Developed an NLP pipeline to automate resume tailoring, achieving a 15% increase in skill-coverage accuracy through advanced semantic retrieval.
+- Collaborated with cross-functional teams in Agile environments to integrate ML capabilities into production systems, enhancing overall system efficiency.
+
+PROJECTS
+
+AutoResuAgent - Automated Resume Tailoring System
+- Built end-to-end NLP pipeline using Sentence-BERT and FAISS for semantic retrieval of relevant experiences
+- Integrated LLM (GPT-4/Claude) for generating tailored resume bullets and cover letters
+- Implemented validation layer with hallucination detection and skill coverage metrics
+- Created LaTeX rendering pipeline for professional PDF output
+
+Cloud-Based Data Fragmentation System
+- Designed secure data fragmentation algorithm for enhanced cloud storage security
+- Implemented distributed storage across multiple cloud providers
+- Published research findings in International Journal IJARSCT

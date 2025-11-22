@@ -5,7 +5,7 @@ Async client for Anthropic's Claude models with JSON output support.
 
 import asyncio
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 from .base import BaseLLMClient
 
@@ -21,51 +21,103 @@ class AnthropicLLMClient(BaseLLMClient):
     Features:
     - JSON mode via prompt engineering
     - Automatic retry with exponential backoff
-    - Configuration from Config object
+    - Configuration from Config object OR direct parameters
     - Async generation
 
     Note:
         Anthropic doesn't have native JSON mode like OpenAI,
         so we use clear prompt instructions to request JSON output.
 
-    Example:
+    Can be initialized two ways:
+
+    1. With Config object (legacy):
         >>> from src.orchestration import get_config
         >>> config = get_config()
         >>> client = AnthropicLLMClient(config)
-        >>> result = await client.generate(
-        ...     system_prompt="You are a helpful assistant",
-        ...     user_prompt="Write a haiku about Python",
-        ...     json_mode=False
+
+    2. With direct parameters:
+        >>> client = AnthropicLLMClient(
+        ...     api_key="sk-ant-...",
+        ...     model="claude-3-5-sonnet-latest",
+        ...     max_tokens=4096,
+        ...     temperature=0.0
         ... )
     """
 
-    def __init__(self, config: "Config"):
+    def __init__(
+        self,
+        config_or_api_key: Union["Config", str, None] = None,
+        *,
+        api_key: Optional[str] = None,
+        model: str = "claude-3-5-sonnet-latest",
+        max_tokens: int = 4096,
+        temperature: float = 0.0,
+        max_retries: int = 3,
+    ):
         """
         Initialize Anthropic client.
 
         Args:
-            config: Application configuration with anthropic_api_key and model_anthropic
+            config_or_api_key: Either a Config object (legacy) or API key string
+            api_key: Anthropic API key (keyword-only, alternative to config_or_api_key)
+            model: Model name (default: claude-3-5-sonnet-latest)
+            max_tokens: Maximum tokens for generation (default: 4096)
+            temperature: Temperature for generation (default: 0.0)
+            max_retries: Maximum retry attempts (default: 3)
 
         Raises:
-            ValueError: If anthropic_api_key not set in config
-        """
-        super().__init__(config)
+            ValueError: If no API key is provided
 
-        if not config.anthropic_api_key:
+        Examples:
+            # Using Config object
+            >>> client = AnthropicLLMClient(config)
+
+            # Using direct parameters
+            >>> client = AnthropicLLMClient(
+            ...     api_key="sk-ant-...",
+            ...     model="claude-3-5-sonnet-latest",
+            ...     max_tokens=1024
+            ... )
+        """
+        # Determine if config_or_api_key is a Config object or string
+        config = None
+        resolved_api_key = api_key
+
+        if config_or_api_key is not None:
+            # Check if it's a Config object (has anthropic_api_key attribute)
+            if hasattr(config_or_api_key, 'anthropic_api_key'):
+                config = config_or_api_key
+                resolved_api_key = config.anthropic_api_key
+                model = config.model_anthropic
+                temperature = config.llm_temperature
+                max_tokens = config.llm_max_tokens
+                max_retries = config.max_retries
+            elif isinstance(config_or_api_key, str):
+                # It's an API key string
+                resolved_api_key = config_or_api_key
+
+        # Initialize base class
+        super().__init__(config, max_retries=max_retries)
+
+        # Validate API key
+        if not resolved_api_key:
             raise ValueError(
-                "Anthropic API key not found in config. "
-                "Set ANTHROPIC_API_KEY environment variable or in .env file."
+                "Anthropic API key required. Either pass a Config object, "
+                "provide api_key parameter, or set ANTHROPIC_API_KEY environment variable."
             )
+
+        # Store parameters
+        self.api_key = resolved_api_key
+        self.model = model
+        self.temperature = temperature
+        self.max_tokens = max_tokens
 
         # Lazy import to avoid dependency at module load
         from anthropic import AsyncAnthropic
 
         self.client: "AsyncAnthropic" = AsyncAnthropic(
-            api_key=config.anthropic_api_key,
+            api_key=self.api_key,
         )
-        self.model = config.model_anthropic
-        self.temperature = config.llm_temperature
-        self.max_tokens = config.llm_max_tokens
 
     async def generate(
         self,
