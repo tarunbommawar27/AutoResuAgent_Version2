@@ -63,15 +63,16 @@ class AgentExecutor:
     async def run_single_job(
         self,
         job_path: Path,
-        resume_path: Path
+        resume_path: Path,
+        mode: str = "full"
     ) -> tuple["FullGeneratedPackage | None", list[str], dict | None]:
         """
         Run the complete agentic loop for a single job.
 
         Steps:
         1. Load job description and resume from files
-        2. Build FAISS index from resume experiences
-        3. Retrieve relevant experiences for job
+        2. Build FAISS index from resume experiences (full mode only)
+        3. Retrieve relevant experiences for job (full mode only)
         4. Generate tailored bullets (with retry on validation failure)
         5. Generate cover letter
         6. Build full package
@@ -82,6 +83,7 @@ class AgentExecutor:
         Args:
             job_path: Path to job description YAML file
             resume_path: Path to resume JSON file
+            mode: "full" or "baseline" - controls retrieval and validation
 
         Returns:
             Tuple of (FullGeneratedPackage or None, list of error messages, dict of metrics or None)
@@ -90,10 +92,11 @@ class AgentExecutor:
             >>> executor = AgentExecutor(llm, encoder)
             >>> pkg, errors, metrics = await executor.run_single_job(
             ...     Path("data/jobs/ml-engineer.yaml"),
-            ...     Path("data/resumes/jane-doe.json")
+            ...     Path("data/resumes/jane-doe.json"),
+            ...     mode="full"
             ... )
         """
-        logger.info(f"Starting job execution: {job_path.name}")
+        logger.info(f"Starting job execution: {job_path.name} (mode={mode})")
 
         try:
             # Step 1: Load models
@@ -105,34 +108,75 @@ class AgentExecutor:
             resume = load_resume_from_json(resume_path)
             logger.info(f"Loaded resume: {resume.name}")
 
-            # Step 2: Build FAISS index
-            logger.debug("Building FAISS index for retrieval")
-            index = ResumeFaissIndex(self.encoder)
-            index.build_from_experiences(resume.experiences)
-            logger.info(f"Built index with {len(index)} bullets")
+            # Branch based on mode
+            if mode == "full":
+                # FULL MODE: Use FAISS retrieval, validation, and retry
+                # Step 2: Build FAISS index (includes experiences and projects)
+                logger.debug("Building FAISS index for retrieval")
+                index = ResumeFaissIndex(self.encoder)
+                index.build_from_experiences(resume.experiences, resume.projects)
+                logger.info(f"Built index with {len(index)} bullets")
 
-            # Step 3: Retrieve relevant experiences
-            logger.debug("Retrieving relevant experiences")
-            retrieved = retrieve_relevant_experiences(
-                job, resume, self.encoder, index, top_k=5
-            )
-            total_retrieved = sum(len(items) for items in retrieved.values())
-            logger.info(f"Retrieved {total_retrieved} relevant bullets for {len(retrieved)} responsibilities")
+                # Step 3: Retrieve relevant experiences
+                logger.debug("Retrieving relevant experiences")
+                retrieved = retrieve_relevant_experiences(
+                    job, resume, self.encoder, index, top_k=5
+                )
+                total_retrieved = sum(len(items) for items in retrieved.values())
+                logger.info(f"Retrieved {total_retrieved} relevant bullets for {len(retrieved)} responsibilities")
 
-            # Step 4: Generate bullets with retry
-            bullets = await self._generate_bullets_with_retry(job, resume, retrieved)
+                # Step 4: Generate bullets with retry
+                bullets = await self._generate_bullets_with_retry(job, resume, retrieved)
 
-            if not bullets:
-                error_msg = "Failed to generate valid bullets after retries"
-                logger.error(error_msg)
-                return None, [error_msg], None
+                if not bullets:
+                    error_msg = "Failed to generate valid bullets after retries"
+                    logger.error(error_msg)
+                    return None, [error_msg], None
 
-            logger.info(f"Generated {len(bullets)} bullets successfully")
+                logger.info(f"Generated {len(bullets)} bullets successfully")
 
-            # Step 5: Generate cover letter
-            logger.debug("Generating cover letter")
-            cover_letter = await generate_cover_letter(job, resume, bullets, self.llm)
-            logger.info("Generated cover letter")
+                # Step 5: Generate cover letter
+                logger.debug("Generating cover letter")
+                cover_letter = await generate_cover_letter(job, resume, bullets, self.llm)
+                logger.info("Generated cover letter")
+
+            elif mode == "baseline":
+                # BASELINE MODE: No FAISS, no retrieval, minimal validation
+                logger.info("Running in BASELINE mode (no retrieval, minimal validation)")
+
+                # Generate bullets using baseline generator
+                from ..generators import generate_bullets_baseline, generate_cover_letter_baseline
+
+                bullets = await generate_bullets_baseline(job, resume, self.llm)
+
+                if not bullets:
+                    error_msg = "Baseline generation failed to produce bullets"
+                    logger.error(error_msg)
+                    return None, [error_msg], None
+
+                logger.info(f"Generated {len(bullets)} baseline bullets")
+
+                # Generate cover letter (baseline)
+                logger.debug("Generating baseline cover letter")
+                cover_letter = await generate_cover_letter_baseline(job, resume, self.llm)
+
+                if not cover_letter:
+                    logger.warning("Baseline cover letter generation failed")
+                    # Create a minimal cover letter
+                    from ..models import GeneratedCoverLetter
+                    cover_letter = GeneratedCoverLetter(
+                        id=f"baseline-cover-{job.job_id}",
+                        job_id=job.job_id,
+                        job_title=job.title,
+                        company=job.company,
+                        tone="professional",
+                        text="Cover letter generation failed."
+                    )
+
+                logger.info("Generated baseline cover letter")
+
+            else:
+                raise ValueError(f"Invalid mode: {mode}. Must be 'full' or 'baseline'.")
 
             # Step 6: Build full package
             logger.debug("Building full package")
@@ -144,14 +188,28 @@ class AgentExecutor:
                 cover_letter=cover_letter
             )
 
-            # Step 7: Final validation
-            logger.debug("Running final package validation")
-            errors = validate_package(package, job, resume)
+            # Step 7: Final validation (mode-dependent)
+            if mode == "full":
+                logger.debug("Running final package validation")
+                errors = validate_package(package, job, resume)
 
-            if errors:
-                logger.warning(f"Package has {len(errors)} validation errors")
-            else:
-                logger.info("Package validated successfully!")
+                if errors:
+                    logger.warning(f"Package has {len(errors)} validation errors")
+                else:
+                    logger.info("Package validated successfully!")
+
+            elif mode == "baseline":
+                # Minimal validation for baseline: only check min length
+                logger.debug("Running minimal baseline validation")
+                errors = []
+                for bullet in bullets:
+                    if len(bullet.text) < 30:
+                        errors.append(f"Bullet {bullet.id} too short: {len(bullet.text)} chars")
+
+                if errors:
+                    logger.warning(f"Baseline has {len(errors)} validation errors (length only)")
+                else:
+                    logger.info("Baseline validation passed (length check)")
 
             # Step 8: Compute metrics
             logger.debug("Computing package metrics")

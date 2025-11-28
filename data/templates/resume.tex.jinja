@@ -62,6 +62,33 @@
 {% if not loop.last %}\vspace{4pt}{% endif %}
 {% endfor %}
 
+% Projects (if any)
+{% if projects %}
+\section*{Projects}
+
+{% for project in projects %}
+\textbf{{ '{' }}{{ project.title }}{{ '}' }}%
+{% if project.tech_stack %} -- \textit{{ '{' }}{{ project.tech_stack|join(', ') }}{{ '}' }}{% endif %}%
+{% if project.link %}
+\hfill \href{{ '{' }}{{ project.link }}{{ '}' }}{{ '{' }}[Link]{{ '}' }}%
+{% endif %}
+
+{% if project.description %}
+{{ project.description }}
+{% endif %}
+
+{% if project.bullets %}
+\begin{itemize}
+    {% for bullet in project.bullets %}
+    \item {{ bullet }}
+    {% endfor %}
+\end{itemize}
+{% endif %}
+
+{% if not loop.last %}\vspace{4pt}{% endif %}
+{% endfor %}
+{% endif %}
+
 % Education
 {% if education %}
 \section*{Education}

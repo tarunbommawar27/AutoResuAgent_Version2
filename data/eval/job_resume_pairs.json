@@ -1,0 +1,12 @@
+[
+  {
+    "id": "pair-001",
+    "job_path": "data/jobs/sample_job.yaml",
+    "resume_path": "data/resumes/sample_resume.json"
+  },
+  {
+    "id": "pair-002",
+    "job_path": "data/jobs/cisco_ml_engineer.yaml",
+    "resume_path": "data/resumes/tarun_resume.json"
+  }
+]

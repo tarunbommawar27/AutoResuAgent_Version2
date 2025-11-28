@@ -150,5 +150,44 @@
         "Publication: Data Fragmentation for Enhanced Cloud Security - International Journal IJARSCT, 2024"
       ]
     }
+  ],
+  "projects": [
+    {
+      "id": "proj-001",
+      "title": "AutoResuAgent",
+      "description": "Automated resume tailoring system using NLP and semantic retrieval",
+      "tech_stack": ["Python", "FAISS", "Sentence-BERT", "GPT-4", "asyncio", "Pydantic"],
+      "link": "https://github.com/tarunbommawar/autoresuagent",
+      "bullets": [
+        "Built end-to-end NLP pipeline using Sentence-BERT and FAISS for semantic retrieval of relevant experiences",
+        "Integrated LLM (GPT-4/Claude) for generating tailored resume bullets and cover letters",
+        "Implemented validation layer with hallucination detection and skill coverage metrics",
+        "Created LaTeX rendering pipeline for professional PDF output"
+      ]
+    },
+    {
+      "id": "proj-002",
+      "title": "Cloud-Based Data Fragmentation System",
+      "description": "Secure data fragmentation algorithm for enhanced cloud storage security",
+      "tech_stack": ["Python", "AWS", "GCP", "Cryptography"],
+      "link": null,
+      "bullets": [
+        "Designed secure data fragmentation algorithm for enhanced cloud storage security",
+        "Implemented distributed storage across multiple cloud providers",
+        "Published research findings in International Journal IJARSCT"
+      ]
+    },
+    {
+      "id": "proj-003",
+      "title": "RL LoadBalancer",
+      "description": "Reinforcement learning-based network load balancer using DQN",
+      "tech_stack": ["Python", "PyTorch", "Docker", "Kubernetes", "PowerBI"],
+      "link": null,
+      "bullets": [
+        "Developed reinforcement learning-based system (DQN) to distribute network traffic dynamically",
+        "Leveraged GPU acceleration for faster training, achieving 40% latency reduction",
+        "Deployed Dockerized microservices with Kubernetes for scalable infrastructure"
+      ]
+    }
   ]
 }

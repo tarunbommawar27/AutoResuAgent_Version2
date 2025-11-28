@@ -28,7 +28,7 @@
     "Terraform",
     "Jenkins",
     "Linux",
-    "AWS (EC2, S3, Lambda, RDS)",
+    "AWS",
     "GCP",
     "MySQL",
     "PostgreSQL",
@@ -89,6 +89,38 @@
       "details": [
         "GPA: 3.72/4.0",
         "Relevant Coursework: Advanced Natural Language Processing, Software Engineering, Data Structures and Algorithms, Computer Systems and Systems Programming, Database Systems, Mathematical Foundations of CS, Theory/Application Data Mining, Network Security, Secure Software Design/Programming"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-001",
+      "title": "AutoResuAgent - Automated Resume Tailoring System",
+      "description": "Built end-to-end NLP pipeline using Sentence-BERT and FAISS for semantic retrieval of relevant experiences.",
+      "tech_stack": [
+        "Sentence-BERT",
+        "FAISS",
+        "GPT-4"
+      ],
+      "link": null,
+      "bullets": [
+        "Integrated LLM (GPT-4/Claude) for generating tailored resume bullets and cover letters.",
+        "Implemented validation layer with hallucination detection and skill coverage metrics.",
+        "Created LaTeX rendering pipeline for professional PDF output."
+      ]
+    },
+    {
+      "id": "proj-002",
+      "title": "Cloud-Based Data Fragmentation System",
+      "description": "Designed secure data fragmentation algorithm for enhanced cloud storage security.",
+      "tech_stack": [
+        "Cloud",
+        "Distributed Storage"
+      ],
+      "link": null,
+      "bullets": [
+        "Implemented distributed storage across multiple cloud providers.",
+        "Published research findings in International Journal IJARSCT."
       ]
     }
   ],

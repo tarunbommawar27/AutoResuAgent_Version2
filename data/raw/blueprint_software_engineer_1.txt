@@ -1,0 +1,58 @@
+Software Engineer 1
+Bellevue, WA
+
+Who is Blueprint?
+We are a technology solutions firm headquartered in Bellevue, Washington, with a strong presence across the United States. Unified by a shared passion for solving complicated problems, our people are our greatest asset. We use technology as a tool to bridge the gap between strategy and execution, powered by the knowledge, skills, and the expertise of our teams, who all have unique perspectives and years of experience across multiple industries. We’re bold, smart, agile, and fun.
+
+What does Blueprint do?
+Blueprint helps organizations unlock value from existing assets by leveraging cutting-edge technology to create additional revenue streams and new lines of business. We connect strategy, business solutions, products, and services to transform and grow companies.
+
+Why Blueprint?
+At Blueprint, we believe in the power of possibility and are passionate about bringing it to life. Whether you join our bustling product division, our multifaceted services team or you want to grow your career in human resources, your ability to make an impact is amplified when you join one of our teams. You’ll focus on solving unique business problems while gaining hands-on experience with the world’s best technology. We believe in unique perspectives and build teams of people with diverse skillsets and backgrounds. At Blueprint, you’ll have the opportunity to work with multiple clients and teams, such as data science and product development, all while learning, growing, and developing new solutions.
+
+In this role
+In this role, you will help ensure that product features are correctly instrumented, that telemetry follows established standards, and that key product scenarios are validated through automation. You’ll review code and event logging, build or extend lightweight testing/validation tools, and query stored telemetry to confirm data quality. You will also partner with senior/technical stakeholders to understand data requirements and support database/ETL changes needed for analytics and reporting. This is a good fit for someone early in their career who can code, likes working with logs/data, and is comfortable troubleshooting.
+
+Responsibilities
+- Review product code and event instrumentation to ensure telemetry/compliance standards are followed.
+- Build, enhance, and run automation or feature/UI test scripts (ideally in JavaScript/TypeScript/Python/C#) to validate product scenarios.
+- Query application logs/telemetry/data in storage using SQL (and similar query tools) to verify that events are flowing and shaped correctly.
+- Work with technical leads and business stakeholders to clarify data requirements and translate them into database/table changes.
+- Support design, implementation, and maintenance of ETL/data-loading processes for larger analytics scenarios.
+- Document test procedures, telemetry requirements, and standard operating practices.
+- Participate in a technical/skills assessment and be ready to walk through recent projects, debugging steps, and problem-solving approaches.
+- Troubleshoot defects in telemetry or data pipelines and propose fixes or automation to prevent recurrence.
+
+Required Qualifications
+- Bachelor’s degree in Computer Science, Computer Engineering, Information Systems, or a related technical field (or equivalent practical experience).
+- 0–2 years of hands-on experience working with software, data, or test/automation in a technical environment.
+- Ability to read and write code in at least one of: JavaScript/TypeScript, C#, Java, or Python.
+- Experience querying data using SQL (or willingness to learn an internal query language with a similar model).
+- Understanding of basic ETL / data movement concepts (sources, transforms, targets).
+- Comfort working with application logs / telemetry and using them to troubleshoot issues.
+- Strong written and verbal communication skills and ability to walk through recent projects.
+- Demonstrated problem-solving skills and attention to detail.
+
+Preferred / Nice-to-Have Qualifications
+- Experience validating telemetry/event schemas or working in environments where logging standards are enforced.
+- Experience with test automation or feature/UI testing frameworks.
+- Experience with a second language (e.g., both JS/TS and Python, or C# plus scripting).
+- Familiarity with working in large-scale or cloud-based environments (storage, queues, containers, or big-data query engines).
+- Experience documenting SOPs, validation steps, or runbooks for other engineers/testers.
+- Comfort working with productivity tools (email, spreadsheets, presentation tools) to report findings and track issues.
+
+Salary Range
+Pay ranges vary based on multiple factors including, without limitation, skill sets, education, responsibilities, experience, and geographical market. The pay range for this position reflects geographic based ranges for Washington state: $36.06 USD/HR. The salary/wage and job title for this opening will be based on the selected candidate’s qualifications and experience and may be outside this range.
+
+Equal Opportunity Employer
+Blueprint Technologies, LLC is an equal employment opportunity employer. Qualified applicants are considered without regard to race, color, age, disability, sex, gender identity or expression, orientation, veteran/military status, religion, national origin, ancestry, marital, or familial status, genetic information, citizenship, or any other status protected by law.
+
+If you need assistance or a reasonable accommodation to complete the application process, please reach out to: recruiting@bpcs.com
+
+Benefits
+- Medical, dental, and vision coverage
+- Flexible Spending Account
+- 401k program
+- Competitive PTO offerings
+- Parental Leave
+- Opportunities for professional growth and development

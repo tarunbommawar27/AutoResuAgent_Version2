@@ -1,0 +1,45 @@
+Founding Engineer
+Remote - US based
+
+The Opportunity
+Construction accounts for 4.2% of GDP and employs over 7 million people. The amount of new construction increases year over year, and the industry needs modern software to help builders manage increasingly complex operations.
+
+As a founding engineer, you will work directly with the CTO to design and develop an industry-leading platform. You will be tasked with becoming deeply familiar with the construction industry in order to build transformative software that meets the needs of a diverse customer base.
+
+TrueBuilt is looking for engineers who:
+- Put the customer’s needs first.
+- Take ownership of their decisions.
+- Love to work on any part of the software stack.
+
+Construction is the backbone of America, and TrueBuilt aims to be the backbone of the construction industry.
+
+Tech Stack
+- Next.js and TypeScript for the platform.
+- Prisma as the ORM connecting to a Postgres database.
+- GitHub Actions and Vercel powering CI/CD for rapid development.
+
+Qualifications
+- Experienced: proven track record of delivering high quality software.
+- 0 to 1 mindset: ability to take an idea and transform it into working software.
+- Learning mindset: eager to learn and contribute across the stack.
+- Frontend capable: able to break down designs into components and implement them.
+- Experience in one or more of:
+  - Database design.
+  - DevOps.
+  - CI/CD.
+  - UI/UX design.
+- Experience with Next.js is a plus.
+- Experience working in a startup is a plus.
+
+First 30 Days
+- Routine pair programming sessions with the CTO.
+- Meet with advisers to learn first-hand about their challenges.
+- Design and implement key features of the MVP.
+
+Benefits
+- Competitive salary and equity.
+- Opportunity to build an amazing company from the ground up.
+- Remote-first workplace.
+- Routine team meetups.
+- Unlimited PTO.
+- Medical, dental, and vision coverage.

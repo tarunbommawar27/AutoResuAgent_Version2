@@ -142,13 +142,77 @@ async def main_async(args):
     """Async main function."""
     print_header()
 
-    # Check mode: compare, batch, or single
-    if hasattr(args, 'compare') and args.compare:
+    # Check mode: eval_dataset, compare, batch, or single
+    if args.eval_dataset:
+        await main_eval_dataset_async(args)
+    elif hasattr(args, 'compare') and args.compare:
         await main_compare_async(args)
     elif args.batch_config:
         await main_batch_async(args)
     else:
         await main_single_async(args)
+
+
+async def main_eval_dataset_async(args):
+    """Async main function for dataset evaluation mode."""
+    dataset_path = Path(args.eval_dataset)
+
+    # Validate dataset file
+    if not dataset_path.exists():
+        print(f"\n❌ Error: Dataset file not found: {dataset_path}")
+        sys.exit(1)
+
+    # Print configuration
+    print(f"\n📋 Evaluation Configuration:")
+    print(f"   Dataset:      {dataset_path}")
+    print(f"   LLM Provider: {args.provider}")
+    print(f"   Output dir:   outputs/eval")
+    print(f"   Verbose:      {args.verbose}")
+
+    print(f"\n🔬 Running baseline vs full evaluation...")
+    print(f"   This will compare baseline (no retrieval) vs full system")
+    print(f"   on each job-resume pair in the dataset")
+
+    try:
+        from src.orchestration.config import get_config
+        from src.embeddings import SentenceBertEncoder
+        from src.agent import AgentExecutor
+        from src.evaluation.run_dataset_eval import run_dataset_eval
+
+        # Load configuration
+        config = get_config()
+
+        if args.provider == "openai":
+            if not config.openai_api_key:
+                raise ValueError("OpenAI API key not set. Set OPENAI_API_KEY environment variable.")
+            llm = config.get_llm_client("openai")
+        else:
+            if not config.anthropic_api_key:
+                raise ValueError("Anthropic API key not set. Set ANTHROPIC_API_KEY environment variable.")
+            llm = config.get_llm_client("anthropic")
+
+        # Initialize encoder
+        encoder = SentenceBertEncoder()
+
+        # Initialize executor
+        executor = AgentExecutor(llm, encoder)
+
+        # Run evaluation
+        await run_dataset_eval(dataset_path, executor)
+
+        print(f"\n✅ Evaluation complete!")
+        print(f"💡 Tip: Review outputs/eval/baseline_vs_full.jsonl for detailed comparison metrics")
+
+        sys.exit(0)
+
+    except KeyboardInterrupt:
+        print("\n\n⚠️  Interrupted by user")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n\n❌ Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
 
 
 async def main_single_async(args):
@@ -487,6 +551,13 @@ Notes:
     )
 
     parser.add_argument(
+        "--eval-dataset",
+        type=str,
+        required=False,
+        help="Path to evaluation dataset JSON file for baseline vs full comparison (e.g., data/eval/job_resume_pairs.json)"
+    )
+
+    parser.add_argument(
         "--provider",
         type=str,
         choices=["openai", "anthropic"],
@@ -511,12 +582,18 @@ Notes:
     args = parser.parse_args()
 
     # Validate arguments: mutually exclusive modes
-    modes = sum([bool(args.batch_config), bool(args.compare)])
+    modes = sum([bool(args.batch_config), bool(args.compare), bool(args.eval_dataset)])
 
     if modes > 1:
-        parser.error("Cannot use --batch-config and --compare together. Choose one mode.")
+        parser.error("Cannot use --batch-config, --compare, and --eval-dataset together. Choose one mode.")
 
-    if args.compare:
+    if args.eval_dataset:
+        # Eval dataset mode: ignore job and resume if provided
+        if args.job or args.resume:
+            print("\n⚠️  Warning: --job and --resume are ignored when using --eval-dataset")
+        if args.gold:
+            parser.error("--gold is only valid with --compare mode")
+    elif args.compare:
         # Compare mode: requires job and resume
         if not args.job or not args.resume:
             parser.error("--compare mode requires both --job and --resume")
@@ -529,7 +606,7 @@ Notes:
     else:
         # Single mode: both job and resume are required
         if not args.job or not args.resume:
-            parser.error("Either --batch-config, --compare, OR both --job and --resume must be provided")
+            parser.error("Either --batch-config, --compare, --eval-dataset, OR both --job and --resume must be provided")
         if args.gold:
             parser.error("--gold is only valid with --compare mode")
 

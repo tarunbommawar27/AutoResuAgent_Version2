@@ -1,0 +1,29 @@
+Software Engineer (Early Career) / Machine Learning Engineer
+Uare.ai
+Los Altos, CA (or Remote, depending on posting)
+
+Company
+Uare.ai, founded by Robert LoCascio (former CEO of LivePerson), is an AI startup launched in May 2024 with a mission to empower people to do more with their memories. Uare.ai creates AI-driven personal digital twins, enabling users to preserve, share, and interact with their knowledge and stories.
+
+At its core is the proprietary Human Life Model (HLM), designed to process unstructured conversation and story data without training client data directly into traditional LLMs. Uare.ai leverages third-party LLMs for conversations while HLM provides structure and reasoning. The platform has broad B2C and B2B applications, and has been featured in outlets like NBC, NPR, The New York Post, and CNET.
+
+Role
+We are seeking a highly skilled Machine Learning Engineer to join an early-stage, mission-driven startup building AI-powered products for real-world human interaction. You will design and implement scalable machine learning pipelines, integrate foundation models, and fine-tune retrieval systems that deliver high-quality, context-aware responses.
+
+Responsibilities
+- Design and implement machine learning workflows that combine structured and unstructured data.
+- Work with state-of-the-art language models and voice technologies.
+- Build and optimize retrieval-augmented generation (RAG) systems.
+- Collaborate with product and engineering teams to turn prototypes into production-grade systems.
+- Help shape the future of AI-powered human interaction products.
+
+Requirements
+- Experience in machine learning, NLP, or AI.
+- Strong experience with LLMs, RAG pipelines, vector databases, and prompt engineering.
+- Hands-on experience with cloud-based AI platforms (AWS, Azure, or GCP).
+- Familiarity with voice cloning, speech synthesis, or related audio ML workflows is a plus.
+- Excited about building 0-to-1 products in a fast-moving environment.
+
+Compensation
+- Annual base salary range: $100,000–$150,000 USD.
+- Total compensation includes equity and a comprehensive benefits package.

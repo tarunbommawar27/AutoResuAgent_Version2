@@ -1,0 +1,22 @@
+job_id: uare-ai-machine-learning-engineer-2024
+title: Machine Learning Engineer
+company: Uare.ai
+location: Los Altos, CA
+responsibilities:
+- Design and implement machine learning workflows that combine structured and unstructured data.
+- Work with state-of-the-art language models and voice technologies.
+- Build and optimize retrieval-augmented generation (RAG) systems.
+- Collaborate with product and engineering teams to turn prototypes into production-grade systems.
+- Help shape the future of AI-powered human interaction products.
+required_skills:
+- Experience in machine learning, NLP, or AI.
+- Strong experience with LLMs, RAG pipelines, vector databases, and prompt engineering.
+- Hands-on experience with cloud-based AI platforms (AWS, Azure, or GCP).
+nice_to_have_skills:
+- Familiarity with voice cloning, speech synthesis, or related audio ML workflows.
+seniority: Entry
+extra_metadata:
+  salary_range: $100,000–$150,000 USD
+  employment_type: Full-time
+  remote_policy: Remote
+  years_experience: null

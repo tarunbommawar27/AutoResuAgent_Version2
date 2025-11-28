@@ -1,0 +1,42 @@
+Software Engineer, New Grad, Backend
+New York, NY, United States
+
+Company
+CLEAR's mission is to create frictionless experiences where every day feels like hitting every green light. With more than 30+ million members and hundreds of partners, CLEAR’s identity platform is transforming the way people live, work, and travel. Whether it’s at the airport, stadium, or on your phone, CLEAR connects you to the things that make you, you, unlocking easier, more secure, seamless experiences.
+
+Tech Stack
+- Python
+- Kafka
+- Postgres
+- AWS cloud
+
+What you’ll do
+- Advance capabilities across a wide array of industries and domains and gain hands-on experience with privacy, security, data modeling and architecture.
+- Develop and deliver code, driving engineering excellence by defining best practices in testing, documentation and observability.
+- Partner with product and other stakeholders to uncover requirements, to innovate, and to solve complex problems.
+- Take ownership of backend components, including architectural decision-making and continuous improvement of technology and processes at CLEAR.
+
+What you’re great at
+- 0–3 years of back-end focused, professional software development experience in Python.
+- Experience with cloud-based application development.
+- Familiarity with at least some of:
+  - Cloud service providers (e.g., AWS).
+  - Containerization technologies like Docker and Kubernetes.
+  - Collaboration, integration, and deployment tools like GitHub and Argo.
+- Ability to articulate technical concepts to both technical and non-technical stakeholders.
+- Strong collaboration skills and comfort working closely with team members.
+- Comfort with ambiguity and a willingness to work through unclear problem spaces.
+- Curiosity about technology, belief in constant learning, and autonomy in prioritizing what’s important.
+
+Compensation and Benefits
+- Base salary range: $115,000–$130,000, depending on skills and experience.
+- Comprehensive healthcare plans.
+- Family building benefits (fertility and adoption/surrogacy support).
+- Flexible time off.
+- Free OneMedical memberships.
+- 401(k) plan with employer match.
+- Annual bonuses and/or RSUs (depending on level and role).
+- Office perks: meals, snacks, and other well-being and learning programs.
+
+Accommodation
+CLEAR provides reasonable accommodation to qualified individuals with disabilities or protected needs, including adjustments to the application process and work procedures.

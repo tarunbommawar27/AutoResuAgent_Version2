@@ -4,7 +4,8 @@
       "Bash(python -m py_compile:*)",
       "Bash(python -c:*)",
       "Bash(python main.py:*)",
-      "Bash(python test_bullet_mapping.py:*)"
+      "Bash(python test_bullet_mapping.py:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

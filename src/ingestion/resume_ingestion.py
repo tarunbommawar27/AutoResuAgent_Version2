@@ -44,6 +44,19 @@ CANDIDATE_PROFILE_SCHEMA = """
       "year": 2024,
       "details": ["GPA: 3.8", "Honors", "Relevant coursework"]
     }
+  ],
+  "projects": [
+    {
+      "id": "proj-001",
+      "title": "Project Name",
+      "description": "Brief description of the project",
+      "tech_stack": ["Python", "TensorFlow", "AWS"],
+      "link": "https://github.com/user/project (or null if not found)",
+      "bullets": [
+        "Project accomplishment 1",
+        "Project accomplishment 2"
+      ]
+    }
   ]
 }
 """
@@ -59,12 +72,16 @@ Rules:
 1. Return ONLY the JSON object, nothing else
 2. Generate a unique candidate_id based on name and current year (e.g., "john-doe-2024")
 3. Assign unique experience IDs: "exp-001", "exp-002", etc.
-4. Use null for missing optional fields (phone, location, summary)
-5. Extract ALL skills mentioned anywhere in the resume
-6. Parse dates in "YYYY-MM" format when possible
-7. Use null for end_date if position is current
-8. Include education details like GPA, honors, relevant coursework
-9. Ensure all bullet points are complete sentences or fragments describing accomplishments
+4. Assign unique project IDs: "proj-001", "proj-002", etc.
+5. Use null for missing optional fields (phone, location, summary)
+6. Extract ALL skills mentioned anywhere in the resume
+7. Parse dates in "YYYY-MM" format when possible
+8. Use null for end_date if position is current
+9. Include education details like GPA, honors, relevant coursework
+10. Extract ALL projects mentioned (personal, academic, professional)
+11. For projects, include tech_stack (technologies used) and link if available
+12. Ensure all bullet points are complete sentences or fragments describing accomplishments
+13. If no projects section exists, return an empty array for "projects"
 """
 
 RETRY_PROMPT = """Your previous response was not valid JSON. Please return ONLY a valid JSON object matching the schema, with no additional text, markdown, or explanations."""
@@ -146,6 +163,7 @@ Return ONLY valid JSON."""
             logger.info(f"Successfully parsed resume for: {profile.name}")
             logger.info(f"  - {len(profile.skills)} skills")
             logger.info(f"  - {len(profile.experiences)} experiences")
+            logger.info(f"  - {len(profile.projects)} projects")
             logger.info(f"  - {len(profile.education)} education entries")
 
             return profile

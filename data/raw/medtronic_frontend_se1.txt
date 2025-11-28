@@ -1,0 +1,49 @@
+Front-end Software Engineer I
+Northridge, California, United States
+Hybrid
+
+Company
+Medtronic Diabetes is focused on transforming diabetes care for better freedom and great health, serving patients across the continuum of diabetes. The goal is to become a holistic diabetes management company focused on value-based care, improving patient experience, clinical outcomes, and lowering total cost of care.
+
+Role Overview
+This role is part of Medtronic's Diabetes business. Medtronic has announced its intention to separate the Diabetes division to promote future growth and innovation. You may eventually transfer to a new entity (SpinCo or another company) depending on the transition.
+
+Responsibilities
+- Design, develop, test, debug, and implement software components.
+- Determine systems software design requirements.
+- Ensure that system improvements are successfully implemented and monitored to increase efficiency.
+- Generate systems software engineering policies, standards, and procedures.
+- Work across a variety of software lifecycle activities as determined by program needs.
+
+Required Knowledge and Experience
+- Requires a Baccalaureate degree and 0 years relevant experience.
+
+Nice to Have
+- Degree in Computer Science, Engineering, Statistics, Math, or similar field.
+- Robust and in-depth knowledge of Angular 18+, HTML, CSS, TypeScript, Node.js.
+- Good knowledge of libraries such as NgRx, RxJs, Angular Material.
+- Advanced Angular skills, including experience with micro frontend architecture.
+- Understanding of cloud technologies like AWS.
+- Experience with SDLC and Agile tools including Jira.
+- Familiarity with configuration tools and best practices including Git and Bitbucket.
+- Self-motivated and proactive, with strong problem solving, troubleshooting, and critical thinking.
+- Good communication skills, both verbal and written.
+- Experience writing Angular unit tests and end-to-end tests.
+- Understanding of FDA regulations including ISO 13485.
+
+Physical Job Requirements
+Employees must be independently mobile, interact with computers, and communicate with peers and co-workers. Reasonable accommodations may be made for individuals with disabilities.
+
+Compensation and Benefits
+- Salary range (US, excluding PR): $74,400.00–$111,600.00.
+- Eligible for Medtronic Incentive Plan (MIP).
+- Health, dental, and vision insurance.
+- HSAs and FSAs.
+- Life insurance and disability coverage.
+- Tuition assistance/reimbursement.
+- 401(k) with employer contribution and match.
+- Paid time off and holidays.
+- Employee Stock Purchase Plan.
+- Employee Assistance Program and other retirement and capital accumulation programs (based on level and regulations).
+
+Medtronic is an equal opportunity employer and provides reasonable accommodations in line with applicable laws.

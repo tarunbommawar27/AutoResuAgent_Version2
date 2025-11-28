@@ -197,9 +197,9 @@ async def run_system_c(
 
     logger.info("Running System C: AutoResuAgent")
 
-    # Build FAISS index
+    # Build FAISS index (includes experiences and projects)
     index = ResumeFaissIndex(encoder)
-    index.build_from_experiences(resume.experiences)
+    index.build_from_experiences(resume.experiences, resume.projects)
 
     # Retrieve relevant experiences
     retrieved = retrieve_relevant_experiences(job, resume, encoder, index, top_k=5)

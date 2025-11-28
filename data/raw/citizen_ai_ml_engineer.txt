@@ -1,0 +1,58 @@
+AI / Machine Learning Engineer
+Citizen Health
+
+Who We Are
+Citizen Health was founded on the belief that having the right advocate is the single most important factor in achieving better care and outcomes. By combining data, AI, and community, Citizen is building a personalized AI advocate powered by patients' complete medical histories and data from thousands of other patients. Starting in rare and complex conditions, patients share their data in exchange for value, enabling biopharma and researchers with seamless access to patients and regulatory-grade data, accelerating drug development.
+
+The Role
+Citizen Health is seeking AI/Machine Learning Engineers to lead the development and deployment of cutting-edge AI solutions that power our patient-centric platform. This role is crucial in designing and implementing sophisticated machine learning models that transform complex health data into actionable insights for patients, healthcare providers, and researchers.
+
+Responsibilities
+- Design and implement end-to-end machine learning solutions, from data preprocessing to model deployment and monitoring.
+- Develop and optimize agentic Large Language Model (LLM) solutions for healthcare applications using techniques like fine-tuning and Retrieval-Augmented Generation (RAG).
+- Create robust data pipelines for validation and deployment.
+- Implement ML systems that can process and analyze diverse healthcare data types, including structured clinical data, medical imaging, and unstructured text.
+- Collaborate with backend engineers to integrate ML models into production infrastructure.
+- Ensure ML systems meet strict healthcare compliance requirements while maintaining high performance.
+- Design and implement monitoring systems for model performance, data drift, and system health.
+- Lead research initiatives to explore and implement state-of-the-art AI/ML techniques.
+- Collaborate with clinical experts to validate model outputs and ensure medical accuracy.
+- Stay current with the latest developments in AI/ML, particularly in healthcare applications.
+
+Who You Are
+You are a builder and problem solver who enjoys fast-paced environments. You are comfortable working with complex data and systems, and you enjoy startups and operating autonomously while collaborating with others.
+
+Must-Have Skills
+- 5+ years of experience in machine learning engineering, with a focus on production ML systems.
+- Strong proficiency in Python and AI/LLM frameworks (e.g., LangChain, LangGraph, AutoGen, CrewAI).
+- Experience designing and implementing production-grade ML pipelines.
+- Proven track record of deploying ML/LLM solutions in production environments.
+- Strong understanding of ML fundamentals, including deep learning, NLP, and statistical modeling.
+- Experience with MLOps tools and best practices.
+- Proficiency in working with large-scale datasets and distributed computing.
+- Strong software engineering skills and coding best practices.
+- Degree in Computer Science or equivalent.
+
+Preferred Skills
+- Hands-on experience integrating and optimizing LLMs in production environments.
+- Proficiency with LLM tools and techniques such as LangChain, LlamaIndex, and prompt engineering.
+- Experience implementing Retrieval-Augmented Generation (RAG) systems.
+- Familiarity with vector databases and efficient similarity search for AI applications.
+- Experience with message queuing systems and data streaming platforms.
+- Familiarity with data processing and analytics technologies.
+- Passion for creating robust, scalable, AI-driven systems that impact healthcare.
+
+Why Join Us
+- Work on pioneering AI technologies that redefine consumer healthcare.
+- Lead projects and shape the company’s direction in a mission-driven environment.
+- Fast-paced, high-growth setting with opportunities for career progression.
+- Supportive culture of learning, experimentation, and innovation.
+- Inclusive, diverse environment where varied perspectives are valued.
+
+Compensation and Benefits
+- Competitive salary plus equity.
+- Comprehensive health, dental, and vision insurance.
+- Unlimited paid time off, including generous parental leave.
+- Flexible hybrid work environment.
+
+Citizen Health is an equal opportunity employer and welcomes applicants of all backgrounds and identities.

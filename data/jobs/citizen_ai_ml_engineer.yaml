@@ -1,0 +1,40 @@
+job_id: citizenhealth-ai-ml-engineer-2024
+title: AI / Machine Learning Engineer
+company: Citizen Health
+responsibilities:
+- Design and implement end-to-end machine learning solutions, from data preprocessing to model deployment and monitoring.
+- Develop and optimize agentic Large Language Model (LLM) solutions for healthcare applications using techniques like fine-tuning
+  and Retrieval-Augmented Generation (RAG).
+- Create robust data pipelines for validation and deployment.
+- Implement ML systems that can process and analyze diverse healthcare data types, including structured clinical data, medical
+  imaging, and unstructured text.
+- Collaborate with backend engineers to integrate ML models into production infrastructure.
+- Ensure ML systems meet strict healthcare compliance requirements while maintaining high performance.
+- Design and implement monitoring systems for model performance, data drift, and system health.
+- Lead research initiatives to explore and implement state-of-the-art AI/ML techniques.
+- Collaborate with clinical experts to validate model outputs and ensure medical accuracy.
+- Stay current with the latest developments in AI/ML, particularly in healthcare applications.
+required_skills:
+- 5+ years of experience in machine learning engineering, with a focus on production ML systems.
+- Strong proficiency in Python and AI/LLM frameworks (e.g., LangChain, LangGraph, AutoGen, CrewAI).
+- Experience designing and implementing production-grade ML pipelines.
+- Proven track record of deploying ML/LLM solutions in production environments.
+- Strong understanding of ML fundamentals, including deep learning, NLP, and statistical modeling.
+- Experience with MLOps tools and best practices.
+- Proficiency in working with large-scale datasets and distributed computing.
+- Strong software engineering skills and coding best practices.
+- Degree in Computer Science or equivalent.
+nice_to_have_skills:
+- Hands-on experience integrating and optimizing LLMs in production environments.
+- Proficiency with LLM tools and techniques such as LangChain, LlamaIndex, and prompt engineering.
+- Experience implementing Retrieval-Augmented Generation (RAG) systems.
+- Familiarity with vector databases and efficient similarity search for AI applications.
+- Experience with message queuing systems and data streaming platforms.
+- Familiarity with data processing and analytics technologies.
+- Passion for creating robust, scalable, AI-driven systems that impact healthcare.
+seniority: Senior
+extra_metadata:
+  salary_range: Competitive salary plus equity.
+  employment_type: Full-time
+  remote_policy: Flexible hybrid work environment.
+  years_experience: 5+ years

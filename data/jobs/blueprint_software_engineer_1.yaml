@@ -1,0 +1,40 @@
+job_id: blueprint-software-engineer-1
+title: Software Engineer 1
+company: Blueprint Technologies, LLC
+location: Bellevue, WA
+responsibilities:
+- Review product code and event instrumentation to ensure telemetry/compliance standards are followed.
+- Build, enhance, and run automation or feature/UI test scripts (ideally in JavaScript/TypeScript/Python/C#) to validate product
+  scenarios.
+- Query application logs/telemetry/data in storage using SQL (and similar query tools) to verify that events are flowing and
+  shaped correctly.
+- Work with technical leads and business stakeholders to clarify data requirements and translate them into database/table
+  changes.
+- Support design, implementation, and maintenance of ETL/data-loading processes for larger analytics scenarios.
+- Document test procedures, telemetry requirements, and standard operating practices.
+- Participate in a technical/skills assessment and be ready to walk through recent projects, debugging steps, and problem-solving
+  approaches.
+- Troubleshoot defects in telemetry or data pipelines and propose fixes or automation to prevent recurrence.
+required_skills:
+- Bachelor’s degree in Computer Science, Computer Engineering, Information Systems, or a related technical field (or equivalent
+  practical experience).
+- 0–2 years of hands-on experience working with software, data, or test/automation in a technical environment.
+- 'Ability to read and write code in at least one of: JavaScript/TypeScript, C#, Java, or Python.'
+- Experience querying data using SQL.
+- Understanding of basic ETL / data movement concepts (sources, transforms, targets).
+- Comfort working with application logs / telemetry and using them to troubleshoot issues.
+- Strong written and verbal communication skills and ability to walk through recent projects.
+- Demonstrated problem-solving skills and attention to detail.
+nice_to_have_skills:
+- Experience validating telemetry/event schemas or working in environments where logging standards are enforced.
+- Experience with test automation or feature/UI testing frameworks.
+- Experience with a second language (e.g., both JS/TS and Python, or C# plus scripting).
+- Familiarity with working in large-scale or cloud-based environments (storage, queues, containers, or big-data query engines).
+- Experience documenting SOPs, validation steps, or runbooks for other engineers/testers.
+- Comfort working with productivity tools (email, spreadsheets, presentation tools) to report findings and track issues.
+seniority: Entry
+extra_metadata:
+  salary_range: $36.06 USD/HR
+  employment_type: Full-time
+  remote_policy: null
+  years_experience: 0–2 years

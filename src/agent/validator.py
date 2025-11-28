@@ -366,35 +366,18 @@ def validate_package(
     # Validate cover letter
     if pkg.cover_letter:
         # Check that job_id matches
-        if pkg.cover_letter.job_id != job.job_id:
+        if pkg.cover_letter.job_id and pkg.cover_letter.job_id != job.job_id:
             errors.append(
                 f"Cover letter job_id '{pkg.cover_letter.job_id}' "
                 f"does not match job '{job.job_id}'"
             )
 
-        # Check cover letter has content
-        # full_text = pkg.cover_letter.get_full_text()
-        # if len(full_text) < 200:
-        #     errors.append(
-        #         f"Cover letter too short: {len(full_text)} chars (min 200)"
-        #     )
-        # elif len(full_text) > 2000:
-        #     errors.append(
-        #         f"Cover letter too long: {len(full_text)} chars (max 2000)"
-        #     )
-
-        # # Check sections are not empty
-        # if not pkg.cover_letter.opening:
-        #     errors.append("Cover letter missing opening paragraph")
-        # if not pkg.cover_letter.body:
-        #     errors.append("Cover letter missing body")
-        # if not pkg.cover_letter.closing:
-        #     errors.append("Cover letter missing closing paragraph")
-
-    # Minimal cover letter length check (using `text`)
-    if len(pkg.cover_letter.text.strip()) < 200:
-        errors.append("Cover letter text too short (< 200 chars)")
-
+        # Minimal cover letter length check (using `text`)
+        if hasattr(pkg.cover_letter, 'text') and pkg.cover_letter.text:
+            if len(pkg.cover_letter.text.strip()) < 200:
+                errors.append("Cover letter text too short (< 200 chars)")
+        else:
+            errors.append("Cover letter missing text content")
 
     else:
         errors.append("Package has no cover letter")

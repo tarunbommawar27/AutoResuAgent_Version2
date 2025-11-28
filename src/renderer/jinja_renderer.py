@@ -113,6 +113,16 @@ def render_resume_tex(
             }
             for edu in (getattr(resume, "education", []) or [])
         ],
+        "projects": [
+            {
+                "title": escape_latex(proj.title),
+                "description": escape_latex(proj.description) if proj.description else None,
+                "tech_stack": [escape_latex(t) for t in (proj.tech_stack or [])],
+                "link": proj.link,  # Don't escape URL
+                "bullets": [escape_latex(b) for b in (proj.bullets or [])],
+            }
+            for proj in (getattr(resume, "projects", []) or [])
+        ],
     }
 
     # ------------------------------------------------------------------

@@ -212,3 +212,142 @@ class ResumeMetrics:
             "length_ok": 50 <= len(bullet) <= 200,
             "score": 0.0  # TODO: composite score
         }
+
+
+def compute_basic_metrics(
+    pkg: "FullGeneratedPackage",
+    job: "JobDescription",
+    resume: "CandidateProfile"
+) -> dict:
+    """
+    Compute basic metrics for a generated package (simplified version).
+
+    This is a simplified version of compute_package_metrics that focuses on
+    the most important metrics for baseline comparison.
+
+    Args:
+        pkg: Full generated package with bullets and cover letter
+        job: Target job description
+        resume: Candidate's resume/profile
+
+    Returns:
+        Dictionary with basic metrics:
+        - num_bullets: Total number of bullets generated
+        - avg_bullet_length_chars: Average bullet length in characters
+        - required_skill_coverage: Ratio of required skills covered (0.0-1.0)
+        - nice_to_have_skill_coverage: Ratio of nice-to-have skills covered
+        - has_cover_letter: Boolean indicating if cover letter exists
+        - num_experiences_with_bullets: Number of unique source experiences
+    """
+    # Get bullets from package
+    bullets = []
+    if hasattr(pkg, 'bullets') and pkg.bullets:
+        bullets = pkg.bullets
+    elif hasattr(pkg, 'sections') and pkg.sections:
+        for section in pkg.sections:
+            bullets.extend(section.bullets)
+
+    metrics = {}
+
+    # Basic bullet metrics
+    metrics["num_bullets"] = len(bullets)
+
+    if bullets:
+        # Average bullet length
+        bullet_lengths = [len(b.text) for b in bullets]
+        metrics["avg_bullet_length_chars"] = sum(bullet_lengths) / len(bullet_lengths)
+
+        # Collect all skills mentioned in bullets
+        bullet_skills_mentioned = set()
+        for bullet in bullets:
+            if bullet.skills_covered:
+                bullet_skills_mentioned.update(s.lower() for s in bullet.skills_covered)
+
+        # Required skills coverage
+        required_skills = job.required_skills if job.required_skills else []
+        if required_skills:
+            required_skills_lower = set(s.lower() for s in required_skills)
+            covered_required = bullet_skills_mentioned & required_skills_lower
+            metrics["required_skill_coverage"] = len(covered_required) / len(required_skills)
+        else:
+            metrics["required_skill_coverage"] = 1.0
+
+        # Nice-to-have skills coverage
+        nice_to_have_skills = job.nice_to_have_skills if hasattr(job, 'nice_to_have_skills') and job.nice_to_have_skills else []
+        if nice_to_have_skills:
+            nice_to_have_lower = set(s.lower() for s in nice_to_have_skills)
+            covered_nice = bullet_skills_mentioned & nice_to_have_lower
+            metrics["nice_to_have_skill_coverage"] = len(covered_nice) / len(nice_to_have_skills)
+        else:
+            metrics["nice_to_have_skill_coverage"] = 1.0
+
+        # Count unique source experiences
+        unique_sources = set()
+        for bullet in bullets:
+            if bullet.source_experience_id:
+                unique_sources.add(bullet.source_experience_id)
+        metrics["num_experiences_with_bullets"] = len(unique_sources)
+
+    else:
+        metrics["avg_bullet_length_chars"] = 0.0
+        metrics["required_skill_coverage"] = 0.0
+        metrics["nice_to_have_skill_coverage"] = 0.0
+        metrics["num_experiences_with_bullets"] = 0
+
+    # Cover letter presence
+    metrics["has_cover_letter"] = pkg.cover_letter is not None and len(pkg.cover_letter.text.strip()) > 0
+
+    return metrics
+
+
+def compare_runs_metrics(full: dict, baseline: dict) -> dict:
+    """
+    Compare metrics between full and baseline runs.
+
+    Computes deltas (full - baseline) for key metrics to show the
+    improvement of the full system over baseline.
+
+    Args:
+        full: Metrics dictionary from full mode run
+        baseline: Metrics dictionary from baseline mode run
+
+    Returns:
+        Dictionary with delta metrics:
+        - delta_required_skill_coverage: Difference in required skill coverage
+        - delta_num_bullets: Difference in number of bullets
+        - delta_avg_bullet_length_chars: Difference in average bullet length
+        - delta_nice_to_have_skill_coverage: Difference in nice-to-have coverage
+        - delta_num_experiences_with_bullets: Difference in unique sources used
+
+    Example:
+        >>> comparison = compare_runs_metrics(full_metrics, baseline_metrics)
+        >>> print(f"Skill coverage improved by {comparison['delta_required_skill_coverage']:.2%}")
+    """
+    comparison = {}
+
+    # Required skill coverage delta
+    full_skill_cov = full.get("required_skill_coverage", 0.0)
+    baseline_skill_cov = baseline.get("required_skill_coverage", 0.0)
+    comparison["delta_required_skill_coverage"] = full_skill_cov - baseline_skill_cov
+
+    # Number of bullets delta
+    full_bullets = full.get("num_bullets", 0)
+    baseline_bullets = baseline.get("num_bullets", 0)
+    comparison["delta_num_bullets"] = full_bullets - baseline_bullets
+
+    # Average bullet length delta
+    full_avg_len = full.get("avg_bullet_length_chars", 0.0)
+    baseline_avg_len = baseline.get("avg_bullet_length_chars", 0.0)
+    comparison["delta_avg_bullet_length_chars"] = full_avg_len - baseline_avg_len
+
+    # Nice-to-have skill coverage delta
+    full_nice = full.get("nice_to_have_skill_coverage", 0.0)
+    baseline_nice = baseline.get("nice_to_have_skill_coverage", 0.0)
+    comparison["delta_nice_to_have_skill_coverage"] = full_nice - baseline_nice
+
+    # Number of unique source experiences delta
+    full_exp = full.get("num_experiences_with_bullets", 0)
+    baseline_exp = baseline.get("num_experiences_with_bullets", 0)
+    comparison["delta_num_experiences_with_bullets"] = full_exp - baseline_exp
+
+    return comparison

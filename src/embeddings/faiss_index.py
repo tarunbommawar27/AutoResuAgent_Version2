@@ -6,10 +6,10 @@ Handles indexing and similarity search for resume experiences using FAISS.
 import numpy as np
 from typing import TYPE_CHECKING
 
-# Import Experience for type hints
+# Import Experience and Project for type hints
 if TYPE_CHECKING:
     import faiss
-    from ..models import Experience
+    from ..models import Experience, Project
 
 from .sentence_bert import SentenceBertEncoder
 
@@ -60,38 +60,58 @@ class ResumeFaissIndex:
             )
         return self._index
 
-    def build_from_experiences(self, experiences: list["Experience"]) -> None:
+    def build_from_experiences(
+        self,
+        experiences: list["Experience"],
+        projects: list["Project"] | None = None
+    ) -> None:
         """
-        Build FAISS index from resume experiences.
+        Build FAISS index from resume experiences and optionally projects.
 
-        Each bullet point from each experience becomes a searchable item.
-        Stores experience_id and bullet text as metadata for retrieval.
+        Each bullet point from each experience/project becomes a searchable item.
+        Stores source_id, source_type, and bullet text as metadata for retrieval.
 
         Args:
             experiences: List of Experience objects from resume
+            projects: Optional list of Project objects from resume
 
         Example:
             >>> from src.models import load_resume_from_json
             >>> resume = load_resume_from_json(Path("data/resumes/jane-doe.json"))
-            >>> index.build_from_experiences(resume.experiences)
+            >>> index.build_from_experiences(resume.experiences, resume.projects)
             >>> print(f"Indexed {len(index)} bullets")
         """
         import faiss
 
-        # Extract all bullets with their experience IDs
+        # Extract all bullets with their source IDs and types
         all_texts = []
         all_metadata = []
 
+        # Add experience bullets
         for exp in experiences:
             for bullet in exp.bullets:
                 all_texts.append(bullet)
                 all_metadata.append({
-                    "experience_id": exp.id,
+                    "experience_id": exp.id,  # Keep for backwards compatibility
+                    "source_id": exp.id,
+                    "source_type": "experience",
                     "text": bullet,
                 })
 
+        # Add project bullets if provided
+        if projects:
+            for proj in projects:
+                for bullet in proj.bullets:
+                    all_texts.append(bullet)
+                    all_metadata.append({
+                        "experience_id": proj.id,  # Keep for backwards compatibility
+                        "source_id": proj.id,
+                        "source_type": "project",
+                        "text": bullet,
+                    })
+
         if not all_texts:
-            raise ValueError("No bullets found in experiences. Cannot build index.")
+            raise ValueError("No bullets found in experiences or projects. Cannot build index.")
 
         # Generate embeddings
         print(f"Encoding {len(all_texts)} bullets...")
@@ -108,7 +128,7 @@ class ResumeFaissIndex:
         self.embeddings = embeddings
         self.metadata = all_metadata
 
-        print(f"✓ Built FAISS index with {len(self)} items")
+        print(f"Built FAISS index with {len(self)} items")
 
     def search(self, query: str, top_k: int = 5) -> list[dict]:
         """
@@ -144,9 +164,12 @@ class ResumeFaissIndex:
             if idx == -1:  # FAISS returns -1 for empty slots
                 continue
 
+            meta = self.metadata[idx]
             results.append({
-                "experience_id": self.metadata[idx]["experience_id"],
-                "text": self.metadata[idx]["text"],
+                "experience_id": meta["experience_id"],  # Backwards compatible
+                "source_id": meta.get("source_id", meta["experience_id"]),
+                "source_type": meta.get("source_type", "experience"),
+                "text": meta["text"],
                 "score": float(score),
             })
 
