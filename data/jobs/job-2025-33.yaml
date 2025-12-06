@@ -1,0 +1,22 @@
+job_id: job-2025-33
+title: Forward Deployed Engineer
+company: Palantir
+location: Washington, DC
+seniority: Mid-Level
+required_skills:
+- Java
+- TypeScript
+- Spark
+- Data Integration
+- Client Facing
+responsibilities:
+- Deploy and configure Palantir Foundry for government and commercial clients.
+- Write data transformation pipelines to integrate disparate legacy datasets.
+- Build custom applications and dashboards on top of the Foundry platform.
+- Travel to client sites to understand mission-critical workflows.
+nice_to_have_skills:
+- Python
+- Distributed Systems
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-10-05'

@@ -1,0 +1,24 @@
+job_id: job-2025-10
+title: Mission Software Engineer
+company: Anduril
+location: Costa Mesa, CA
+seniority: Senior
+required_skills:
+- C++
+- Rust
+- Distributed Systems
+- Network Programming
+- Real-time Systems
+responsibilities:
+- Build the Lattice operating system that coordinates autonomous assets in the field.
+- Develop mesh networking protocols for intermittent and low-bandwidth environments.
+- Implement consensus algorithms for multi-agent coordination without central control.
+- Optimize software for deployment on edge compute hardware (NVIDIA Jetson).
+- Lead field testing exercises to validate software reliability in real-world conditions.
+nice_to_have_skills:
+- Geospatial data processing
+- Robotics Operating System (ROS)
+- Security Clearance
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-10-15'

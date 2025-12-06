@@ -1,0 +1,26 @@
+job_id: job-2025-05
+title: Research Scientist, Reasoning
+company: Google DeepMind
+location: London, UK
+seniority: Staff
+required_skills:
+- Python
+- TensorFlow/JAX
+- Chain-of-Thought Reasoning
+- Mathematics
+- Academic Writing
+responsibilities:
+- Lead research into improving multi-step reasoning and planning capabilities of Gemini
+  models.
+- Develop novel training objectives that encourage self-correction and reflection.
+- Propose and validate hypotheses regarding the limits of current transformer architectures.
+- Mentor junior researchers and engineers.
+- Collaborate with the Gemini product team to transfer research breakthroughs into
+  production.
+nice_to_have_skills:
+- Formal Logic
+- Theorem Proving
+- Robotics experience
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-10-28'

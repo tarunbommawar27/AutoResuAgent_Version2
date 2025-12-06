@@ -1,0 +1,83 @@
+{
+  "candidate_id": "cand-002",
+  "name": "Casey Chen",
+  "email": "casey.c@example.com",
+  "location": "Seattle, WA",
+  "skills": [
+    "Python",
+    "PyTorch",
+    "TensorFlow",
+    "Scikit-learn",
+    "Docker",
+    "Kubernetes",
+    "AWS SageMaker",
+    "SQL",
+    "Airflow",
+    "MLflow",
+    "FastAPI",
+    "Redis",
+    "Git"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Machine Learning Engineer",
+      "company": "Visionary AI",
+      "start_date": "2022-03-01",
+      "end_date": null,
+      "bullets": [
+        "Designed and deployed a computer vision model for defect detection in manufacturing, achieving 99.2% accuracy and reducing manual inspection costs by 30%",
+        "Optimized inference latency of a ResNet-50 based model by 40% using TensorRT and quantization techniques",
+        "Built automated retraining pipelines using Airflow and MLflow to handle data drift, ensuring consistent model performance in production"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Junior Data Engineer",
+      "company": "DataDrive Inc",
+      "start_date": "2020-06-01",
+      "end_date": "2022-02-01",
+      "bullets": [
+        "Developed ETL pipelines processing 2TB of daily log data using PySpark on AWS EMR",
+        "Collaborated with data scientists to productize prototype models, converting Jupyter notebooks into modular Python packages",
+        "Implemented data quality checks that reduced downstream reporting errors by 25%"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Semantic Search Engine",
+      "tech_stack": [
+        "Python",
+        "BERT",
+        "Elasticsearch",
+        "FastAPI"
+      ],
+      "description": "Built a semantic search backend for a document repository. Fine-tuned a BERT model to improve search relevance by 20% over keyword matching.",
+      "bullets": [
+        "Fine-tuned BERT model improving search relevance by 20% over keyword matching"
+      ]
+    },
+    {
+      "id": "proj-2",
+      "title": "Real-time Crypto Predictor",
+      "tech_stack": [
+        "Kafka",
+        "TensorFlow",
+        "WebSocket"
+      ],
+      "description": "Streaming pipeline consuming real-time trade data to predict short-term price movements using LSTM networks.",
+      "bullets": [
+        "Built streaming pipeline with LSTM for real-time cryptocurrency price prediction"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "M.S. Computer Science (AI Specialization)",
+      "institution": "University of Washington",
+      "graduation_year": 2020
+    }
+  ]
+}

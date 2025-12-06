@@ -1,0 +1,22 @@
+job_id: job-2025-35
+title: Core Engine Developer
+company: Roblox
+location: San Mateo, CA
+seniority: Senior
+required_skills:
+- C++
+- Lua
+- Multithreading
+- Rendering / Graphics API
+- Networking
+responsibilities:
+- Optimize the core game engine to run on low-end mobile devices and high-end PCs.
+- Implement new physics and rendering capabilities for developers.
+- Reduce memory overhead and improve frame rates.
+- Debug complex concurrency issues in the game loop.
+nice_to_have_skills:
+- Vulkan/DirectX
+- Assembly
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-18'

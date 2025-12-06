@@ -1,0 +1,24 @@
+job_id: job-2025-27
+title: AI Infrastructure Engineer
+company: Tesla
+location: Palo Alto, CA
+seniority: Senior
+required_skills:
+- Python
+- C++
+- PyTorch
+- Distributed Systems
+- Linux Kernel
+responsibilities:
+- Optimize the software stack for the Dojo supercomputer.
+- Improve the efficiency of large-scale distributed training jobs.
+- Debug low-level networking and storage issues in the training cluster.
+- Develop tools for automated model evaluation and deployment.
+- Work with hardware engineers to co-design future compute platforms.
+nice_to_have_skills:
+- Compiler optimization
+- CUDA
+- Kubernetes
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-17'

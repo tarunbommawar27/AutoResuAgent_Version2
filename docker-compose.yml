@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Backend Service - FastAPI
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: autoresuagent-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Read from .env file - CRITICAL: TA must set OPENAI_API_KEY
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    env_file:
+      - .env
+    volumes:
+      # Mount data directory for persistence (optional)
+      - ./data:/app/data
+      # Mount outputs for generated resumes
+      - ./outputs:/app/outputs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - autoresuagent-network
+
+  # Frontend Service - React + Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Point to backend service via Docker network
+        VITE_API_URL: http://localhost:8000
+    container_name: autoresuagent-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - autoresuagent-network
+
+networks:
+  autoresuagent-network:
+    driver: bridge
+
+volumes:
+  data:
+  outputs:

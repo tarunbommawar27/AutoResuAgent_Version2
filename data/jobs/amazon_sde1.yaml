@@ -1,0 +1,23 @@
+job_id: "job-005"
+title: "Software Development Engineer I"
+company: "Amazon"
+location: "Seattle, WA"
+seniority: "Junior"
+required_skills:
+  - Java
+  - Object-Oriented Design
+  - Data Structures
+  - Algorithms
+  - Linux
+responsibilities:
+  - "Design, implement, and test code for customer-facing services and applications."
+  - "Participate in code reviews to ensure code quality and maintainability."
+  - "Collaborate with senior engineers to understand system architecture and design choices."
+  - "Troubleshoot and fix bugs in production environments as part of the team's operational load."
+  - "Write unit and integration tests to ensure software stability."
+nice_to_have_skills:
+  - "AWS (DynamoDB, Lambda)"
+  - "Python"
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2024-11-20"

@@ -1,0 +1,24 @@
+job_id: job-2025-15
+title: Senior Software Engineer, Safety
+company: Discord
+location: San Francisco, CA
+seniority: Senior
+required_skills:
+- Python
+- Go
+- Real-time Stream Processing
+- Machine Learning Systems
+- Cassandra/ScyllaDB
+responsibilities:
+- Build real-time content moderation systems processing billions of messages per day.
+- Integrate on-device and cloud-based ML models to detect harmful content.
+- Architect scalable privacy-preserving systems for user data.
+- Lead technical initiatives to combat platform abuse and spam.
+- Mentor junior engineers in distributed systems best practices.
+nice_to_have_skills:
+- Rust
+- Elixir
+- Graph Neural Networks
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-10-30'

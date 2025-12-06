@@ -1,0 +1,24 @@
+job_id: job-2025-14
+title: Core Model Engineer
+company: Mistral AI
+location: Paris, France
+seniority: Mid-Level
+required_skills:
+- Python
+- PyTorch
+- FlashAttention
+- Model Optimization
+- English & French (Professional)
+responsibilities:
+- Implement state-of-the-art transformer architectures for open-weight models.
+- Optimize training loops to improve convergence speed and compute efficiency.
+- Develop Mixture-of-Experts (MoE) routing algorithms.
+- Collaborate on the creation of high-quality synthetic training datasets.
+- Deploy models to internal inference clusters for benchmarking.
+nice_to_have_skills:
+- C++
+- Megatron-LM
+- Rust
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-14'

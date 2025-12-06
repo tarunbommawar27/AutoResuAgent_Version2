@@ -1,0 +1,22 @@
+job_id: job-2025-32
+title: Cloud Solution Architect, AI
+company: Microsoft
+location: Redmond, WA
+seniority: Senior
+required_skills:
+- Azure
+- Python
+- Kubernetes (AKS)
+- System Architecture
+- Enterprise Sales/Pre-sales
+responsibilities:
+- Design reference architectures for enterprise customers deploying Azure OpenAI Service.
+- Lead technical workshops to unblock customer deployments.
+- Troubleshoot complex networking and identity issues in hybrid cloud environments.
+- Provide feedback to the Azure engineering team based on customer friction points.
+nice_to_have_skills:
+- .NET/C#
+- Terraform
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-10'

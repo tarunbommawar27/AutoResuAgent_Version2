@@ -1,0 +1,22 @@
+job_id: job-2025-36
+title: Site Reliability Engineer
+company: Datadog
+location: New York, NY
+seniority: Senior
+required_skills:
+- Python
+- Go
+- Kubernetes
+- Terraform
+- Linux Internals
+responsibilities:
+- Manage the reliability of Datadog's massive ingestion pipeline.
+- Automate infrastructure provisioning and scaling using Terraform.
+- Debug kernel-level performance issues in a multi-tenant environment.
+- Design chaos engineering experiments to test system resilience.
+nice_to_have_skills:
+- eBPF
+- Ansible
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-12'

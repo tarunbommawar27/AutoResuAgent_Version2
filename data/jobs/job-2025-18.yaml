@@ -1,0 +1,24 @@
+job_id: job-2025-18
+title: Staff Backend Engineer
+company: Uber
+location: San Francisco, CA
+seniority: Staff
+required_skills:
+- Go
+- Java
+- Microservices
+- High Availability
+- Kafka
+responsibilities:
+- Architect the next generation of Uber's marketplace matching engine.
+- Design systems that handle millions of real-time events per second.
+- Lead cross-functional engineering efforts to improve platform reliability.
+- Define technical standards and best practices for the backend engineering organization.
+- Resolve high-severity production incidents and implement long-term fixes.
+nice_to_have_skills:
+- Redis
+- Optimization Algorithms
+- Google Cloud Platform
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-10-25'

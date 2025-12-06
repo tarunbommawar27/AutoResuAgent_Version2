@@ -1,0 +1,25 @@
+job_id: job-2025-12
+title: Senior Data Scientist, Product
+company: Netflix
+location: Los Gatos, CA
+seniority: Senior
+required_skills:
+- Python
+- SQL
+- Causal Inference
+- A/B Testing
+- Machine Learning
+responsibilities:
+- Lead experimentation strategy for AI-generated content personalized thumbnails.
+- Develop causal models to understand the long-term retention impact of interactive
+  storytelling.
+- Partner with engineering to instrument new logging for complex user sessions.
+- Communicate insights to product leadership to influence the content roadmap.
+- Build automated dashboards to monitor the health of recommendation algorithms.
+nice_to_have_skills:
+- Spark
+- Tableau
+- Econometrics
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-08'

@@ -1,0 +1,25 @@
+job_id: "job-003"
+title: "Junior Machine Learning Engineer"
+company: "Orchard Robotics"
+location: "Seattle, WA"
+seniority: "Junior"
+required_skills:
+  - Python
+  - Computer Vision
+  - PyTorch
+  - OpenCV
+  - Docker
+  - Git
+responsibilities:
+  - "Build and maintain ETL pipelines for processing large agricultural image datasets."
+  - "Train and evaluate object detection models for fruit analysis on edge devices."
+  - "Deploy machine learning models to run efficiently on NVIDIA Jetson embedded systems."
+  - "Collaborate with hardware engineers to integrate vision software with robotic camera systems."
+  - "Write scripts to automate data cleaning, annotation, and model benchmarking."
+nice_to_have_skills:
+  - "C++"
+  - "CUDA"
+  - "AWS"
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2024-10-28"

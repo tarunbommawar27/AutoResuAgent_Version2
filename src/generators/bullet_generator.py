@@ -18,7 +18,8 @@ async def generate_bullets_for_job(
     job: "JobDescription",
     resume: "CandidateProfile",
     retrieved: dict[str, list[dict]],
-    llm: "BaseLLMClient"
+    llm: "BaseLLMClient",
+    validation_feedback: str | None = None
 ) -> list["GeneratedBullet"]:
     """
     Generate tailored resume bullets for a specific job.
@@ -68,6 +69,17 @@ Respond with valid JSON only."""
 
     # Build user prompt with job details and retrieved context
     user_prompt = _build_bullet_generation_prompt(job, resume, retrieved)
+
+    # Add validation feedback if this is a retry
+    if validation_feedback:
+        user_prompt += f"""
+
+**VALIDATION FEEDBACK FROM PREVIOUS ATTEMPT:**
+The previous bullet generation had these issues:
+{validation_feedback}
+
+**IMPORTANT:** Please fix these issues in your new generation. Pay special attention to covering all missing skills.
+"""
 
     # Generate bullets using LLM
     logger.debug(f"Calling LLM with {len(retrieved)} responsibilities")
@@ -191,12 +203,18 @@ def _build_bullet_generation_prompt(
     Build the user prompt for bullet generation.
 
     Includes job details, responsibilities, skills, and retrieved context.
+    NOW WITH STRONG EMPHASIS ON SKILL COVERAGE.
     """
-    # Job details
+    # Build required skills emphasis
+    required_skills_str = ', '.join(job.required_skills) if job.required_skills else 'None specified'
+    nice_skills_str = ', '.join(job.nice_to_have_skills) if job.nice_to_have_skills else 'None'
+
+    # Start with critical requirement
     prompt_parts = [
-        "Generate tailored resume bullet points for the following job application:\n",
+        "Generate tailored resume bullet points for this job application.\n",
+        "**CRITICAL REQUIREMENT:** You MUST ensure that collectively, your bullets cover ALL required skills listed below. Each bullet should mention at least one required skill, and all required skills must appear across the complete set of bullets.\n",
         f"**Job Title:** {job.title}",
-        f"**Company:** {job.company}",
+        f"**Company:** {job.company or 'N/A'}",
     ]
 
     if job.location:
@@ -205,19 +223,19 @@ def _build_bullet_generation_prompt(
     if job.seniority:
         prompt_parts.append(f"**Seniority Level:** {job.seniority}")
 
-    # Responsibilities
-    if job.responsibilities:
-        prompt_parts.append(f"\n**Key Responsibilities ({len(job.responsibilities)}):**")
-        for i, resp in enumerate(job.responsibilities, 1):
-            prompt_parts.append(f"{i}. {resp}")
-
-    # Required skills
-    if job.required_skills:
-        prompt_parts.append(f"\n**Required Skills:** {', '.join(job.required_skills)}")
+    # EMPHASIZE required skills
+    prompt_parts.append("\n**REQUIRED SKILLS (MUST COVER ALL OF THESE):**")
+    prompt_parts.append(required_skills_str)
 
     # Nice-to-have skills
-    if job.nice_to_have_skills:
-        prompt_parts.append(f"**Nice-to-Have Skills:** {', '.join(job.nice_to_have_skills)}")
+    prompt_parts.append(f"\n**Nice-to-Have Skills (bonus if included):**")
+    prompt_parts.append(nice_skills_str)
+
+    # Responsibilities
+    if job.responsibilities:
+        prompt_parts.append(f"\n**Job Responsibilities:**")
+        for i, resp in enumerate(job.responsibilities[:8], 1):
+            prompt_parts.append(f"{i}. {resp}")
 
     # Retrieved relevant experiences
     prompt_parts.append("\n**Candidate's Relevant Experience (Retrieved by Semantic Search):**\n")
@@ -248,35 +266,35 @@ def _build_bullet_generation_prompt(
                     prompt_parts.append(f"  - {bullet}")
                     shown_bullets.add(bullet)
 
-    # Instructions for output format
-    prompt_parts.append("\n**Task:**")
-    prompt_parts.append(
-        "Based on the job requirements and the candidate's relevant experience above, "
-        "generate 5-8 tailored resume bullet points that strongly align with this job."
-    )
+    # Instructions for output format with STRONG skill coverage emphasis
+    target_bullets = max(5, len(job.responsibilities)) if job.responsibilities else 6
+    prompt_parts.append(f"\n**Task:** Generate {target_bullets} tailored resume bullets that:")
+    prompt_parts.append("1. **COVER ALL REQUIRED SKILLS** - Collectively, your bullets must mention every skill from the required list above")
+    prompt_parts.append("2. Strongly align with the job responsibilities")
+    prompt_parts.append("3. Use specific metrics, numbers, and impact statements where possible")
+    prompt_parts.append("4. Are achievement-oriented and action-verb driven")
+    prompt_parts.append("5. Are 40-200 characters each (concise but descriptive)")
+    prompt_parts.append("6. Avoid first-person pronouns (I, me, my, we, our)")
+    prompt_parts.append("7. Each bullet must specify which skills it covers in the skills_covered field")
+
+    prompt_parts.append("\n**SKILL COVERAGE CHECK:** Before finalizing, verify that every required skill appears in at least one bullet's skills_covered list.")
+
     prompt_parts.append("\n**Output Format (JSON):**")
     prompt_parts.append("""
 {
   "bullets": [
     {
       "id": "bullet-001",
-      "text": "The tailored bullet point text (use action verbs, no first-person pronouns)",
+      "text": "Designed and deployed scalable ML pipelines using Python and TensorFlow, reducing training time by 40%",
       "source_experience_id": "exp-001",
-      "skills_covered": ["Python", "AWS", "Machine Learning"]
+      "skills_covered": ["Python", "TensorFlow", "Machine Learning"]
     },
     ...
   ]
 }
 """)
 
-    prompt_parts.append("\n**Important Rules:**")
-    prompt_parts.append("- Each bullet must be 30-250 characters")
-    prompt_parts.append("- Start with strong action verbs")
-    prompt_parts.append("- NO first-person pronouns (I, me, my, we, our, etc.)")
-    prompt_parts.append("- Include metrics and quantifiable results when possible")
-    prompt_parts.append("- Match the job's required skills and responsibilities")
-    prompt_parts.append("- Use the candidate's actual experience as evidence")
-    prompt_parts.append('- Generate unique IDs like "bullet-001", "bullet-002", etc.')
+    prompt_parts.append("\n**Remember:** Every required skill must appear in at least one bullet's skills_covered field. If a skill is missing, add another bullet to cover it.")
 
     return "\n".join(prompt_parts)
 

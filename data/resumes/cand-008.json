@@ -1,0 +1,65 @@
+{
+  "candidate_id": "cand-008",
+  "name": "Jamie Kim",
+  "email": "jamie.kim@example.com",
+  "location": "Los Angeles, CA",
+  "skills": [
+    "Swift",
+    "SwiftUI",
+    "Objective-C",
+    "iOS SDK",
+    "Xcode",
+    "Combine",
+    "Fastlane",
+    "CocoaPods",
+    "Unit Testing (XCTest)",
+    "Git"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "iOS Engineer",
+      "company": "MobileFirst Startup",
+      "start_date": "2022-09-01",
+      "end_date": "Present",
+      "bullets": [
+        "Developed and launched a fitness tracking app featured on the App Store, acquiring 50k users in the first 3 months",
+        "Refactored the networking layer using Combine, improving data synchronization reliability by 25%",
+        "Implemented rigorous UI tests using XCUITest to prevent regression bugs in critical user flows"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Mobile Developer Intern",
+      "company": "Media Corp",
+      "start_date": "2021-06-01",
+      "end_date": "2021-09-01",
+      "bullets": [
+        "Assisted in migrating legacy Objective-C code to Swift for the flagship news reader app",
+        "Fixed 20+ UI/UX bugs and optimized table view scrolling performance"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "AR Interior Designer",
+      "tech_stack": [
+        "Swift",
+        "ARKit",
+        "SceneKit"
+      ],
+      "description": "An iOS app allowing users to place virtual furniture in their rooms using augmented reality.",
+      "bullets": [
+        "Utilized ARKit to detect planes and place 3D models with real-time lighting estimation."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.S. Computer Science",
+      "end_date": "2022-06-01",
+      "institution": "UCLA"
+    }
+  ]
+}

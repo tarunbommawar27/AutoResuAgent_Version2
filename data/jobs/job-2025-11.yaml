@@ -1,0 +1,25 @@
+job_id: job-2025-11
+title: Software Development Engineer II
+company: Amazon
+location: Seattle, WA
+seniority: Mid-Level
+required_skills:
+- Java
+- AWS (DynamoDB, ECS, S3)
+- System Design
+- Operational Excellence
+- Microservices
+responsibilities:
+- Design and build the control plane for AWS Bedrock, managing millions of concurrent
+  model invocations.
+- Implement rate limiting and metering systems for Generative AI APIs.
+- Ensure high availability and fault tolerance across multiple AWS regions.
+- Participate in on-call rotations and drive root cause analysis for production incidents.
+- Optimize service latency to meet strict SLAs for enterprise customers.
+nice_to_have_skills:
+- Python
+- Rust
+- Knowledge of LLM serving
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-25'

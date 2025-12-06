@@ -1,0 +1,24 @@
+job_id: job-2025-19
+title: Computational Biologist / ML Researcher
+company: Isomorphic Labs
+location: London, UK
+seniority: Senior
+required_skills:
+- Python
+- JAX/PyTorch
+- Structural Biology
+- Geometric Deep Learning
+- Protein Folding
+responsibilities:
+- Apply deep learning methods to predict protein-ligand interactions.
+- Develop generative models for de novo drug design.
+- Collaborate with chemists and biologists to validate model predictions.
+- Analyze large-scale genomic and proteomic datasets.
+- Publish research in top scientific journals.
+nice_to_have_skills:
+- Molecular Dynamics
+- Cheminformatics
+- PhD in relevant field
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-16'

@@ -1,0 +1,24 @@
+job_id: job-2025-21
+title: Senior Systems Engineer
+company: Pinecone
+location: New York, NY
+seniority: Senior
+required_skills:
+- Go
+- Rust
+- Kubernetes
+- Distributed Databases
+- Vector Search Algorithms
+responsibilities:
+- Build and scale the storage engine for a high-performance vector database.
+- Optimize HNSW and other indexing algorithms for latency and recall.
+- Design systems for multi-tenant data isolation and security.
+- Implement replication and sharding strategies for global availability.
+- Mentor engineers and drive technical decision-making.
+nice_to_have_skills:
+- C++
+- Prometheus/Grafana
+- AWS EKS
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-12'

@@ -1,0 +1,21 @@
+{
+  "job_file": "data\\jobs\\job-2025-01.yaml",
+  "resume_file": "data\\resumes\\tarun_resume.json",
+  "metrics": {
+    "num_bullets": 5,
+    "avg_bullet_length_chars": 128.2,
+    "avg_bullet_length_words": 16.8,
+    "min_bullet_length_chars": 115,
+    "max_bullet_length_chars": 138,
+    "num_required_skills": 5,
+    "num_required_skills_covered_in_bullets": 4,
+    "required_skill_coverage_ratio": 0.8,
+    "num_resume_skills": 53,
+    "num_resume_skills_used_in_bullets": 2,
+    "resume_skill_usage_ratio": 0.03773584905660377,
+    "hallucinated_skills_count": 3,
+    "cover_letter_word_count": 245,
+    "cover_letter_paragraph_count": 4
+  },
+  "validation_errors": []
+}

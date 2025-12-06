@@ -1,0 +1,24 @@
+job_id: job-2025-17
+title: Machine Learning Engineer
+company: Scale AI
+location: San Francisco, CA
+seniority: Junior
+required_skills:
+- Python
+- PyTorch
+- Generative AI
+- Data Pipelines
+- API Integration
+responsibilities:
+- Develop automated pipelines for generating high-quality synthetic training data.
+- Fine-tune open-source models (Llama, Mistral) for specific domain tasks.
+- Build evaluation metrics to assess the quality of AI-generated content.
+- Collaborate with operations teams to manage human-in-the-loop workflows.
+- Write scripts to clean and format massive datasets for enterprise clients.
+nice_to_have_skills:
+- Docker
+- FastAPI
+- Prompt Engineering
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-19'

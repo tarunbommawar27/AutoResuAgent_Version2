@@ -251,13 +251,20 @@ class AgentExecutor:
             List of validated bullets, or None if all retries failed
         """
         last_error = None
+        validation_feedback = None
 
         for attempt in range(self.max_retries):
             try:
                 logger.info(f"Bullet generation attempt {attempt + 1}/{self.max_retries}")
 
-                # Generate bullets
-                bullets = await generate_bullets_for_job(job, resume, retrieved, self.llm)
+                # Generate bullets - pass validation feedback if available
+                bullets = await generate_bullets_for_job(
+                    job,
+                    resume,
+                    retrieved,
+                    self.llm,
+                    validation_feedback=validation_feedback
+                )
 
                 # Validate
                 errors = validate_bullets_only(bullets, job, resume, max_len=150)
@@ -272,11 +279,9 @@ class AgentExecutor:
                     logger.warning(f"  - {error}")
 
                 if attempt < self.max_retries - 1:
-                    # Prepare feedback for retry
-                    # Note: This is a simplified retry - in production you might want to
-                    # modify the prompt with specific feedback
-                    logger.info("Retrying with feedback...")
-                    # Could add feedback to prompt here for more sophisticated retry
+                    # Prepare feedback for next attempt
+                    validation_feedback = "\n".join(errors)
+                    logger.info("Retrying with validation feedback...")
                 else:
                     last_error = errors
 
@@ -286,6 +291,7 @@ class AgentExecutor:
 
                 if attempt < self.max_retries - 1:
                     logger.info("Retrying after error...")
+                    validation_feedback = f"Previous attempt raised exception: {str(e)}"
 
         # All retries exhausted
         logger.error(f"Failed to generate valid bullets after {self.max_retries} attempts")

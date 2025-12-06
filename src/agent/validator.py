@@ -425,6 +425,65 @@ def format_validation_feedback(errors: list[str]) -> str:
     return "\n".join(feedback_parts)
 
 
+def validate_skill_coverage_strict(
+    bullets: list["GeneratedBullet"],
+    job: "JobDescription",
+    minimum_coverage: float = 0.8
+) -> list[str]:
+    """
+    Validate that bullets adequately cover required skills.
+
+    Args:
+        bullets: List of generated bullets
+        job: Job description with required skills
+        minimum_coverage: Minimum fraction of skills that must be covered (0.0-1.0)
+
+    Returns:
+        List of error messages (empty if validation passes)
+    """
+    errors = []
+
+    if not job.required_skills:
+        return errors  # No skills to validate
+
+    # Collect all skills mentioned across all bullets
+    all_mentioned_skills = set()
+    for bullet in bullets:
+        if bullet.skills_covered:
+            # Normalize to lowercase for comparison
+            all_mentioned_skills.update(s.lower().strip() for s in bullet.skills_covered)
+
+    # Check coverage of required skills
+    required_skills_lower = {s.lower().strip() for s in job.required_skills}
+    missing_skills = []
+
+    for req_skill in required_skills_lower:
+        # Check exact match or if skill is substring of mentioned skill
+        found = False
+        for mentioned in all_mentioned_skills:
+            if req_skill in mentioned or mentioned in req_skill:
+                found = True
+                break
+        if not found:
+            missing_skills.append(req_skill)
+
+    # Calculate coverage
+    coverage = 1.0 - (len(missing_skills) / len(job.required_skills))
+
+    if missing_skills:
+        errors.append(
+            f"Missing required skills in bullets: {', '.join(missing_skills)} "
+            f"(coverage: {coverage:.1%}, need: {minimum_coverage:.1%})"
+        )
+
+    if coverage < minimum_coverage:
+        errors.append(
+            f"Insufficient skill coverage: {coverage:.1%} (minimum required: {minimum_coverage:.1%})"
+        )
+
+    return errors
+
+
 def validate_bullets_only(
     bullets: list["GeneratedBullet"],
     job: "JobDescription",
@@ -466,5 +525,9 @@ def validate_bullets_only(
         hallucination_warnings = detect_bullet_hallucinations(bullet, job, resume)
         if hallucination_warnings:
             errors.extend(hallucination_warnings)
+
+    # ADD THIS: Skill coverage check (collective across all bullets)
+    skill_coverage_errors = validate_skill_coverage_strict(bullets, job, minimum_coverage=0.8)
+    errors.extend(skill_coverage_errors)
 
     return errors

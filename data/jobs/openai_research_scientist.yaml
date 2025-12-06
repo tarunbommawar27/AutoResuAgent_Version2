@@ -1,0 +1,25 @@
+job_id: "job-008"
+title: "Research Scientist"
+company: "OpenAI"
+location: "San Francisco, CA"
+seniority: "Senior"
+required_skills:
+  - Python
+  - PyTorch
+  - Deep Learning
+  - Mathematics
+  - Research Methodology
+  - Distributed Computing
+responsibilities:
+  - "Conduct original research to advance the state-of-the-art in generative models and reasoning."
+  - "Design and implement novel algorithms for pre-training and post-training of large scale models."
+  - "Collaborate with engineering teams to scale research ideas to massive compute clusters."
+  - "Publish research findings in top-tier conferences (NeurIPS, ICML) or internal technical reports."
+  - "Analyze model behaviors and failure modes to improve safety and alignment."
+  - "Mentor junior researchers and contribute to the company's long-term research roadmap."
+nice_to_have_skills:
+  - "CUDA programming"
+  - "Experience with NLP or RLHF"
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2024-10-15"

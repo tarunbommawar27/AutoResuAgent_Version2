@@ -1,0 +1,24 @@
+job_id: job-2025-28
+title: Ruby/Rails Engineer (Intelligence)
+company: Shopify
+location: Remote
+seniority: Senior
+required_skills:
+- Ruby on Rails
+- Python
+- GraphQL
+- MySQL
+- AI Application Integration
+responsibilities:
+- Build backend services for 'Shopify Magic' AI features.
+- Design scalable architectures to process merchant data safely.
+- Integrate third-party LLM APIs with Shopify's core commerce platform.
+- Optimize background jobs and data processing pipelines.
+- Mentor junior developers and review code.
+nice_to_have_skills:
+- Go
+- React
+- Vector Stores
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-07'

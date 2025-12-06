@@ -1,0 +1,24 @@
+job_id: job-2025-25
+title: Senior Backend Engineer
+company: Cohere
+location: Toronto, Canada
+seniority: Senior
+required_skills:
+- Go
+- Python
+- gRPC
+- Kubernetes
+- Cloud Infrastructure (GCP/AWS)
+responsibilities:
+- Design and build the high-performance API serving Cohere's Enterprise LLMs.
+- Implement fine-grained rate limiting and usage tracking for billing.
+- Optimize inter-service communication latency.
+- Ensure data privacy and compliance for enterprise customers.
+- Scale the platform to handle exponential traffic growth.
+nice_to_have_skills:
+- Terraform
+- Service Mesh
+- PostgreSQL
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-15'

@@ -1,0 +1,25 @@
+job_id: "job-004"
+title: "Backend Engineer, Core Technology"
+company: "Stripe"
+location: "Remote (US)"
+seniority: "Mid-Level"
+required_skills:
+  - Java
+  - Go
+  - Distributed Systems
+  - API Design
+  - SQL
+  - AWS
+responsibilities:
+  - "Design and ship high-quality backend services that handle billions of financial transactions."
+  - "Improve the reliability and latency of core payment infrastructure."
+  - "Debug production issues across multiple services and layers of the stack."
+  - "Partner with product and data science teams to support new financial reporting features."
+  - "Participate in on-call rotations to ensure 99.999% availability of critical systems."
+nice_to_have_skills:
+  - "Ruby/Sorbet"
+  - "Kafka"
+  - "Terraform"
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2024-10-03"

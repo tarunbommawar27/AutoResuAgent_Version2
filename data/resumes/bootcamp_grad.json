@@ -1,0 +1,86 @@
+{
+  "candidate_id": "cand-006",
+  "name": "Alex Patrascu",
+  "email": "alex.p@example.com",
+  "location": "Remote",
+  "skills": [
+    "JavaScript",
+    "React",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "HTML5",
+    "CSS3",
+    "Git",
+    "Heroku",
+    "Netlify",
+    "Bootstrap",
+    "Figma"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Freelance Web Developer",
+      "company": "Self-Employed",
+      "start_date": "2024-01-01",
+      "end_date": null,
+      "bullets": [
+        "Designed and developed responsive websites for 5 small business clients using React and Tailwind CSS, increasing their web traffic by an average of 20%",
+        "Integrated Shopify APIs for a local boutique, enabling them to launch an online store and generate $5k sales in the first month",
+        "Maintained and updated WordPress sites for clients, ensuring security patches and plugin compatibility"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Customer Success Manager",
+      "company": "Retail Giant (Non-Tech Role)",
+      "start_date": "2019-06-01",
+      "end_date": "2023-06-01",
+      "bullets": [
+        "Managed a portfolio of 50+ high-value accounts, achieving a 95% retention rate through proactive communication",
+        "Collaborated with technical support teams to resolve complex user issues, developing a strong interest in software troubleshooting",
+        "Automated weekly reporting using Excel macros, saving the team 5 hours of manual work per week"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Neighborhood Marketplace",
+      "tech_stack": [
+        "MERN Stack (MongoDB, Express, React, Node)",
+        "Redux",
+        "JWT"
+      ],
+      "description": "Full-stack e-commerce platform allowing users to list and buy local items. Features include user authentication, image upload, and search filtering. Deployed on Heroku.",
+      "bullets": [
+        "Built full-stack e-commerce platform with authentication and search filtering"
+      ]
+    },
+    {
+      "id": "proj-2",
+      "title": "TaskFlow Manager",
+      "tech_stack": [
+        "React",
+        "Firebase",
+        "Drag-and-Drop API"
+      ],
+      "description": "Trello-clone project management tool. Implemented real-time updates using Firebase Firestore and a drag-and-drop interface for task cards.",
+      "bullets": [
+        "Created Trello-clone with real-time updates and drag-and-drop interface"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Full Stack Web Development Certificate",
+      "institution": "Ironhack Bootcamp",
+      "graduation_year": 2023
+    },
+    {
+      "degree": "B.A. in Communications",
+      "institution": "Ohio State University",
+      "graduation_year": 2019
+    }
+  ]
+}

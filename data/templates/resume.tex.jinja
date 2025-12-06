@@ -5,6 +5,9 @@
 \usepackage[margin=0.75in]{geometry}
 \usepackage{enumitem}
 \usepackage{hyperref}
+\usepackage{xcolor}
+\definecolor{primaryblue}{RGB}{0, 77, 153}
+\hypersetup{colorlinks=true, urlcolor=primaryblue}
 \usepackage{titlesec}
 
 % Formatting
@@ -22,6 +25,8 @@
     {% if candidate_email %}{{ candidate_email }}{% endif %}
     {% if candidate_phone %} $\cdot$ {{ candidate_phone }}{% endif %}
     {% if candidate_location %} $\cdot$ {{ candidate_location }}{% endif %}
+    {% if candidate_linkedin_url %} $\cdot$ \href{ {{ candidate_linkedin_url }} }{LinkedIn}{% endif %}
+    {% if candidate_github_url %} $\cdot$ \href{ {{ candidate_github_url }} }{GitHub}{% endif %}
 \end{center}
 
 \vspace{8pt}
@@ -69,8 +74,10 @@
 {% for project in projects %}
 \textbf{{ '{' }}{{ project.title }}{{ '}' }}%
 {% if project.tech_stack %} -- \textit{{ '{' }}{{ project.tech_stack|join(', ') }}{{ '}' }}{% endif %}%
-{% if project.link %}
-\hfill \href{{ '{' }}{{ project.link }}{{ '}' }}{{ '{' }}[Link]{{ '}' }}%
+{% if project.link or project.github_url %}
+\hfill
+{% if project.link %}\href{ {{ project.link }} }{[Link]} {% endif %}
+{% if project.github_url %}\href{ {{ project.github_url }} }{[GitHub]}{% endif %}
 {% endif %}
 
 {% if project.description %}

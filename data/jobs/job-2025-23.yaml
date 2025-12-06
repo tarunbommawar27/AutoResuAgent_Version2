@@ -1,0 +1,24 @@
+job_id: job-2025-23
+title: Humanoid Control Engineer
+company: Figure
+location: Sunnyvale, CA
+seniority: Senior
+required_skills:
+- C++
+- Python
+- Model Predictive Control (MPC)
+- Reinforcement Learning
+- Robotics
+responsibilities:
+- Develop whole-body control algorithms for humanoid robots.
+- Implement locomotion and manipulation planners.
+- Bridge the gap between simulation (Sim-to-Real) and physical hardware.
+- Optimize control loops for real-time performance on embedded computers.
+- Collaborate with mechanical engineers to design actuation systems.
+nice_to_have_skills:
+- MuJoCo/Isaac Gym
+- ROS2
+- EtherCAT
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-21'

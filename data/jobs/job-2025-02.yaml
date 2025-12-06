@@ -1,0 +1,28 @@
+job_id: job-2025-02
+title: Research Engineer, Alignment
+company: Anthropic
+location: San Francisco, CA
+seniority: Senior
+required_skills:
+- Python
+- JAX
+- Interpretability Research
+- Large Language Models
+- Mathematics
+responsibilities:
+- Investigate the internal representations of large language models to understand
+  how they reason.
+- Build tools and techniques to steer model behavior towards helpfulness and honesty
+  (Constitutional AI).
+- Design experiments to detect and mitigate reward hacking in reinforcement learning
+  loops.
+- Write production-quality code to run large-scale interpretability sweeps on Claude
+  models.
+- Publish technical reports and contribute to the broader AI safety community.
+nice_to_have_skills:
+- Rust
+- Information Theory
+- Visualization libraries (D3.js)
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-20'

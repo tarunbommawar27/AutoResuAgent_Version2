@@ -1,0 +1,24 @@
+job_id: job-2025-24
+title: Data Engineer, AI
+company: Snowflake
+location: San Mateo, CA
+seniority: Mid-Level
+required_skills:
+- SQL
+- Python
+- Snowflake
+- Airflow
+- Data Modeling
+responsibilities:
+- Build scalable data pipelines to prepare unstructured data for AI models (Cortex).
+- Optimize SQL queries and data structures for cost and performance.
+- Implement data governance and security controls for sensitive enterprise data.
+- Collaborate with product teams to integrate AI features into the Data Cloud.
+- Monitor pipeline health and data quality.
+nice_to_have_skills:
+- Java
+- dbt
+- Vector Search
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-09'

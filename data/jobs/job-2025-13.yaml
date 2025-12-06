@@ -1,0 +1,25 @@
+job_id: job-2025-13
+title: Member of Technical Staff, Infrastructure
+company: xAI
+location: Palo Alto, CA
+seniority: Senior
+required_skills:
+- Rust
+- Python
+- Kubernetes
+- HPC (High Performance Computing)
+- RDMA
+responsibilities:
+- Build the world's largest GPU training cluster, optimizing network topology and
+  storage I/O.
+- Develop high-performance data loaders in Rust to feed models at line rate.
+- Create custom schedulers to maximize GPU utilization across thousands of nodes.
+- Debug hardware failures at scale and implement automated remediation systems.
+- Work directly with researchers to support massive training runs.
+nice_to_have_skills:
+- Kernel development
+- Hardware design knowledge
+- Electrical Engineering background
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-28'

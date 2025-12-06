@@ -1,0 +1,24 @@
+job_id: job-2025-29
+title: Senior ML Engineer, Trust & Safety
+company: Pinterest
+location: San Francisco, CA
+seniority: Senior
+required_skills:
+- Python
+- PyTorch
+- Computer Vision
+- NLP
+- Big Data (Spark/Flink)
+responsibilities:
+- Develop multi-modal models to detect unsafe images and text.
+- Build real-time classification systems to filter content at upload.
+- Analyze adversarial patterns and update models accordingly.
+- Collaborate with policy teams to define safety guidelines.
+- Scale training pipelines to handle petabytes of data.
+nice_to_have_skills:
+- Scala
+- AWS
+- Graph Mining
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-13'

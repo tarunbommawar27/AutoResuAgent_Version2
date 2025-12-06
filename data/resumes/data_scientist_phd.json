@@ -1,0 +1,88 @@
+{
+  "candidate_id": "cand-004",
+  "name": "Dr. Taylor Wilson",
+  "email": "taylor.wilson@example.com",
+  "location": "San Francisco, CA",
+  "skills": [
+    "Python",
+    "R",
+    "SQL",
+    "Causal Inference",
+    "A/B Testing",
+    "Bayesian Statistics",
+    "Machine Learning",
+    "Pandas",
+    "PyMC3",
+    "Tableau",
+    "Snowflake",
+    "Experimental Design",
+    "Research Methodology"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Data Scientist",
+      "company": "BioHealth Analytics",
+      "start_date": "2022-09-01",
+      "end_date": null,
+      "bullets": [
+        "Developed a causal inference framework using instrumental variables to estimate the true ROI of marketing campaigns, identifying strategies that increased revenue by 15%",
+        "Designed and analyzed complex A/B tests for user engagement features, leading to a 10% increase in daily active users",
+        "Built a customer churn prediction model using XGBoost that saved the company $2M annually in retained revenue",
+        "Presented technical insights to C-suite executives, translating complex statistical concepts into actionable business strategies"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Postdoctoral Researcher",
+      "company": "Institute for Computational Science",
+      "start_date": "2020-08-01",
+      "end_date": "2022-08-01",
+      "bullets": [
+        "Led a research project on high-dimensional genomic data analysis, resulting in 2 publications in top-tier peer-reviewed journals",
+        "Developed novel Bayesian statistical models to handle missing data in large-scale longitudinal studies",
+        "Mentored 3 PhD students in statistical programming and experimental design"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "CausalImpact Implementation",
+      "tech_stack": [
+        "R",
+        "Python",
+        "Bayesian Structural Time Series"
+      ],
+      "description": "Open-source contribution implementing Google's CausalImpact algorithm in a new domain, downloaded 1,000+ times.",
+      "bullets": [
+        "Implemented Google's CausalImpact algorithm achieving 1,000+ downloads"
+      ]
+    },
+    {
+      "id": "proj-2",
+      "title": "Healthcare Policy Simulation",
+      "tech_stack": [
+        "Python",
+        "SimPy",
+        "Matplotlib"
+      ],
+      "description": "Agent-based simulation model to predict the impact of policy changes on hospital wait times and resource allocation.",
+      "bullets": [
+        "Built agent-based simulation for healthcare policy impact prediction"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Ph.D. in Statistics",
+      "institution": "Stanford University",
+      "graduation_year": 2020
+    },
+    {
+      "degree": "B.S. in Mathematics",
+      "institution": "University of Chicago",
+      "graduation_year": 2015
+    }
+  ]
+}

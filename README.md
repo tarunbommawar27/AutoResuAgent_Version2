@@ -1,251 +1,444 @@
-# AutoResuAgent
+# AutoResuAgent - AI-Powered Resume Tailoring System
 
-**An agentic NLP system for automated, tailored resume and cover letter generation.**
+AutoResuAgent is an intelligent resume tailoring system that uses advanced NLP and LLMs to automatically customize resumes for specific job postings. It analyzes job descriptions, extracts relevant experiences from your resume, and generates tailored bullets and cover letters optimized for ATS systems.
+
+## Features
+
+- **Smart Parsing**: Paste raw job postings and resumes - AI automatically structures the data
+- **Semantic Matching**: Uses Sentence-BERT + FAISS for intelligent experience retrieval
+- **LLM Generation**: GPT-4o-mini generates tailored bullets and cover letters
+- **LaTeX Output**: Professional LaTeX source code for resume and cover letter
+- **Change Summary**: Detailed explanation of how your resume was tailored
+- **Modern UI**: Clean, professional interface with real-time status updates
+
+## Prerequisites
+
+- **Docker** (recommended): Docker Desktop for Windows/Mac
+- **OR Manual Setup**:
+  - Python 3.10 or higher
+  - Node.js 18 or higher
+  - OpenAI API Key
+
+## Quick Start (Docker - Recommended)
+
+This is the easiest way to run AutoResuAgent on Windows and Mac (including M-series).
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/autoresuagent.git
+cd autoresuagent
+```
+
+### Step 2: Set Your OpenAI API Key
+
+**CRITICAL**: The application requires an OpenAI API key to function.
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` and add your OpenAI API key:
+   ```bash
+   # Windows (Notepad)
+   notepad .env
+
+   # Mac/Linux
+   nano .env
+   ```
+
+3. Replace `sk-your-openai-api-key-here` with your actual API key:
+   ```
+   OPENAI_API_KEY=sk-proj-YOUR_ACTUAL_KEY_HERE
+   ```
+
+   **Get an API key**: https://platform.openai.com/api-keys
+
+### Step 3: Start the Application
+
+```bash
+docker-compose up --build
+```
+
+**What happens**:
+- Backend starts on `http://localhost:8000`
+- Frontend starts on `http://localhost:3000`
+- Both services are automatically connected via Docker network
+
+### Step 4: Access the Application
+
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
+
+### Step 5: Stop the Application
+
+Press `Ctrl+C` in the terminal, then:
+```bash
+docker-compose down
+```
 
 ---
 
-## Overview
+## Manual Setup (Without Docker)
 
-AutoResuAgent uses state-of-the-art NLP techniques and an agentic workflow to automatically generate customized resumes and cover letters for job applications. The system:
+If you prefer to run the application without Docker:
 
-1. **Reads** structured job descriptions (YAML) and resumes (JSON)
-2. **Retrieves** relevant experience using Sentence-BERT embeddings and FAISS vector search
-3. **Generates** tailored resume bullets and cover letters using GPT-4o or Claude
-4. **Validates** outputs using Pydantic models and custom quality rules
-5. **Iterates** through a plan → generate → validate → retry loop until valid
-6. **Renders** professional PDFs using LaTeX templates
+### Backend Setup
+
+1. **Install Python Dependencies**
+
+   ```bash
+   # Create virtual environment (recommended)
+   python -m venv venv
+
+   # Activate virtual environment
+   # Windows:
+   venv\Scripts\activate
+   # Mac/Linux:
+   source venv/bin/activate
+
+   # Install dependencies
+   pip install -r requirements.txt
+   pip install -r requirements-web.txt
+   ```
+
+2. **Set Environment Variable**
+
+   ```bash
+   # Windows (PowerShell)
+   $env:OPENAI_API_KEY="sk-your-key-here"
+
+   # Windows (CMD)
+   set OPENAI_API_KEY=sk-your-key-here
+
+   # Mac/Linux
+   export OPENAI_API_KEY=sk-your-key-here
+   ```
+
+3. **Start Backend Server**
+
+   ```bash
+   python server.py
+   ```
+
+   Backend will run at `http://localhost:8000`
+
+### Frontend Setup
+
+1. **Install Node Dependencies**
+
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Start Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+   Frontend will run at `http://localhost:3000`
+
+### Access the Application
+
+Open your browser: `http://localhost:3000`
+
+---
+
+## Usage Guide
+
+### 1. Prepare Your Inputs
+
+- **Job Posting**: Copy the full text from LinkedIn, Indeed, or company website
+- **Resume**: Copy from LinkedIn profile, PDF export, or text document
+
+### 2. Parse Job Posting
+
+1. Paste the raw job posting text in the **left panel**
+2. Click **"Auto-Parse"** to convert to structured YAML
+3. Wait for the "Ready" badge
+
+### 3. Parse Resume
+
+1. Paste your resume text in the **right panel**
+2. Click **"Auto-Parse"** to convert to structured JSON
+3. Wait for the "Ready" badge
+
+### 4. Generate Tailored Resume
+
+1. Click **"Generate Tailored Resume"** (center button)
+2. Wait 30-60 seconds for AI processing
+3. View results in the success card
+
+### 5. Review Output
+
+The generated output includes:
+
+- **Change Summary**: What was improved and why
+- **Cover Letter**: Tailored plain text cover letter
+- **Resume Bullets**: Optimized bullet points (3 tabs):
+  - Resume Bullets (ready to use)
+  - Resume LaTeX (copy and compile)
+  - Cover Letter LaTeX (copy and compile)
+
+### 6. Use LaTeX Output
+
+1. Click the **"Resume LaTeX"** or **"Cover Letter LaTeX"** tab
+2. Click **"Copy"** button
+3. Paste into:
+   - Local LaTeX editor (compile with `pdflatex`)
+   - [Overleaf](https://www.overleaf.com/) (online LaTeX editor)
+4. Compile to get professional PDF
+
+---
+
+## Troubleshooting
+
+### Port Already in Use
+
+**Problem**: `Error: Port 8000 (or 3000) is already in use`
+
+**Solution**:
+```bash
+# Find and kill the process using the port
+
+# Windows:
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+
+# Mac/Linux:
+lsof -ti:8000 | xargs kill -9
+```
+
+Or change the port in `docker-compose.yml`:
+```yaml
+ports:
+  - "8001:8000"  # Change 8000 to 8001
+```
+
+### Docker Build Fails
+
+**Problem**: `Error: failed to solve with frontend dockerfile.v0`
+
+**Solutions**:
+1. Ensure Docker Desktop is running
+2. Clear Docker cache:
+   ```bash
+   docker system prune -a
+   docker-compose build --no-cache
+   ```
+
+### OpenAI API Error
+
+**Problem**: `Error: OPENAI_API_KEY environment variable not set`
+
+**Solutions**:
+1. Check `.env` file exists and has the correct key
+2. Restart Docker containers:
+   ```bash
+   docker-compose down
+   docker-compose up
+   ```
+3. Verify API key at: https://platform.openai.com/api-keys
+
+### Frontend Can't Connect to Backend
+
+**Problem**: `Failed to parse job posting: NetworkError`
+
+**Solutions**:
+1. Ensure backend is running (`docker-compose ps` shows both services)
+2. Check backend health: `http://localhost:8000/` (should show `{"status": "healthy"}`)
+3. CORS is configured in `server.py` - check logs for errors
+
+### Generation Takes Too Long
+
+**Problem**: Request hangs or times out
+
+**Solutions**:
+1. Check backend logs: `docker-compose logs backend`
+2. Verify OpenAI API credits: https://platform.openai.com/usage
+3. The process typically takes 30-60 seconds - be patient
+
+### M-Series Mac Issues
+
+**Problem**: Docker build fails on Apple Silicon
+
+**Solution**:
+Docker images are multi-platform compatible, but ensure:
+```bash
+docker-compose build --platform linux/amd64
+```
 
 ---
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────┐
-│                  AutoResuAgent                       │
-│                                                      │
-│  [Job YAML] + [Resume JSON]                          │
-│         ↓                                            │
-│  [SentenceBERT + FAISS] → Retrieve relevant exp.    │
-│         ↓                                            │
-│  [Agent Planner] → Strategy                          │
-│         ↓                                            │
-│  [LLM Generator] → Draft content                     │
-│         ↓                                            │
-│  [Validator] → Check quality                         │
-│         ↓                                            │
-│  Valid? → [Render LaTeX] → [PDF]                     │
-│         ↓                                            │
-│  Invalid? → [Retry with feedback]                    │
-└─────────────────────────────────────────────────────┘
-```
+### Tech Stack
 
----
+**Backend**:
+- FastAPI (Python 3.11)
+- OpenAI GPT-4o-mini (LLM)
+- Sentence-BERT (embeddings)
+- FAISS (vector search)
+- Pydantic (validation)
 
-## Features
+**Frontend**:
+- React 18
+- Vite 5
+- Tailwind CSS 3
+- Modern Slate & Teal theme
 
-- **Semantic Retrieval**: Uses Sentence-BERT + FAISS for intelligent experience matching
-- **Multi-LLM Support**: Works with OpenAI GPT-4o or Anthropic Claude
-- **Agentic Loop**: Automatically retries generation with feedback until validation passes
-- **Async Execution**: Processes multiple jobs concurrently with `asyncio.Semaphore`
-- **LaTeX Rendering**: Professional PDF output using Jinja2 templates
-- **Pydantic Validation**: Ensures high-quality, consistent output
+**Infrastructure**:
+- Docker & Docker Compose
+- Nginx (frontend proxy)
+- Uvicorn (ASGI server)
 
----
-
-## Installation
-
-### 1. Clone the repository
-
-```bash
-git clone <repository-url>
-cd autoresuagent
-```
-
-### 2. Install Python dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Install LaTeX (required for PDF generation)
-
-- **Ubuntu/Debian**: `sudo apt-get install texlive-latex-base texlive-latex-extra`
-- **macOS**: `brew install --cask mactex`
-- **Windows**: Install [MiKTeX](https://miktex.org/) or [TeX Live](https://www.tug.org/texlive/)
-
-### 4. Set up environment variables
-
-Create a `.env` file in the project root:
-
-```bash
-# LLM API Keys (set one based on your provider)
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-
-# Configuration (optional, defaults shown)
-LLM_PROVIDER=openai
-LLM_MODEL=gpt-4o
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-RETRIEVAL_TOP_K=5
-MAX_RETRIES=3
-MAX_CONCURRENT_JOBS=5
-```
-
----
-
-## Usage
-
-### Basic Usage
-
-```bash
-python main.py \
-  --jobs data/jobs/job1.yaml data/jobs/job2.yaml \
-  --resume data/resumes/my_resume.json \
-  --output-dir outputs/pdf \
-  --llm-provider openai
-```
-
-### Arguments
-
-- `--jobs`: One or more job description YAML files
-- `--resume`: Resume JSON file
-- `--output-dir`: Directory for generated PDFs (default: `./autoresuagent/outputs/pdf`)
-- `--llm-provider`: LLM provider (`openai` or `anthropic`)
-- `--config`: Optional path to config file
-- `--log-level`: Logging level (DEBUG, INFO, WARNING, ERROR)
-
----
-
-## Project Structure
+### Project Structure
 
 ```
 autoresuagent/
-├── data/
-│   ├── jobs/                  # Job description YAML files
-│   ├── resumes/               # Resume JSON files
-│   └── templates/             # LaTeX/Jinja2 templates
-├── src/
-│   ├── models/                # Pydantic data models
-│   ├── embeddings/            # SentenceBERT + FAISS
-│   ├── llm/                   # LLM client implementations
-│   ├── generators/            # Content generators
-│   ├── agent/                 # Agentic loop components
-│   ├── renderer/              # LaTeX rendering
-│   ├── evaluation/            # Quality metrics
-│   └── orchestration/         # Pipeline coordination
-├── outputs/
-│   ├── logs/                  # Application logs
-│   └── pdf/                   # Generated PDFs
-├── tests/                     # Unit tests
-├── main.py                    # CLI entry point
-├── requirements.txt           # Python dependencies
-└── README.md                  # This file
+├── src/                      # Backend source code
+│   ├── agent/               # Agent executor & pipeline
+│   ├── embeddings/          # Sentence-BERT encoder
+│   ├── generators/          # Bullet & cover letter generators
+│   ├── llm/                 # OpenAI client
+│   ├── models/              # Pydantic schemas
+│   └── parsers.py           # Raw text parsers
+├── frontend/                # React frontend
+│   ├── src/
+│   │   ├── App.jsx         # Main component
+│   │   └── index.css       # Tailwind styles
+│   ├── Dockerfile          # Frontend container
+│   └── nginx.conf          # Nginx config
+├── data/                    # Job & resume data
+│   ├── jobs/               # YAML job descriptions
+│   ├── resumes/            # JSON candidate profiles
+│   └── temp/               # Temporary files
+├── server.py               # FastAPI server
+├── Dockerfile              # Backend container
+├── docker-compose.yml      # Multi-container orchestration
+└── .env.example            # Environment template
 ```
 
 ---
 
-## Workflow
+## API Documentation
 
-1. **Input Parsing**: Load and validate job descriptions and resume using Pydantic
-2. **Index Building**: Encode resume experiences with SentenceBERT and store in FAISS
-3. **Retrieval**: For each job, retrieve top-k relevant experiences
-4. **Planning**: Analyze job-resume fit and create tailoring strategy
-5. **Generation**: Use LLM to generate tailored bullets and cover letter
-6. **Validation**: Check output against Pydantic rules and quality criteria
-7. **Retry Loop**: If invalid, provide feedback and regenerate (max 3 attempts)
-8. **Rendering**: Populate LaTeX template and compile to PDF
+Once the backend is running, visit:
+
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+### Endpoints
+
+- `POST /parse/job` - Parse raw job text to YAML
+- `POST /parse/resume` - Parse raw resume text to JSON
+- `POST /generate` - Generate tailored resume
 
 ---
 
-## Data Formats
+## Development
 
-### Job Description (YAML)
+### Run Tests
 
-```yaml
-title: "Senior ML Engineer"
-company: "TechCorp"
-description: "Full job description text..."
-required_skills:
-  - Python
-  - TensorFlow
-  - AWS
-responsibilities:
-  - Design ML pipelines
-  - Deploy models to production
-keywords:
-  - machine learning
-  - deep learning
-  - MLOps
-seniority_level: "Senior"
+```bash
+# Backend tests
+python -m pytest tests/
+
+# Check code quality
+python -m pylint src/
+python -m mypy src/
 ```
 
-### Resume (JSON)
+### Hot Reload
 
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "summary": "Experienced ML engineer...",
-  "experiences": [
-    {
-      "company": "Company A",
-      "title": "ML Engineer",
-      "start_date": "2020-01",
-      "end_date": "2023-12",
-      "bullets": [
-        "Built recommendation system serving 1M users",
-        "Reduced model latency by 40%"
-      ],
-      "skills": ["Python", "TensorFlow", "AWS"]
-    }
-  ],
-  "education": [...],
-  "projects": [...],
-  "skills": {
-    "languages": ["Python", "Java"],
-    "frameworks": ["TensorFlow", "PyTorch"]
-  }
-}
+- **Backend**: Auto-reloads on code changes (Uvicorn `--reload`)
+- **Frontend**: Hot Module Replacement (Vite HMR)
+
+### View Logs
+
+```bash
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f backend
+docker-compose logs -f frontend
 ```
 
 ---
 
-## TODO / Future Enhancements
+## Security Notes
 
-- [ ] Implement all core modules (currently stubs)
-- [ ] Add sample job descriptions and resumes
-- [ ] Create LaTeX templates
-- [ ] Add unit tests
-- [ ] Implement skill synonym matching
-- [ ] Add ATS (Applicant Tracking System) compatibility scoring
-- [ ] Support additional output formats (Word, HTML)
-- [ ] Add web UI
-- [ ] Implement feedback loop from user corrections
+- **Never commit `.env` file** - It contains your API key
+- `.env` is in `.gitignore` by default
+- Use `.env.example` as a template for others
+- Rotate API keys regularly
+- In production, use secrets management (AWS Secrets Manager, etc.)
 
 ---
 
-## Contributing
+## Performance Notes
 
-Contributions are welcome! Please:
+- **Generation Time**: 30-60 seconds (depends on OpenAI API latency)
+- **Concurrent Requests**: Backend handles multiple requests via async
+- **Caching**: Frontend static assets cached for 1 year
+- **Optimization**: Multi-stage Docker builds minimize image size
 
-1. Fork the repository
-2. Create a feature branch
-3. Implement your changes
-4. Add tests
-5. Submit a pull request
+---
+
+## Credits
+
+- **Author**: Tarun Bommawar
+- **Course**: CS 675 - Introduction to AI (Fall 2024)
+- **Instructor**: Dr. Ziyu Yao
+- **Institution**: George Mason University
+
+**Technologies**:
+- OpenAI GPT-4o-mini
+- Sentence-BERT (all-MiniLM-L6-v2)
+- FAISS (Facebook AI Similarity Search)
+- FastAPI, React, Docker
 
 ---
 
 ## License
 
-[MIT License](LICENSE) (TODO: Add license file)
+MIT License - See LICENSE file for details
 
 ---
 
-## Contact
+## Support
 
-For questions or feedback, please open an issue on GitHub.
+For issues, questions, or feedback:
+
+1. Check the **Troubleshooting** section above
+2. Review backend logs: `docker-compose logs backend`
+3. Open an issue on GitHub (if applicable)
 
 ---
 
-**AutoResuAgent**: Making job applications smarter, one resume at a time. 🚀
+## Submission Checklist
+
+For TAs/Graders:
+
+- [ ] Clone repository
+- [ ] Create `.env` file with OpenAI API key
+- [ ] Run `docker-compose up --build`
+- [ ] Access `http://localhost:3000`
+- [ ] Paste sample job posting and resume
+- [ ] Click "Auto-Parse" on both panels
+- [ ] Click "Generate Tailored Resume"
+- [ ] Wait ~45 seconds
+- [ ] Review generated output (bullets, LaTeX, change summary)
+- [ ] Click "Copy" on LaTeX tabs to get source code
+
+**Expected Result**: Full tailored resume with cover letter in ~45 seconds
+
+---
+
+**Thank you for using AutoResuAgent!**

@@ -1,0 +1,24 @@
+job_id: job-2025-09
+title: Machine Learning Engineer, Llama
+company: Meta
+location: Menlo Park, CA
+seniority: Mid-Level
+required_skills:
+- Python
+- PyTorch
+- Distributed Training
+- Model Quantization
+- Data Engineering
+responsibilities:
+- Curate and process massive datasets for training future versions of Llama.
+- Implement efficient data loading pipelines to saturate H100 GPU clusters.
+- Experiment with new architectural components to improve model efficiency.
+- Run ablation studies to determine the impact of different data mixtures.
+- Collaborate with the open-source team to prepare model weights for public release.
+nice_to_have_skills:
+- C++
+- CUDA
+- Hadoop/Hive
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-12'

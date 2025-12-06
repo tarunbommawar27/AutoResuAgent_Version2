@@ -1,0 +1,22 @@
+job_id: job-2025-38
+title: Graphics Engineer
+company: Figma
+location: San Francisco, CA
+seniority: Senior
+required_skills:
+- C++
+- WebGL / WebGPU
+- TypeScript
+- Computational Geometry
+- Performance Profiling
+responsibilities:
+- Push the boundaries of what's possible in a browser-based design tool.
+- Implement efficient 2D rendering algorithms for complex vector graphics.
+- Compile C++ code to WebAssembly for near-native performance.
+- Optimize the scenegraph update loop for large files.
+nice_to_have_skills:
+- Rust
+- React
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-08'

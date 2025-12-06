@@ -1,0 +1,24 @@
+job_id: job-2025-30
+title: Software Engineer, Core
+company: Poolside
+location: San Francisco, CA
+seniority: Mid-Level
+required_skills:
+- Python
+- Rust
+- Code Generation LLMs
+- VS Code Extensions
+- Distributed Systems
+responsibilities:
+- Build the infrastructure for training models specialized in code generation.
+- Develop IDE extensions that integrate seamlessly with developer workflows.
+- Design evaluation benchmarks for coding tasks.
+- Optimize inference latency for real-time code completion.
+- Collaborate with a small, high-velocity team.
+nice_to_have_skills:
+- TypeScript
+- LSP (Language Server Protocol)
+- C++
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-29'

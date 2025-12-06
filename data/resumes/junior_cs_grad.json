@@ -1,0 +1,79 @@
+{
+  "candidate_id": "cand-001",
+  "name": "Jordan Lee",
+  "email": "jordan.lee@example.edu",
+  "location": "Boston, MA",
+  "skills": [
+    "Python",
+    "Java",
+    "JavaScript",
+    "React",
+    "HTML/CSS",
+    "Git",
+    "SQL",
+    "AWS (EC2)",
+    "Flask",
+    "JUnit"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Software Engineer Intern",
+      "company": "Streamline Tech",
+      "start_date": "2024-05-01",
+      "end_date": "2024-08-30",
+      "bullets": [
+        "Developed and deployed a RESTful API service using Flask to handle internal data requests, reducing manual data retrieval time by 40%",
+        "Collaborated with 3 senior engineers to migrate legacy Java code to a modern microservices architecture",
+        "Wrote comprehensive unit tests using JUnit, increasing code coverage from 65% to 85% for the payments module"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Undergraduate Research Assistant",
+      "company": "University Tech Lab",
+      "start_date": "2023-09-01",
+      "end_date": "2024-05-01",
+      "bullets": [
+        "Analyzed 50GB+ of sensor data using Python (Pandas/NumPy) to identify patterns in IoT device usage",
+        "Built a data visualization dashboard using React that allowed researchers to monitor real-time experiment metrics",
+        "Presented findings at the Annual Undergraduate Research Symposium to an audience of 200+ faculty and students"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "StudyBuddy Mobile App",
+      "tech_stack": [
+        "React Native",
+        "Firebase",
+        "Node.js"
+      ],
+      "description": "Cross-platform mobile app for organizing study groups. Implemented real-time chat and push notifications, reaching 500+ student users within 2 months.",
+      "bullets": [
+        "Built cross-platform mobile app with real-time chat reaching 500+ users"
+      ]
+    },
+    {
+      "id": "proj-2",
+      "title": "Algorithm Visualizer",
+      "tech_stack": [
+        "JavaScript",
+        "D3.js",
+        "HTML5"
+      ],
+      "description": "Interactive web tool visualizing sorting and pathfinding algorithms. Used by 2 professors as a teaching aid for Intro to CS classes.",
+      "bullets": [
+        "Created interactive algorithm visualization tool used by professors in CS courses"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.S. Computer Science",
+      "institution": "Boston State University",
+      "graduation_year": 2025
+    }
+  ]
+}

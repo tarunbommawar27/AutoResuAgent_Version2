@@ -1,0 +1,26 @@
+job_id: job-2025-08
+title: Full Stack Engineer, AI Product
+company: Notion
+location: New York, NY
+seniority: Mid-Level
+required_skills:
+- TypeScript
+- React
+- Node.js
+- Postgres
+- OpenAI API / LLM Integration
+responsibilities:
+- Build intuitive user interfaces for Notion's AI writing and organization features.
+- Develop backend services that orchestrate calls to multiple LLM providers (Anthropic,
+  OpenAI).
+- Optimize frontend performance for real-time streaming of generated text.
+- Implement RAG (Retrieval Augmented Generation) pipelines to ground AI answers in
+  user data.
+- Collaborate with designers to create novel human-AI interaction patterns.
+nice_to_have_skills:
+- Next.js
+- Vector Databases (Pinecone/Weaviate)
+- WebAssembly
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-18'

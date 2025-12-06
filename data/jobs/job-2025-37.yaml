@@ -1,0 +1,22 @@
+job_id: job-2025-37
+title: Systems Engineer
+company: Cloudflare
+location: Austin, TX
+seniority: Mid-Level
+required_skills:
+- Rust
+- C
+- TCP/IP Networking
+- WebAssembly (Wasm)
+- Distributed Systems
+responsibilities:
+- Build high-performance edge computing services using Rust.
+- Optimize the global network stack for millisecond latency.
+- Develop secure sandboxing environments for Cloudflare Workers.
+- Analyze packet captures to debug routing and protocol issues.
+nice_to_have_skills:
+- Nginx
+- Lua
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-22'

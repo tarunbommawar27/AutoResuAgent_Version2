@@ -1,0 +1,24 @@
+job_id: job-2025-20
+title: Open Source ML Engineer
+company: Hugging Face
+location: Remote
+seniority: Mid-Level
+required_skills:
+- Python
+- PyTorch
+- Transformers Library
+- Open Source Contribution
+- Git
+responsibilities:
+- Maintain and improve the Hugging Face Transformers and Accelerate libraries.
+- Implement new model architectures from recent research papers.
+- Optimize training scripts for ease of use and performance.
+- Engage with the community on GitHub and Discord to resolve issues.
+- Create tutorials and documentation to help users leverage open-source AI.
+nice_to_have_skills:
+- JAX/Flax
+- ONNX
+- TensorFlow
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-26'

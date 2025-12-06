@@ -1,0 +1,24 @@
+job_id: job-2025-26
+title: Full Stack Engineer
+company: Airbnb
+location: San Francisco, CA
+seniority: Mid-Level
+required_skills:
+- Java
+- JavaScript/TypeScript
+- React
+- GraphQL
+- SQL
+responsibilities:
+- Develop features for the guest travel planning experience.
+- Integrate AI-powered recommendations into the search flow.
+- Build responsive and accessible user interfaces.
+- Write efficient backend code to serve data to the frontend.
+- Participate in code reviews and design discussions.
+nice_to_have_skills:
+- Kotlin
+- Swift/Android
+- Design Systems
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-03'

@@ -1,0 +1,22 @@
+job_id: job-2025-34
+title: Full Stack Engineer, Consumer
+company: Character.ai
+location: Palo Alto, CA
+seniority: Mid-Level
+required_skills:
+- React Native
+- Python
+- Node.js
+- High Scale Web Sockets
+- UX Sensibility
+responsibilities:
+- Build engaging mobile and web experiences for millions of daily active users.
+- Optimize the chat interface for low-latency token streaming.
+- Implement social features like group chats and character sharing.
+- Run A/B tests to improve user retention and engagement time.
+nice_to_have_skills:
+- Flutter
+- Go
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-25'

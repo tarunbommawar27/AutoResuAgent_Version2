@@ -1,0 +1,26 @@
+job_id: "job-001"
+title: "Senior Machine Learning Engineer"
+company: "Google"
+location: "Mountain View, CA"
+seniority: "Senior"
+required_skills:
+  - Python
+  - C++
+  - TensorFlow
+  - JAX
+  - System Design
+  - Kubernetes
+responsibilities:
+  - "Design and build scalable ML pipelines to train and deploy large-scale generative AI models."
+  - "Optimize machine learning infrastructure to improve model training speed and inference latency."
+  - "Lead technical strategy for high-impact projects involving large language models (LLMs)."
+  - "Collaborate with research teams to translate novel model architectures into production-grade systems."
+  - "Mentor junior engineers and drive best practices for code quality and testing."
+  - "Debug complex production issues across distributed systems and hardware accelerators (TPUs/GPUs)."
+nice_to_have_skills:
+  - "Google Cloud Platform (GCP)"
+  - "XLA (Accelerated Linear Algebra)"
+  - "MLIR"
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2024-11-15"

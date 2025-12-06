@@ -1,0 +1,24 @@
+job_id: job-2025-22
+title: Flight Software Engineer
+company: SpaceX
+location: Hawthorne, CA
+seniority: Mid-Level
+required_skills:
+- C++
+- Python
+- Embedded Systems
+- Real-time OS (RTOS)
+- Control Systems
+responsibilities:
+- Develop safety-critical flight software for Starship vehicles.
+- Implement guidance, navigation, and control (GNC) algorithms.
+- Write efficient driver code for sensors and actuators.
+- Participate in hardware-in-the-loop (HITL) testing and launch support.
+- Analyze flight telemetry to improve system performance.
+nice_to_have_skills:
+- Rust
+- FPGA programming
+- Physics simulation
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-05'

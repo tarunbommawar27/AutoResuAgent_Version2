@@ -1,0 +1,28 @@
+job_id: job-2025-01
+title: Member of Technical Staff (Post-Training)
+company: OpenAI
+location: San Francisco, CA
+seniority: Mid-Level
+required_skills:
+- Python
+- PyTorch
+- Reinforcement Learning (RLHF/RLAIF)
+- Distributed Training
+- Algorithm Design
+responsibilities:
+- Design and implement novel post-training methods to improve model reasoning and
+  instruction following.
+- Scale reinforcement learning pipelines across thousands of GPUs to fine-tune next-generation
+  frontier models.
+- Develop automated evaluation harnesses to measure model alignment, safety, and factual
+  accuracy.
+- Collaborate with the pre-training team to analyze model checkpoints and optimize
+  handover protocols.
+- Debug complex distributed system issues in a high-velocity research environment.
+nice_to_have_skills:
+- Experience with PPO or DPO algorithms
+- Kubernetes
+- C++
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-15'

@@ -1,0 +1,97 @@
+{
+  "candidate_id": "cand-003",
+  "name": "Morgan Smith",
+  "email": "morgan.smith@example.com",
+  "location": "New York, NY",
+  "skills": [
+    "Java",
+    "Go",
+    "Python",
+    "Spring Boot",
+    "System Design",
+    "Microservices",
+    "AWS (Lambda, DynamoDB, SQS)",
+    "Kubernetes",
+    "Terraform",
+    "PostgreSQL",
+    "Redis",
+    "Kafka",
+    "gRPC",
+    "CI/CD (Jenkins)",
+    "Prometheus",
+    "Grafana"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Senior Backend Engineer",
+      "company": "CloudScale Solutions",
+      "start_date": "2021-08-01",
+      "end_date": null,
+      "bullets": [
+        "Architected and led the migration of a monolithic payment system to microservices using Go and gRPC, improving system scalability to handle 50k requests/second",
+        "Designed a multi-region disaster recovery strategy on AWS, reducing Recovery Time Objective (RTO) from 4 hours to 15 minutes",
+        "Mentored 4 junior engineers through code reviews and design sessions, resulting in 2 promotions within the team",
+        "Optimized database queries and indexing strategies in PostgreSQL, cutting average query latency by 60%"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Software Engineer II",
+      "company": "FinTech Global",
+      "start_date": "2018-02-01",
+      "end_date": "2021-07-01",
+      "bullets": [
+        "Built a real-time fraud detection service processing $10M+ in daily transactions with <50ms latency",
+        "Implemented a robust event-driven architecture using Apache Kafka to decouple services and improve reliability",
+        "Led the initiative to containerize all backend services using Docker and Kubernetes, reducing deployment time by 70%"
+      ]
+    },
+    {
+      "id": "exp-3",
+      "role": "Backend Developer",
+      "company": "MediaStream Corp",
+      "start_date": "2016-01-01",
+      "end_date": "2018-01-01",
+      "bullets": [
+        "Developed high-performance REST APIs for a video streaming platform serving 1M+ active users",
+        "Integrated third-party payment gateways (Stripe, PayPal) ensuring PCI-DSS compliance"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "Distributed Key-Value Store",
+      "tech_stack": [
+        "Go",
+        "Raft Consensus Algorithm",
+        "TCP/IP"
+      ],
+      "description": "Implemented a distributed key-value store from scratch supporting strong consistency and partition tolerance using the Raft consensus algorithm.",
+      "bullets": [
+        "Implemented distributed key-value store with Raft consensus algorithm for strong consistency"
+      ]
+    },
+    {
+      "id": "proj-2",
+      "title": "Rate Limiter Library",
+      "tech_stack": [
+        "Java",
+        "Redis",
+        "Lua"
+      ],
+      "description": "High-throughput distributed rate limiter using token bucket algorithm, widely used across internal company microservices.",
+      "bullets": [
+        "Created high-throughput distributed rate limiter using token bucket algorithm"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.S. Computer Engineering",
+      "institution": "Georgia Tech",
+      "graduation_year": 2015
+    }
+  ]
+}

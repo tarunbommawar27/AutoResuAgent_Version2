@@ -1,0 +1,26 @@
+job_id: job-2025-07
+title: Software Engineer, Perception
+company: Waymo
+location: Mountain View, CA
+seniority: Mid-Level
+required_skills:
+- C++
+- Python
+- Computer Vision
+- LiDAR Processing
+- Linear Algebra
+responsibilities:
+- Develop real-time perception algorithms for detecting pedestrians and cyclists in
+  complex urban environments.
+- Integrate Vision-Language Models (VLMs) to improve semantic understanding of road
+  scenes.
+- Optimize code for latency-critical onboard embedded systems.
+- Validate algorithm performance using large-scale simulation and log replay tools.
+- Work closely with the planning team to ensure perception outputs meet safety requirements.
+nice_to_have_skills:
+- CUDA
+- TensorRT
+- Sensor Fusion
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-01'

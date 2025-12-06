@@ -1,0 +1,66 @@
+{
+  "candidate_id": "cand-007",
+  "name": "Sam Rivera",
+  "email": "sam.rivera@example.com",
+  "location": "Denver, CO",
+  "skills": [
+    "Terraform",
+    "Kubernetes",
+    "AWS",
+    "GCP",
+    "Python",
+    "Go",
+    "Linux",
+    "Jenkins",
+    "Prometheus",
+    "Docker",
+    "Ansible",
+    "Bash Scripting"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Senior DevOps Engineer",
+      "company": "SaaS Platform Inc",
+      "start_date": "2021-06-01",
+      "end_date": "Present",
+      "bullets": [
+        "Migrated on-premise infrastructure to AWS, reducing operational costs by 30% using Spot Instances and Auto Scaling",
+        "Implemented a GitOps workflow with ArgoCD and Kubernetes, reducing deployment time from 1 hour to 5 minutes",
+        "Built a centralized observability platform using Prometheus and Grafana, improving incident response time by 50%"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Site Reliability Engineer",
+      "company": "E-commerce Giant",
+      "start_date": "2018-05-01",
+      "end_date": "2021-05-01",
+      "bullets": [
+        "Managed a fleet of 500+ EC2 instances and ensured 99.99% availability during Black Friday traffic spikes",
+        "Automated database backups and disaster recovery drills, achieving a Recovery Point Objective (RPO) of 5 minutes"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "K8s Chaos Monkey",
+      "tech_stack": [
+        "Go",
+        "Kubernetes API"
+      ],
+      "description": "Built a custom controller that randomly terminates pods in staging to test service resilience.",
+      "bullets": [
+        "Designed a custom K8s controller using Client-go library to randomly delete pods in staging environments."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.S. Information Technology",
+      "end_date": "2018-05-01",
+      "institution": "Colorado State University"
+    }
+  ]
+}

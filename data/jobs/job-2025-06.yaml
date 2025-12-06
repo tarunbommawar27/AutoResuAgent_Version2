@@ -1,0 +1,25 @@
+job_id: job-2025-06
+title: Senior ML Systems Engineer
+company: Databricks
+location: San Francisco, CA
+seniority: Senior
+required_skills:
+- Kubernetes
+- Go
+- Python
+- GPU Infrastructure
+- Spark/Ray
+responsibilities:
+- Architect and build the compute substrate for training MosaicML foundation models.
+- Optimize job scheduling algorithms for massive multi-node GPU clusters.
+- Develop efficient model checkpointing and recovery systems to minimize training
+  downtime.
+- Build observability tools to monitor hardware health and training metrics at scale.
+- Contribute to open-source projects like MLflow and Ray.
+nice_to_have_skills:
+- Slurm
+- InfiniBand networking
+- Rust
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-22'

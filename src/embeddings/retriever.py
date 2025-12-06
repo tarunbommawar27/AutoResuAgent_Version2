@@ -17,7 +17,7 @@ def retrieve_relevant_experiences(
     resume: "CandidateProfile",
     encoder: SentenceBertEncoder,
     index: ResumeFaissIndex,
-    top_k: int = 5
+    top_k: int = 10
 ) -> dict[str, list[dict]]:
     """
     Retrieve relevant resume experiences for each job responsibility.
@@ -32,6 +32,7 @@ def retrieve_relevant_experiences(
         encoder: SentenceBERT encoder instance
         index: Built FAISS index of resume bullets
         top_k: Number of relevant bullets to retrieve per responsibility
+               (default: 10, increased from 5 for better skill coverage)
 
     Returns:
         Dictionary mapping each responsibility text to list of retrieved items:

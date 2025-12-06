@@ -22,6 +22,8 @@ CANDIDATE_PROFILE_SCHEMA = """
   "email": "email@example.com",
   "phone": "+1-555-0123 (or null if not found)",
   "location": "City, State (or null if not found)",
+  "linkedin_url": "https://linkedin.com/in/user (or null if not found)",
+  "github_url": "https://github.com/user (or null if not found)",
   "summary": "Professional summary paragraph (or null if not found)",
   "skills": ["Skill1", "Skill2", "Skill3"],
   "experiences": [
@@ -51,7 +53,8 @@ CANDIDATE_PROFILE_SCHEMA = """
       "title": "Project Name",
       "description": "Brief description of the project",
       "tech_stack": ["Python", "TensorFlow", "AWS"],
-      "link": "https://github.com/user/project (or null if not found)",
+      "link": "https://demo.com (or null if not found)",
+      "github_url": "https://github.com/user/project (or null if not found)",
       "bullets": [
         "Project accomplishment 1",
         "Project accomplishment 2"

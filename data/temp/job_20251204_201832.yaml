@@ -1,0 +1,39 @@
+job_id: "job-2023-10-04-mercury_insurance-software_engineer"
+title: "Software Engineer"
+company: "Mercury Insurance"
+location: "Remote"
+seniority: "Entry"
+employment_type: "Full-time"
+posted_on: "2023-10-04"
+required_skills:
+  - Java
+  - Python
+  - JavaScript
+  - Microservices
+  - CI/CD pipeline
+  - Cassandra
+  - RESTful services
+  - GitHub
+  - Java Design Patterns
+  - Message queues
+  - Mockito Unit Tests
+  - Problem-solving
+  - Communication
+nice_to_have_skills:
+  - Master’s Degree in Computer Science
+  - 6 or more months of experience in Java
+  - 6 or more months of experience in JavaScript
+  - Exposure to Microservices
+  - Exposure to CI/CD pipeline
+  - Exposure to Cassandra
+  - Exposure to GitHub
+  - Experience in developing RESTful services
+  - Exposure to Cassandra DB and SQL
+  - Good understanding of Java Design Patterns
+  - Exposure to message queues
+  - Exposure to Mockito Unit Tests
+responsibilities:
+  - Develop a strong understanding of relevant product areas, codebases, and systems.
+  - Write high-quality code for simple scenarios with good test coverage.
+  - Assist with any application system support needs.
+  - Participate in design and code reviews of applications to ensure best practices, adherence to Mercury standards, and high quality.

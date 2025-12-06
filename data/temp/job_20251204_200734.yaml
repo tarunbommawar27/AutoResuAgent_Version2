@@ -1,0 +1,62 @@
+job_id: mercury_insurance_se_001
+title: Software Engineer
+company: Mercury Insurance
+
+responsibilities:
+  - Develop a strong understanding of relevant product areas, codebases, and systems.
+  - Write high-quality code for simple scenarios with good test coverage.
+  - Assist with any application system support needs.
+  - Participate in design and code reviews of applications to ensure best practices, adherence to Mercury standards, and high quality.
+
+skills_tags:
+  - Java
+  - Python
+  - JavaScript
+  - Microservices
+  - CI/CD pipeline
+  - Cassandra
+  - RESTful services
+  - GitHub
+  - Java Design Patterns
+  - Message queues
+  - Mockito Unit Tests
+  - Problem-solving
+  - Communication
+
+qualifications:
+  required:
+    - Bachelor’s Degree in Computer Science, Computer Engineering, Information Systems or other related fields Or equivalent combination of education and experience.
+    - Up to 2 years experience in programming in one or more industry-standard languages (e.g., Java, Python, Go, C++, JavaScript).
+    - Knowledgeable in leveraging various data structures, algorithms, and design patterns.
+    - Familiar with relational databases, NoSQL, and caching solutions.
+    - Strong problem-solving skills.
+    - Good communication abilities.
+    - Capable of working independently on simple tasks.
+    - Ability to collaborate and influence team members to address impediments and deliver desired results.
+  preferred:
+    - Master’s Degree in Computer Science.
+    - 6 or more months of experience in Java.
+    - 6 or more months of experience in Javascript.
+    - Exposure to Microservices.
+    - Exposure to CI/CD pipeline.
+    - Exposure to Cassandra.
+    - Exposure to GitHub.
+    - Experience in developing RESTful services.
+    - Exposure to Cassandra DB and SQL.
+    - Good understanding of Java Design Patterns.
+    - Exposure to message queues.
+    - Exposure to Mockito Unit Tests.
+
+benefits:
+  - Competitive compensation
+  - Flexibility to work from anywhere in the United States for most positions
+  - Paid time off (vacation time, sick time, 9 paid Company holidays, volunteer hours)
+  - Incentive bonus programs (potential for holiday bonus, referral bonus, and performance-based bonus)
+  - Medical, dental, vision, life, and pet insurance
+  - 401 (k) retirement savings plan with company match
+  - Engaging work environment
+  - Promotional opportunities
+  - Education assistance
+  - Professional and personal development opportunities
+  - Company recognition program
+  - Health and wellbeing resources, including free mental wellbeing therapy/coaching sessions, child and eldercare resources, and more

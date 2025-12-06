@@ -1,0 +1,24 @@
+job_id: "job-002"
+title: "Member of Technical Staff (Agent Skills)"
+company: "Anthropic"
+location: "San Francisco, CA"
+seniority: "Mid-Level"
+required_skills:
+  - Python
+  - PyTorch
+  - Reinforcement Learning
+  - Distributed Systems
+  - LLM Evaluation
+responsibilities:
+  - "Finetune Claude models to improve performance on complex agentic tasks and tool use."
+  - "Design and implement reinforcement learning pipelines for virtual collaborator workflows."
+  - "Develop robust evaluation frameworks to measure model reasoning and prevent reward hacking."
+  - "Collaborate with the data generation team to create high-quality training datasets for agents."
+  - "Write reliable, high-performance code to support large-scale model training experiments."
+nice_to_have_skills:
+  - "Rust"
+  - "Kubernetes"
+  - "Prompt Engineering"
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2024-11-03"

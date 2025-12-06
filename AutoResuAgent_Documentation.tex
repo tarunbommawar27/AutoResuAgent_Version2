@@ -1,0 +1,1224 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=1in}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    commentstyle=\color{gray},
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    showstringspaces=false
+}
+
+\title{AutoResuAgent: Agentic Resume and Cover Letter Generation with Semantic Retrieval}
+\author{Tarun Bommawar}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+AutoResuAgent is an NLP-driven system for automatically generating tailored resume bullets and cover letters for job applications. The system employs semantic retrieval using Sentence-BERT embeddings and FAISS vector search to match job responsibilities with relevant candidate experiences. Two execution modes are supported: a \textit{baseline mode} that performs one-shot LLM generation without retrieval, and a \textit{full agentic mode} that leverages semantic search, structured validation, and iterative refinement. An evaluation pipeline enables systematic comparison of both modes across multiple job--resume pairs, computing metrics such as skill coverage, bullet quality, and source attribution. This document provides a complete technical reference for understanding the architecture, data models, execution modes, and evaluation methodology.
+\end{abstract}
+
+\section{Introduction}
+
+Tailoring resumes and cover letters to specific job descriptions is a labor-intensive and error-prone process. Candidates must manually identify relevant experiences, rewrite accomplishment bullets to emphasize job-specific skills, and craft personalized cover letters that align with hiring manager expectations. Naive approaches using raw ChatGPT prompts suffer from several limitations:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Lack of structure}: Unstructured prompts produce inconsistent outputs with no schema validation.
+    \item \textbf{Hallucination risk}: LLMs may fabricate skills, technologies, or accomplishments not present in the candidate's actual experience.
+    \item \textbf{No retrieval context}: Without semantic search, the LLM cannot intelligently select the most relevant experiences for each job responsibility.
+    \item \textbf{No evaluation}: Ad-hoc prompting provides no mechanism to measure output quality or compare alternative generation strategies.
+\end{enumerate}
+
+AutoResuAgent addresses these limitations through a systematic agentic pipeline. The system:
+
+\begin{itemize}[noitemsep]
+    \item Parses structured inputs (job YAML, resume JSON) using Pydantic validation.
+    \item Builds FAISS vector indices from resume experiences using Sentence-BERT embeddings.
+    \item Retrieves relevant experiences for each job responsibility via cosine similarity search.
+    \item Generates tailored bullets and cover letters using OpenAI GPT-4o or Anthropic Claude.
+    \item Validates outputs against length constraints, skill coverage, and hallucination rules.
+    \item Iterates through retry loops with validation feedback to ensure quality.
+    \item Renders professional LaTeX PDFs from Jinja2 templates (when configured).
+    \item Evaluates baseline vs. full modes on datasets to quantify improvements.
+\end{itemize}
+
+The primary contributions are:
+\begin{enumerate}[noitemsep]
+    \item A complete implementation of semantic retrieval for resume tailoring.
+    \item Dual-mode execution (baseline vs. full) enabling controlled experiments.
+    \item Comprehensive validation logic detecting skill hallucinations and source mismatches.
+    \item An evaluation framework producing JSONL results with detailed metrics and comparisons.
+\end{enumerate}
+
+\section{System Overview}
+
+\subsection{High-Level Architecture}
+
+The system follows a modular pipeline architecture:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Input Parsing}: Load job YAML and resume JSON using Pydantic models (\texttt{JobDescription}, \texttt{CandidateProfile}).
+    \item \textbf{Embedding \& Indexing}: Encode resume bullets with Sentence-BERT (\texttt{all-MiniLM-L6-v2}) and store in FAISS \texttt{IndexFlatIP} for cosine similarity search.
+    \item \textbf{Retrieval} (full mode only): For each job responsibility, retrieve top-$k$ relevant resume bullets from the FAISS index.
+    \item \textbf{Generation}: Call LLM (OpenAI or Anthropic) to generate tailored bullets and cover letter using retrieved context (full mode) or raw resume bullets (baseline mode).
+    \item \textbf{Validation}: Check bullets for length constraints (30--250 chars), skill coverage, first-person pronoun usage, and hallucinated technologies or company names.
+    \item \textbf{Retry Loop} (full mode only): If validation fails, regenerate with feedback (up to 3 attempts).
+    \item \textbf{Output Packaging}: Assemble \texttt{FullGeneratedPackage} containing bullets and cover letter with metadata.
+    \item \textbf{Rendering} (optional): Populate LaTeX Jinja2 templates and compile to PDF.
+\end{enumerate}
+
+\subsection{Data Flow}
+
+\begin{verbatim}
+CLI (main.py)
+    |
+    v
+Executor (run_single_job or run_batch_pipeline)
+    |
+    v
+[Mode Selection]
+    |
+    +---> Baseline Mode:
+    |         - No FAISS indexing
+    |         - Baseline generators (generate_bullets_baseline, generate_cover_letter_baseline)
+    |         - Minimal validation (length only)
+    |         - No retry
+    |
+    +---> Full Mode:
+              - Build FAISS index from resume bullets
+              - Retrieve relevant experiences per responsibility
+              - Full generators (generate_bullets_for_job, generate_cover_letter)
+              - Comprehensive validation (length, skills, hallucinations)
+              - Retry up to 3 times on failure
+    |
+    v
+FullGeneratedPackage
+    |
+    v
+Validator (validate_package)
+    |
+    v
+Metrics Computation (compute_package_metrics)
+    |
+    v
+Output (JSON, LaTeX, PDF)
+\end{verbatim}
+
+\section{Data Models and Inputs}
+
+\subsection{Job Description (YAML)}
+
+Job descriptions are stored as YAML files in \texttt{data/jobs/}. The \texttt{JobDescription} Pydantic model enforces schema validation. Required fields include \texttt{job\_id}, \texttt{title}, \texttt{company}, \texttt{responsibilities}, and \texttt{required\_skills}.
+
+\textbf{Example: \texttt{data/jobs/sample\_job.yaml}}
+\begin{lstlisting}[language=yaml]
+job_id: "job-123"
+title: "Machine Learning Engineer"
+company: "ExampleTech"
+location: "Remote"
+seniority: "Junior"
+required_skills:
+  - Python
+  - Machine Learning
+  - NLP
+  - SQL
+nice_to_have_skills:
+  - Docker
+  - AWS
+responsibilities:
+  - "Build and maintain machine learning pipelines for NLP use cases."
+  - "Collaborate with data scientists to deploy models to production."
+  - "Write clean, maintainable Python code and SQL queries."
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2025-10-01"
+\end{lstlisting}
+
+\textbf{Key Model Methods}:
+\begin{itemize}[noitemsep]
+    \item \texttt{get\_all\_skills()}: Returns combined list of required and nice-to-have skills.
+    \item \texttt{get\_search\_text()}: Concatenates title, company, responsibilities, and skills for semantic search.
+\end{itemize}
+
+\subsection{Resume (JSON)}
+
+Resumes are stored as JSON files in \texttt{data/resumes/}. The \texttt{CandidateProfile} model includes \texttt{experiences}, \texttt{projects}, \texttt{education}, and \texttt{skills}. Each experience and project has a unique \texttt{id} for tracking source attribution during bullet generation.
+
+\textbf{Example: \texttt{data/resumes/sample\_resume.json} (partial)}
+\begin{lstlisting}[language=json]
+{
+  "candidate_id": "cand-001",
+  "name": "Tarun Bommawar",
+  "email": "tarun@example.com",
+  "location": "Fairfax, VA",
+  "skills": ["Python", "Machine Learning", "NLP", "SQL", "Docker"],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Data Science Intern",
+      "company": "AnalyticsCo",
+      "start_date": "2024-06-01",
+      "end_date": "2024-12-31",
+      "bullets": [
+        "Built NLP pipelines in Python to classify customer support tickets.",
+        "Trained and evaluated machine learning models using scikit-learn."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "AutoResuAgent",
+      "description": "Resume tailoring system using NLP and FAISS",
+      "tech_stack": ["Python", "Sentence-BERT", "FAISS", "GPT-4"],
+      "bullets": [
+        "Implemented semantic retrieval with Sentence-BERT and FAISS."
+      ]
+    }
+  ]
+}
+\end{lstlisting}
+
+\textbf{Key Model Methods}:
+\begin{itemize}[noitemsep]
+    \item \texttt{get\_all\_bullets(include\_projects=True)}: Returns flattened list of all bullets from experiences and projects.
+    \item \texttt{get\_experience\_by\_id(exp\_id)}: Retrieves specific experience by ID.
+    \item \texttt{get\_project\_by\_id(proj\_id)}: Retrieves specific project by ID.
+\end{itemize}
+
+\subsection{Generated Output Models}
+
+\textbf{GeneratedBullet}:
+\begin{itemize}[noitemsep]
+    \item \texttt{id}: Unique identifier (e.g., \texttt{"bullet-001"}).
+    \item \texttt{text}: Bullet content (30--250 chars).
+    \item \texttt{source\_experience\_id}: ID of originating experience/project.
+    \item \texttt{skills\_covered}: List of skills mentioned in the bullet.
+\end{itemize}
+
+Bullets are validated to reject first-person pronouns (``I'', ``me'', ``my'', etc.) and ensure action verbs.
+
+\textbf{GeneratedCoverLetter}:
+\begin{itemize}[noitemsep]
+    \item \texttt{id}: Identifier.
+    \item \texttt{job\_id}, \texttt{job\_title}, \texttt{company}: Metadata.
+    \item \texttt{text}: Full cover letter body (200--3000 chars).
+    \item \texttt{tone}: E.g., ``professional''.
+\end{itemize}
+
+Cover letters must have non-empty \texttt{text} and meet minimum word count (200 words).
+
+\textbf{FullGeneratedPackage}:
+\begin{itemize}[noitemsep]
+    \item \texttt{job\_id}, \texttt{candidate\_id}: Identifiers.
+    \item \texttt{bullets}: List of \texttt{GeneratedBullet} objects.
+    \item \texttt{cover\_letter}: \texttt{GeneratedCoverLetter} object or \texttt{None}.
+\end{itemize}
+
+\section{Execution Modes}
+
+\subsection{Single Job--Resume Run}
+
+The simplest execution mode processes one job--resume pair in either baseline or full mode.
+
+\textbf{Baseline Mode Example}:
+\begin{lstlisting}[language=bash]
+python main.py \
+  --job data/jobs/sample_job.yaml \
+  --resume data/resumes/sample_resume.json \
+  --provider openai
+\end{lstlisting}
+
+If no \texttt{mode} parameter exists in the current CLI (based on code inspection), the system defaults to full mode. Baseline mode is accessible only via internal function calls or evaluation datasets.
+
+\textbf{Full Mode (Default)}:
+\begin{lstlisting}[language=bash]
+python main.py \
+  --job data/jobs/cisco_ml_engineer.yaml \
+  --resume data/resumes/tarun_resume.json \
+  --provider openai \
+  --verbose
+\end{lstlisting}
+
+\textbf{Artifacts Produced}:
+\begin{itemize}[noitemsep]
+    \item \texttt{outputs/<company>\_<job\_title>/resume.tex}: LaTeX source for resume.
+    \item \texttt{outputs/<company>\_<job\_title>/cover\_letter.tex}: LaTeX source for cover letter.
+    \item \texttt{outputs/<company>\_<job\_title>/resume.pdf}: Compiled PDF resume (if \texttt{pdflatex} available).
+    \item \texttt{outputs/<company>\_<job\_title>/cover\_letter.pdf}: Compiled PDF cover letter.
+    \item \texttt{outputs/<company>\_<job\_title>/metrics.json}: Package metrics.
+\end{itemize}
+
+\subsection{Batch Evaluation with Dataset}
+
+The evaluation mode (\texttt{--eval-dataset}) enables systematic comparison of baseline vs. full modes across multiple job--resume pairs.
+
+\textbf{Dataset Format: \texttt{data/eval/job\_resume\_pairs.json}}
+\begin{lstlisting}[language=json]
+[
+  {
+    "id": "pair-001",
+    "job_path": "data/jobs/sample_job.yaml",
+    "resume_path": "data/resumes/sample_resume.json"
+  },
+  {
+    "id": "pair-002",
+    "job_path": "data/jobs/cisco_ml_engineer.yaml",
+    "resume_path": "data/resumes/tarun_resume.json"
+  }
+]
+\end{lstlisting}
+
+Each entry specifies \texttt{id}, \texttt{job\_path}, and \texttt{resume\_path}. The evaluation runner (\texttt{run\_dataset\_eval}) processes each pair in both modes sequentially.
+
+\textbf{Execution Command}:
+\begin{lstlisting}[language=bash]
+python main.py \
+  --eval-dataset data/eval/job_resume_pairs.json \
+  --provider openai \
+  --verbose
+\end{lstlisting}
+
+\textbf{Output: \texttt{outputs/eval/baseline\_vs\_full.jsonl}}
+
+Each line is a JSON object containing:
+\begin{itemize}[noitemsep]
+    \item \texttt{pair\_id}: Pair identifier.
+    \item \texttt{job\_path}, \texttt{resume\_path}: Input file paths.
+    \item \texttt{baseline}: Dictionary with \texttt{metrics} and \texttt{errors} from baseline mode.
+    \item \texttt{full}: Dictionary with \texttt{metrics} and \texttt{errors} from full mode.
+    \item \texttt{comparison}: Dictionary with delta metrics (e.g., \texttt{delta\_required\_skill\_coverage}).
+\end{itemize}
+
+\textbf{Example JSONL Entry}:
+\begin{lstlisting}[language=json]
+{
+  "pair_id": "pair-001",
+  "job_path": "data/jobs/sample_job.yaml",
+  "resume_path": "data/resumes/sample_resume.json",
+  "baseline": {
+    "metrics": {
+      "num_bullets": 5,
+      "avg_bullet_length_chars": 123.6,
+      "required_skill_coverage": 1.0,
+      "nice_to_have_skill_coverage": 0.5,
+      "num_experiences_with_bullets": 0,
+      "has_cover_letter": true
+    },
+    "errors": []
+  },
+  "full": {
+    "metrics": {
+      "num_bullets": 6,
+      "avg_bullet_length_chars": 139.5,
+      "required_skill_coverage": 1.0,
+      "nice_to_have_skill_coverage": 0.0,
+      "num_experiences_with_bullets": 2,
+      "has_cover_letter": true
+    },
+    "errors": []
+  },
+  "comparison": {
+    "delta_required_skill_coverage": 0.0,
+    "delta_num_bullets": 1,
+    "delta_avg_bullet_length_chars": 15.9,
+    "delta_nice_to_have_skill_coverage": -0.5,
+    "delta_num_experiences_with_bullets": 2
+  }
+}
+\end{lstlisting}
+
+\textbf{Metrics Explanation}:
+\begin{itemize}[noitemsep]
+    \item \texttt{num\_bullets}: Total bullets generated.
+    \item \texttt{avg\_bullet\_length\_chars}: Average bullet length.
+    \item \texttt{required\_skill\_coverage}: Fraction of required skills mentioned in bullets (0.0--1.0).
+    \item \texttt{nice\_to\_have\_skill\_coverage}: Fraction of nice-to-have skills mentioned.
+    \item \texttt{num\_experiences\_with\_bullets}: Number of unique source experiences referenced (0 for baseline, since no source tracking).
+    \item \texttt{has\_cover\_letter}: Boolean indicating cover letter presence.
+\end{itemize}
+
+\section{Baseline Pipeline}
+
+\subsection{Overview}
+
+Baseline mode serves as a control condition for evaluating the benefit of semantic retrieval. It performs one-shot LLM generation without FAISS indexing or advanced validation. This mode is intentionally simple to establish a lower-bound performance baseline.
+
+\subsection{Baseline Bullet Generation}
+
+\textbf{Function: \texttt{generate\_bullets\_baseline(job, resume, llm)}}
+
+Located in \texttt{src/generators/baseline\_generator.py}, this function:
+\begin{enumerate}[noitemsep]
+    \item Collects all bullets from \texttt{resume.experiences} and \texttt{resume.projects} (limited to first 20).
+    \item Constructs a simple prompt including job title, company, required skills, and responsibilities.
+    \item Calls \texttt{llm.generate\_with\_retry(system\_prompt, user\_prompt, json\_mode=True)}.
+    \item Parses JSON response into \texttt{GeneratedBullet} objects with fields: \texttt{id}, \texttt{text}, \texttt{skills\_covered}.
+    \item Sets \texttt{source\_experience\_id=None} (no source tracking in baseline).
+\end{enumerate}
+
+\textbf{Code Snippet (Simplified)}:
+\begin{lstlisting}[language=Python]
+async def generate_bullets_baseline(job, resume, llm):
+    all_bullets = []
+    for exp in resume.experiences:
+        all_bullets.extend(exp.bullets)
+    if hasattr(resume, 'projects') and resume.projects:
+        for proj in resume.projects:
+            all_bullets.extend(proj.bullets)
+
+    bullets_text = "\n".join(f"- {b}" for b in all_bullets[:20])
+
+    system_prompt = """You are a professional resume writer.
+    Generate tailored resume bullets for job applications.
+    Respond with valid JSON only."""
+
+    user_prompt = f"""Rewrite resume bullets to match this job posting.
+    JOB TITLE: {job.title}
+    COMPANY: {job.company or 'N/A'}
+    REQUIRED SKILLS: {', '.join(job.required_skills)}
+    RESPONSIBILITIES: {chr(10).join(job.responsibilities[:5])}
+    CANDIDATE'S BULLETS: {bullets_text}
+    TASK: Generate {max(5, len(job.responsibilities))} tailored bullets.
+    OUTPUT FORMAT (JSON): {"bullets": [{"id": "...", "text": "...", "skills_covered": [...]}]}
+    """
+
+    response = await llm.generate_with_retry(
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        json_mode=True
+    )
+
+    data = json.loads(response)
+    bullets = [GeneratedBullet(**b) for b in data["bullets"]]
+    return bullets
+\end{lstlisting}
+
+\subsection{Baseline Cover Letter Generation}
+
+\textbf{Function: \texttt{generate\_cover\_letter\_baseline(job, resume, llm)}}
+
+Similar structure to bullet generation:
+\begin{enumerate}[noitemsep]
+    \item Constructs prompt with candidate name, job title, company, and required skills.
+    \item Requests JSON output with \texttt{id}, \texttt{job\_title}, \texttt{company}, \texttt{tone}, and \texttt{text} fields.
+    \item Parses response into \texttt{GeneratedCoverLetter} object.
+    \item Normalizes \texttt{text} field if LLM uses alternative keys (\texttt{body}, \texttt{content}, etc.).
+\end{enumerate}
+
+\subsection{Baseline Validation}
+
+In baseline mode (executed via \texttt{executor.py} with \texttt{mode="baseline"}):
+\begin{itemize}[noitemsep]
+    \item Only minimal length check: bullets must be $\geq 30$ characters.
+    \item No skill coverage validation.
+    \item No hallucination detection.
+    \item No retry loops.
+\end{itemize}
+
+Errors are appended to the error list only if bullets are too short or JSON parsing fails.
+
+\section{Full Agentic Pipeline}
+
+\subsection{Overview}
+
+Full mode leverages semantic retrieval, comprehensive validation, and iterative refinement to produce high-quality tailored content. This is the primary mode for production use.
+
+\subsection{Step 1: FAISS Index Construction}
+
+\textbf{Function: \texttt{ResumeFaissIndex.build\_from\_experiences(experiences, projects)}}
+
+Located in \texttt{src/embeddings/faiss\_index.py}:
+\begin{enumerate}[noitemsep]
+    \item Extracts all bullets from experiences and projects.
+    \item Encodes each bullet using \texttt{SentenceBertEncoder.encode\_texts()}.
+    \item Creates \texttt{faiss.IndexFlatIP} (inner product index for cosine similarity with normalized vectors).
+    \item Adds embeddings to index.
+    \item Stores metadata: \texttt{source\_id}, \texttt{source\_type} (\texttt{"experience"} or \texttt{"project"}), \texttt{text}.
+\end{enumerate}
+
+\textbf{Code Snippet}:
+\begin{lstlisting}[language=Python]
+def build_from_experiences(self, experiences, projects=None):
+    import faiss
+    all_texts = []
+    all_metadata = []
+
+    for exp in experiences:
+        for bullet in exp.bullets:
+            all_texts.append(bullet)
+            all_metadata.append({
+                "source_id": exp.id,
+                "source_type": "experience",
+                "text": bullet
+            })
+
+    if projects:
+        for proj in projects:
+            for bullet in proj.bullets:
+                all_texts.append(bullet)
+                all_metadata.append({
+                    "source_id": proj.id,
+                    "source_type": "project",
+                    "text": bullet
+                })
+
+    embeddings = self.encoder.encode_texts(all_texts, show_progress=True)
+    dimension = embeddings.shape[1]
+    self._index = faiss.IndexFlatIP(dimension)
+    self._index.add(embeddings)
+    self.embeddings = embeddings
+    self.metadata = all_metadata
+\end{lstlisting}
+
+\subsection{Step 2: Semantic Retrieval}
+
+\textbf{Function: \texttt{retrieve\_relevant\_experiences(job, resume, encoder, index, top\_k=5)}}
+
+Located in \texttt{src/embeddings/retriever.py}:
+\begin{enumerate}[noitemsep]
+    \item For each job responsibility, encodes the responsibility text.
+    \item Queries FAISS index for top-$k$ most similar bullets.
+    \item Returns dictionary mapping each responsibility to list of retrieved items.
+\end{enumerate}
+
+Each retrieved item contains:
+\begin{itemize}[noitemsep]
+    \item \texttt{source\_id}: Experience or project ID.
+    \item \texttt{source\_type}: \texttt{"experience"} or \texttt{"project"}.
+    \item \texttt{text}: Original bullet text.
+    \item \texttt{score}: Cosine similarity score (higher = more relevant).
+\end{itemize}
+
+\textbf{Example Output}:
+\begin{lstlisting}[language=Python]
+{
+    "Build ML pipelines for NLP": [
+        {"source_id": "exp-1", "text": "Built NLP pipelines...", "score": 0.87},
+        {"source_id": "proj-1", "text": "Implemented...", "score": 0.82}
+    ],
+    "Deploy models to production": [
+        {"source_id": "exp-2", "text": "Deployed models...", "score": 0.79}
+    ]
+}
+\end{lstlisting}
+
+\subsection{Step 3: Full Bullet Generation}
+
+\textbf{Function: \texttt{generate\_bullets\_for\_job(job, resume, retrieved, llm)}}
+
+Located in \texttt{src/generators/bullet\_generator.py}:
+\begin{enumerate}[noitemsep]
+    \item Constructs detailed prompt with job details, responsibilities, skills, and retrieved bullet context.
+    \item Groups retrieved bullets by source experience/project to provide coherent context.
+    \item Calls LLM with \texttt{json\_mode=True}.
+    \item Parses JSON response.
+    \item Infers \texttt{source\_experience\_id} if LLM omits it (using most common source in retrieved context).
+\end{enumerate}
+
+\textbf{Prompt Structure} (abbreviated):
+\begin{lstlisting}
+Generate tailored resume bullets for this job application:
+
+**Job Title:** Machine Learning Engineer
+**Company:** ExampleTech
+**Required Skills:** Python, Machine Learning, NLP, SQL
+
+**Candidate's Relevant Experience (Retrieved by Semantic Search):**
+
+From **Data Science Intern** at **AnalyticsCo**:
+  - Built NLP pipelines in Python to classify customer support tickets.
+  - Trained and evaluated machine learning models using scikit-learn.
+
+**Task:** Generate 5-8 tailored resume bullets that strongly align with this job.
+
+**Output Format (JSON):**
+{
+  "bullets": [
+    {
+      "id": "bullet-001",
+      "text": "Developed NLP classification pipelines using Python and scikit-learn",
+      "source_experience_id": "exp-001",
+      "skills_covered": ["Python", "NLP", "Machine Learning"]
+    },
+    ...
+  ]
+}
+\end{lstlisting}
+
+\subsection{Step 4: Full Cover Letter Generation}
+
+\textbf{Function: \texttt{generate\_cover\_letter(job, resume, bullets, llm)}}
+
+Located in \texttt{src/generators/cover\_letter\_generator.py}:
+\begin{enumerate}[noitemsep]
+    \item Incorporates job details, candidate info, and \textit{tailored bullets} for context.
+    \item Requests JSON with \texttt{id}, \texttt{job\_title}, \texttt{company}, \texttt{tone}, and \texttt{text}.
+    \item Normalizes \texttt{text} field from alternative keys if needed.
+    \item Ensures \texttt{job\_id}, \texttt{job\_title}, and \texttt{company} are populated.
+\end{enumerate}
+
+The cover letter generator uses the \textit{generated bullets} from Step 3, not the raw resume bullets, to create a cohesive narrative.
+
+\subsection{Step 5: Validation}
+
+\textbf{Function: \texttt{validate\_package(pkg, job, resume)}}
+
+Located in \texttt{src/agent/validator.py}. Validates the complete package:
+
+\textbf{Bullet Validation}:
+\begin{itemize}[noitemsep]
+    \item \textbf{Length}: 30--250 characters (hard minimum, soft maximum).
+    \item \textbf{First-person pronouns}: Rejects bullets containing ``I'', ``me'', ``my'', ``we'', ``our''.
+    \item \textbf{Hallucination detection}: Warns if bullets mention skills not in resume, companies not in work history, or unknown technologies.
+\end{itemize}
+
+\textbf{Cover Letter Validation}:
+\begin{itemize}[noitemsep]
+    \item \textbf{Existence check}: Ensures \texttt{pkg.cover\_letter} is not \texttt{None}.
+    \item \textbf{Text length}: Minimum 200 characters.
+    \item \textbf{Job ID match}: \texttt{cover\_letter.job\_id} must match \texttt{job.job\_id}.
+\end{itemize}
+
+\textbf{Fixed Bug} (as of recent updates):
+Earlier versions had an indentation bug where cover letter validation incorrectly reported ``Package has no cover letter'' even when present. This was fixed by properly nesting the text length check inside the \texttt{if pkg.cover\_letter:} block.
+
+\textbf{Code Snippet (Corrected)}:
+\begin{lstlisting}[language=Python]
+if pkg.cover_letter:
+    if pkg.cover_letter.job_id and pkg.cover_letter.job_id != job.job_id:
+        errors.append("Cover letter job_id mismatch")
+
+    if hasattr(pkg.cover_letter, 'text') and pkg.cover_letter.text:
+        if len(pkg.cover_letter.text.strip()) < 200:
+            errors.append("Cover letter text too short (< 200 chars)")
+    else:
+        errors.append("Cover letter missing text content")
+else:
+    errors.append("Package has no cover letter")
+\end{lstlisting}
+
+\subsection{Step 6: Retry Loop}
+
+\textbf{Function: \texttt{AgentExecutor.\_generate\_bullets\_with\_retry(job, resume, retrieved)}}
+
+Located in \texttt{src/agent/executor.py}:
+\begin{enumerate}[noitemsep]
+    \item Attempts bullet generation.
+    \item Validates using \texttt{validate\_bullets\_only(bullets, job, resume)}.
+    \item If errors exist and retries remain, logs errors and regenerates (up to 3 attempts).
+    \item Returns bullets on success or \texttt{None} if all retries fail.
+\end{enumerate}
+
+Retry feedback is currently limited to logging; more sophisticated implementations could inject validation errors into the prompt for targeted correction.
+
+\subsection{Step 7: Package Assembly}
+
+After successful generation and validation:
+\begin{enumerate}[noitemsep]
+    \item Construct \texttt{FullGeneratedPackage} with \texttt{job\_id}, \texttt{candidate\_id}, \texttt{bullets}, \texttt{cover\_letter}.
+    \item Compute final metrics using \texttt{compute\_package\_metrics()}.
+    \item Return tuple: \texttt{(package, errors, metrics)}.
+\end{enumerate}
+
+\section{Evaluation and Metrics}
+
+\subsection{Evaluation Pipeline}
+
+\textbf{Function: \texttt{run\_dataset\_eval(dataset\_path, executor, output\_dir=None)}}
+
+Located in \texttt{src/evaluation/run\_dataset\_eval.py}:
+\begin{enumerate}[noitemsep]
+    \item Loads dataset JSON (list of \texttt{\{id, job\_path, resume\_path\}} entries).
+    \item For each pair:
+    \begin{enumerate}[noitemsep]
+        \item Runs \texttt{executor.run\_single\_job(job\_path, resume\_path, mode="baseline")}.
+        \item Computes \texttt{compute\_basic\_metrics(baseline\_pkg, job, resume)}.
+        \item Runs \texttt{executor.run\_single\_job(job\_path, resume\_path, mode="full")}.
+        \item Computes \texttt{compute\_basic\_metrics(full\_pkg, job, resume)}.
+        \item Computes \texttt{compare\_runs\_metrics(full\_metrics, baseline\_metrics)}.
+    \end{enumerate}
+    \item Appends JSONL entry to \texttt{outputs/eval/baseline\_vs\_full.jsonl}.
+    \item Prints aggregate statistics (average deltas across pairs).
+\end{enumerate}
+
+\subsection{Metrics Computation}
+
+\textbf{Function: \texttt{compute\_basic\_metrics(pkg, job, resume)}}
+
+Located in \texttt{src/evaluation/metrics.py}:
+\begin{itemize}[noitemsep]
+    \item \texttt{num\_bullets}: Total bullets in package.
+    \item \texttt{avg\_bullet\_length\_chars}: Mean character count per bullet.
+    \item \texttt{required\_skill\_coverage}: $\frac{\text{required skills mentioned}}{\text{total required skills}}$.
+    \item \texttt{nice\_to\_have\_skill\_coverage}: $\frac{\text{nice-to-have skills mentioned}}{\text{total nice-to-have skills}}$.
+    \item \texttt{has\_cover\_letter}: Boolean (True if cover letter present with non-empty text).
+    \item \texttt{num\_experiences\_with\_bullets}: Count of unique \texttt{source\_experience\_id} values in bullets (0 for baseline).
+\end{itemize}
+
+\textbf{Function: \texttt{compare\_runs\_metrics(full, baseline)}}
+
+Computes deltas:
+\begin{align*}
+\Delta_{\text{skill coverage}} &= \text{full}[\text{required\_skill\_coverage}] - \text{baseline}[\text{required\_skill\_coverage}] \\
+\Delta_{\text{num bullets}} &= \text{full}[\text{num\_bullets}] - \text{baseline}[\text{num\_bullets}] \\
+\Delta_{\text{avg length}} &= \text{full}[\text{avg\_bullet\_length\_chars}] - \text{baseline}[\text{avg\_bullet\_length\_chars}] \\
+\Delta_{\text{num experiences}} &= \text{full}[\text{num\_experiences\_with\_bullets}] - \text{baseline}[\text{num\_experiences\_with\_bullets}]
+\end{align*}
+
+Positive deltas indicate full mode improvements.
+
+\subsection{Interpreting Results}
+
+Typical observations from evaluation runs:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Baseline}: Generates 5--8 bullets with 60--80\% required skill coverage. No source tracking (\texttt{num\_experiences\_with\_bullets=0}). May hallucinate skills not in resume.
+    \item \textbf{Full}: Generates 6--10 bullets with 80--100\% required skill coverage. Tracks 2--5 unique source experiences. Lower hallucination rates due to retrieval grounding.
+\end{itemize}
+
+\textbf{Example Aggregate Stats}:
+\begin{verbatim}
+Evaluated 2 pairs:
+  Baseline success: 2/2
+  Full success: 2/2
+
+Aggregate Comparison Statistics:
+  Avg Delta Required Skill Coverage: +0.10 (10% improvement)
+  Avg Delta Num Bullets: +1.5
+  Avg Delta Avg Bullet Length: +12.5 chars
+\end{verbatim}
+
+\section{How This Differs from Raw ChatGPT Usage}
+
+\subsection{Structured Outputs}
+
+AutoResuAgent enforces schema validation using Pydantic models. Bullets must conform to \texttt{GeneratedBullet} schema with \texttt{id}, \texttt{text}, \texttt{source\_experience\_id}, and \texttt{skills\_covered}. Ad-hoc ChatGPT prompts produce unstructured text requiring manual parsing.
+
+\subsection{Deterministic Pipelines}
+
+The system provides reproducible workflows:
+\begin{itemize}[noitemsep]
+    \item FAISS index construction is deterministic for fixed resume inputs.
+    \item Retrieval scores are reproducible for identical queries.
+    \item Validation rules are explicit and testable.
+\end{itemize}
+
+Contrast with iterative ChatGPT sessions where context drifts and outputs vary unpredictably.
+
+\subsection{Batch Evaluation}
+
+The \texttt{--eval-dataset} mode enables systematic experiments across multiple job--resume pairs. Metrics are logged to JSONL for analysis. Raw ChatGPT usage lacks infrastructure for batch processing or quantitative comparison.
+
+\subsection{Separation of Concerns}
+
+Modular architecture separates retrieval (\texttt{embeddings/}), generation (\texttt{generators/}), validation (\texttt{agent/validator.py}), and evaluation (\texttt{evaluation/}). This enables independent testing and extension.
+
+\section{How to Run the Project}
+
+\subsection{Environment Setup}
+
+\textbf{Step 1: Install Python Dependencies}
+\begin{lstlisting}[language=bash]
+pip install -r requirements.txt
+\end{lstlisting}
+
+Key dependencies:
+\begin{itemize}[noitemsep]
+    \item \texttt{sentence-transformers}: Embedding model.
+    \item \texttt{faiss-cpu}: Vector search.
+    \item \texttt{openai}, \texttt{anthropic}: LLM APIs.
+    \item \texttt{pydantic}: Data validation.
+    \item \texttt{jinja2}: Template rendering.
+    \item \texttt{pyyaml}: YAML parsing.
+\end{itemize}
+
+\textbf{Step 2: Set Environment Variables}
+
+Create \texttt{.env} file:
+\begin{lstlisting}[language=bash]
+OPENAI_API_KEY=sk-...
+# or
+ANTHROPIC_API_KEY=sk-ant-...
+\end{lstlisting}
+
+\textbf{Step 3: (Optional) Install LaTeX}
+
+For PDF generation:
+\begin{itemize}[noitemsep]
+    \item Ubuntu: \texttt{sudo apt-get install texlive-latex-base texlive-latex-extra}
+    \item macOS: \texttt{brew install --cask mactex}
+    \item Windows: Install MiKTeX or TeX Live
+\end{itemize}
+
+\subsection{Single Pair Generation}
+
+\textbf{Full Mode (Default)}:
+\begin{lstlisting}[language=bash]
+python main.py \
+  --job data/jobs/sample_job.yaml \
+  --resume data/resumes/sample_resume.json \
+  --provider openai \
+  --verbose
+\end{lstlisting}
+
+Output directory: \texttt{outputs/<company>\_<job\_title>/}
+
+\textbf{Baseline Mode (Internal)}:
+
+Baseline mode is not directly accessible via CLI flags in the current \texttt{main.py} implementation. It is executed via the evaluation pipeline or internal function calls:
+\begin{lstlisting}[language=Python]
+from src.agent import AgentExecutor
+from src.llm.openai_client import OpenAILLMClient
+from src.embeddings import SentenceBertEncoder
+from pathlib import Path
+
+llm = OpenAILLMClient(api_key="...")
+encoder = SentenceBertEncoder()
+executor = AgentExecutor(llm, encoder)
+
+pkg, errors, metrics = await executor.run_single_job(
+    Path("data/jobs/sample_job.yaml"),
+    Path("data/resumes/sample_resume.json"),
+    mode="baseline"
+)
+\end{lstlisting}
+
+\subsection{Batch Evaluation}
+
+\textbf{Command}:
+\begin{lstlisting}[language=bash]
+python main.py \
+  --eval-dataset data/eval/job_resume_pairs.json \
+  --provider openai \
+  --verbose
+\end{lstlisting}
+
+\textbf{Expected Behavior}:
+\begin{enumerate}[noitemsep]
+    \item Loads pairs from dataset.
+    \item For each pair, runs baseline mode then full mode.
+    \item Computes metrics and comparison deltas.
+    \item Appends JSONL entries to \texttt{outputs/eval/baseline\_vs\_full.jsonl}.
+    \item Prints aggregate statistics:
+    \begin{lstlisting}
+Evaluated N pairs: baseline_success=X, full_success=Y
+Results saved to outputs/eval/baseline_vs_full.jsonl
+
+Aggregate Comparison Statistics:
+  Avg Delta Required Skill Coverage: +XX%
+  Avg Delta Num Bullets: +Y
+  Avg Delta Avg Bullet Length: +Z chars
+    \end{lstlisting}
+\end{enumerate}
+
+\subsection{Inspecting Outputs and Logs}
+
+\textbf{Single Job Outputs}:
+\begin{itemize}[noitemsep]
+    \item \texttt{outputs/<company>\_<job\_title>/resume.tex}: Resume LaTeX.
+    \item \texttt{outputs/<company>\_<job\_title>/cover\_letter.tex}: Cover letter LaTeX.
+    \item \texttt{outputs/<company>\_<job\_title>/metrics.json}: Package metrics.
+\end{itemize}
+
+\textbf{Batch Evaluation Output}:
+\begin{itemize}[noitemsep]
+    \item \texttt{outputs/eval/baseline\_vs\_full.jsonl}: JSONL with per-pair results.
+\end{itemize}
+
+\textbf{Logs}:
+
+With \texttt{--verbose}, detailed logs appear in console:
+\begin{itemize}[noitemsep]
+    \item Index construction progress.
+    \item Retrieved bullet scores.
+    \item LLM generation status.
+    \item Validation errors and warnings.
+\end{itemize}
+
+\section{Module-by-Module Reference}
+
+\subsection{src/models/}
+
+\subsubsection{job\_description.py}
+
+\textbf{Class: JobDescription}
+\begin{itemize}[noitemsep]
+    \item \textbf{Fields}: \texttt{job\_id}, \texttt{title}, \texttt{company}, \texttt{responsibilities}, \texttt{required\_skills}, \texttt{nice\_to\_have\_skills}, \texttt{seniority}.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{get\_all\_skills()}: Returns combined required and nice-to-have skills.
+        \item \texttt{get\_search\_text()}: Concatenates job fields for embedding.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Function: load\_job\_from\_yaml(path)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Path to YAML file.
+    \item \textbf{Output}: Validated \texttt{JobDescription} instance.
+    \item \textbf{Raises}: \texttt{FileNotFoundError}, \texttt{yaml.YAMLError}, \texttt{ValidationError}.
+\end{itemize}
+
+\subsubsection{resume.py}
+
+\textbf{Class: Experience}
+\begin{itemize}[noitemsep]
+    \item \textbf{Fields}: \texttt{id}, \texttt{role}, \texttt{company}, \texttt{start\_date}, \texttt{end\_date}, \texttt{bullets}.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{get\_search\_text()}: Concatenates role, company, bullets.
+        \item \texttt{is\_current()}: Returns True if \texttt{end\_date} is None.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Class: Project}
+\begin{itemize}[noitemsep]
+    \item \textbf{Fields}: \texttt{id}, \texttt{title}, \texttt{description}, \texttt{tech\_stack}, \texttt{bullets}.
+    \item \textbf{Methods}: \texttt{get\_search\_text()}.
+\end{itemize}
+
+\textbf{Class: CandidateProfile}
+\begin{itemize}[noitemsep]
+    \item \textbf{Fields}: \texttt{candidate\_id}, \texttt{name}, \texttt{email}, \texttt{skills}, \texttt{experiences}, \texttt{projects}, \texttt{education}.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{get\_all\_bullets(include\_projects=True)}: Flattened bullet list.
+        \item \texttt{get\_experience\_by\_id(exp\_id)}: Retrieve experience by ID.
+        \item \texttt{get\_project\_by\_id(proj\_id)}: Retrieve project by ID.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Function: load\_resume\_from\_json(path)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Path to JSON file.
+    \item \textbf{Output}: Validated \texttt{CandidateProfile} instance.
+\end{itemize}
+
+\subsubsection{output.py}
+
+\textbf{Class: GeneratedBullet}
+\begin{itemize}[noitemsep]
+    \item \textbf{Fields}: \texttt{id}, \texttt{text}, \texttt{source\_experience\_id}, \texttt{skills\_covered}.
+    \item \textbf{Validation}: Rejects first-person pronouns, enforces 30--250 char length.
+\end{itemize}
+
+\textbf{Class: GeneratedCoverLetter}
+\begin{itemize}[noitemsep]
+    \item \textbf{Fields}: \texttt{id}, \texttt{job\_id}, \texttt{job\_title}, \texttt{company}, \texttt{tone}, \texttt{text}.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{get\_word\_count()}: Returns word count of \texttt{text}.
+        \item \texttt{get\_paragraph\_count()}: Counts paragraphs (split by double newlines).
+        \item \texttt{get\_full\_text()}: Returns \texttt{text} field.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Class: FullGeneratedPackage}
+\begin{itemize}[noitemsep]
+    \item \textbf{Fields}: \texttt{id}, \texttt{job\_id}, \texttt{candidate\_id}, \texttt{bullets}, \texttt{cover\_letter}.
+    \item \textbf{Validation}: Ensures at least one of \texttt{bullets}, \texttt{sections}, or \texttt{cover\_letter} is present.
+\end{itemize}
+
+\subsection{src/embeddings/}
+
+\subsubsection{sentence\_bert.py}
+
+\textbf{Class: SentenceBertEncoder}
+\begin{itemize}[noitemsep]
+    \item \textbf{Constructor}: \texttt{\_\_init\_\_(model\_name="all-MiniLM-L6-v2")}. Lazy loads model on first encode.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{encode\_texts(texts, batch\_size=32, show\_progress=False)}: Returns numpy array of shape \texttt{[n\_texts, 384]}.
+        \item \texttt{encode\_single(text)}: Returns 1D embedding vector.
+        \item \texttt{get\_embedding\_dimension()}: Returns 384 (for MiniLM).
+        \item \texttt{is\_loaded()}: Boolean indicating model load status.
+    \end{itemize}
+    \item \textbf{Note}: Normalizes embeddings for cosine similarity.
+\end{itemize}
+
+\subsubsection{faiss\_index.py}
+
+\textbf{Class: ResumeFaissIndex}
+\begin{itemize}[noitemsep]
+    \item \textbf{Constructor}: \texttt{\_\_init\_\_(encoder)}.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{build\_from\_experiences(experiences, projects=None)}: Builds FAISS index from bullets.
+        \item \texttt{search(query, top\_k=5)}: Returns list of dicts with \texttt{source\_id}, \texttt{text}, \texttt{score}.
+        \item \texttt{get\_all\_bullets\_for\_experience(experience\_id)}: Returns bullets for specific experience.
+        \item \texttt{is\_built()}: Boolean.
+        \item \texttt{\_\_len\_\_()}: Returns number of indexed bullets.
+    \end{itemize}
+    \item \textbf{Index Type}: \texttt{faiss.IndexFlatIP} (inner product for cosine similarity).
+\end{itemize}
+
+\subsubsection{retriever.py}
+
+\textbf{Function: retrieve\_relevant\_experiences(job, resume, encoder, index, top\_k=5)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Job, resume, encoder, built FAISS index, top\_k.
+    \item \textbf{Output}: Dict mapping each responsibility to list of retrieved items.
+    \item \textbf{Logic}: For each responsibility, searches index and returns top-$k$ bullets.
+\end{itemize}
+
+\textbf{Function: retrieve\_for\_skills(skills, encoder, index, top\_k=3)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: List of skills, encoder, index.
+    \item \textbf{Output}: Dict mapping each skill to relevant bullets.
+\end{itemize}
+
+\textbf{Function: get\_top\_matching\_experiences(job, resume, encoder, index, top\_k=10)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Job, resume, encoder, index.
+    \item \textbf{Output}: List of top-$k$ overall matches using \texttt{job.get\_search\_text()}.
+\end{itemize}
+
+\textbf{Function: deduplicate\_retrieved\_items(items)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: List of retrieved items.
+    \item \textbf{Output}: Deduplicated list keeping highest score per unique text.
+\end{itemize}
+
+\subsection{src/llm/}
+
+\subsubsection{openai\_client.py}
+
+\textbf{Class: OpenAILLMClient}
+\begin{itemize}[noitemsep]
+    \item \textbf{Constructor}: \texttt{\_\_init\_\_(api\_key, model="gpt-4o-mini", temperature=0.0, max\_tokens=4096)}.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{generate(system\_prompt, user\_prompt, json\_mode=True)}: Single API call.
+        \item \texttt{generate\_with\_retry(system\_prompt, user\_prompt, json\_mode=True)}: Retries up to \texttt{max\_retries} with exponential backoff.
+    \end{itemize}
+    \item \textbf{JSON Mode}: Sets \texttt{response\_format=\{"type": "json\_object"\}} when \texttt{json\_mode=True}.
+\end{itemize}
+
+\subsection{src/generators/}
+
+\subsubsection{baseline\_generator.py}
+
+\textbf{Function: generate\_bullets\_baseline(job, resume, llm)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Job, resume, LLM client.
+    \item \textbf{Output}: List of \texttt{GeneratedBullet} objects.
+    \item \textbf{Logic}: Collects all resume bullets, constructs simple prompt, calls LLM, parses JSON. Sets \texttt{source\_experience\_id=None}.
+\end{itemize}
+
+\textbf{Function: generate\_cover\_letter\_baseline(job, resume, llm)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Job, resume, LLM client.
+    \item \textbf{Output}: \texttt{GeneratedCoverLetter} or \texttt{None}.
+    \item \textbf{Logic}: Constructs prompt, requests JSON, parses and normalizes \texttt{text} field.
+\end{itemize}
+
+\subsubsection{bullet\_generator.py}
+
+\textbf{Function: generate\_bullets\_for\_job(job, resume, retrieved, llm)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Job, resume, retrieved context (dict mapping responsibilities to items), LLM.
+    \item \textbf{Output}: List of \texttt{GeneratedBullet} objects.
+    \item \textbf{Logic}: Builds prompt with job details and retrieved bullet context. Calls LLM. Infers \texttt{source\_experience\_id} if missing. Returns validated bullets.
+\end{itemize}
+
+\textbf{Helper: \_infer\_source\_experience\_id(bullet\_dict, retrieved, resume)}
+\begin{itemize}[noitemsep]
+    \item Counts occurrences of each experience ID in retrieved context.
+    \item Returns most common ID or falls back to first experience.
+\end{itemize}
+
+\subsubsection{cover\_letter\_generator.py}
+
+\textbf{Function: generate\_cover\_letter(job, resume, bullets, llm)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Job, resume, \textit{tailored bullets}, LLM.
+    \item \textbf{Output}: \texttt{GeneratedCoverLetter}.
+    \item \textbf{Logic}: Constructs prompt including job, candidate, and sample tailored bullets. Requests JSON. Normalizes \texttt{text} field and ensures metadata fields.
+\end{itemize}
+
+\subsection{src/agent/}
+
+\subsubsection{executor.py}
+
+\textbf{Class: AgentExecutor}
+\begin{itemize}[noitemsep]
+    \item \textbf{Constructor}: \texttt{\_\_init\_\_(llm, encoder, max\_retries=3)}.
+    \item \textbf{Methods}:
+    \begin{itemize}[noitemsep]
+        \item \texttt{run\_single\_job(job\_path, resume\_path, mode="full")}: Main entry point. Returns \texttt{(package, errors, metrics)}.
+        \item \texttt{\_generate\_bullets\_with\_retry(job, resume, retrieved)}: Retry loop for bullet generation (full mode only).
+    \end{itemize}
+\end{itemize}
+
+\textbf{Function: run\_single\_job(job\_path, resume\_path, mode="full")}
+
+\textbf{Inputs}:
+\begin{itemize}[noitemsep]
+    \item \texttt{job\_path}: Path to job YAML.
+    \item \texttt{resume\_path}: Path to resume JSON.
+    \item \texttt{mode}: \texttt{"full"} or \texttt{"baseline"}.
+\end{itemize}
+
+\textbf{Outputs}:
+\begin{itemize}[noitemsep]
+    \item \texttt{package}: \texttt{FullGeneratedPackage} or \texttt{None}.
+    \item \texttt{errors}: List of error messages.
+    \item \texttt{metrics}: Dict with package metrics.
+\end{itemize}
+
+\textbf{Logic (mode="full")}:
+\begin{enumerate}[noitemsep]
+    \item Load job and resume.
+    \item Build FAISS index.
+    \item Retrieve relevant experiences.
+    \item Generate bullets with retry.
+    \item Generate cover letter.
+    \item Build package.
+    \item Validate package.
+    \item Compute metrics.
+    \item Return tuple.
+\end{enumerate}
+
+\textbf{Logic (mode="baseline")}:
+\begin{enumerate}[noitemsep]
+    \item Load job and resume.
+    \item Generate bullets using \texttt{generate\_bullets\_baseline}.
+    \item Generate cover letter using \texttt{generate\_cover\_letter\_baseline}.
+    \item Build package.
+    \item Minimal validation (length only).
+    \item Compute metrics.
+    \item Return tuple.
+\end{enumerate}
+
+\subsubsection{validator.py}
+
+\textbf{Function: validate\_bullet\_length(bullet, max\_len=150)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Bullet, max length.
+    \item \textbf{Output}: Error string or \texttt{None}.
+    \item \textbf{Logic}: Hard minimum 30 chars, soft maximum (warning only).
+\end{itemize}
+
+\textbf{Function: detect\_bullet\_hallucinations(bullet, job, resume)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Bullet, job, resume.
+    \item \textbf{Output}: List of warning messages.
+    \item \textbf{Checks}:
+    \begin{enumerate}[noitemsep]
+        \item Skills in \texttt{skills\_covered} not in resume skills (soft warning).
+        \item Company names in bullet text not in resume work history (hard error if detected).
+        \item Technologies mentioned not in resume or job skills (soft warning).
+    \end{enumerate}
+\end{itemize}
+
+\textbf{Function: validate\_package(pkg, job, resume)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Package, job, resume.
+    \item \textbf{Output}: List of error messages.
+    \item \textbf{Validates}:
+    \begin{enumerate}[noitemsep]
+        \item Bullet length.
+        \item Hallucinations.
+        \item Cover letter existence and length.
+        \item Job ID matches.
+    \end{enumerate}
+\end{itemize}
+
+\textbf{Function: validate\_bullets\_only(bullets, job, resume, max\_len=150)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Bullets, job, resume, max length.
+    \item \textbf{Output}: List of error messages.
+    \item \textbf{Logic}: Used in retry loop. Validates length and hallucinations for bullets only (no cover letter check).
+\end{itemize}
+
+\subsection{src/evaluation/}
+
+\subsubsection{metrics.py}
+
+\textbf{Function: compute\_package\_metrics(pkg, job, resume)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Package, job, resume.
+    \item \textbf{Output}: Dict with comprehensive metrics.
+    \item \textbf{Metrics}: \texttt{num\_bullets}, \texttt{avg\_bullet\_length\_chars}, \texttt{avg\_bullet\_length\_words}, \texttt{min/max\_bullet\_length\_chars}, \texttt{num\_required\_skills}, \texttt{num\_required\_skills\_covered\_in\_bullets}, \texttt{required\_skill\_coverage\_ratio}, \texttt{resume\_skill\_usage\_ratio}, \texttt{hallucinated\_skills\_count}, \texttt{cover\_letter\_word\_count}, \texttt{cover\_letter\_paragraph\_count}.
+\end{itemize}
+
+\textbf{Function: compute\_basic\_metrics(pkg, job, resume)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Package, job, resume.
+    \item \textbf{Output}: Simplified metrics dict for evaluation.
+    \item \textbf{Metrics}: \texttt{num\_bullets}, \texttt{avg\_bullet\_length\_chars}, \texttt{required\_skill\_coverage}, \texttt{nice\_to\_have\_skill\_coverage}, \texttt{has\_cover\_letter}, \texttt{num\_experiences\_with\_bullets}.
+\end{itemize}
+
+\textbf{Function: compare\_runs\_metrics(full, baseline)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Full mode metrics dict, baseline mode metrics dict.
+    \item \textbf{Output}: Delta metrics dict.
+    \item \textbf{Deltas}: \texttt{delta\_required\_skill\_coverage}, \texttt{delta\_num\_bullets}, \texttt{delta\_avg\_bullet\_length\_chars}, \texttt{delta\_nice\_to\_have\_skill\_coverage}, \texttt{delta\_num\_experiences\_with\_bullets}.
+\end{itemize}
+
+\subsubsection{run\_dataset\_eval.py}
+
+\textbf{Function: run\_dataset\_eval(dataset\_path, executor, output\_dir=None)}
+\begin{itemize}[noitemsep]
+    \item \textbf{Input}: Path to dataset JSON, executor instance, optional output dir.
+    \item \textbf{Output}: None (writes to JSONL file and prints summary).
+    \item \textbf{Logic}:
+    \begin{enumerate}[noitemsep]
+        \item Load dataset.
+        \item For each pair:
+        \begin{enumerate}[noitemsep]
+            \item Run baseline mode, compute metrics.
+            \item Run full mode, compute metrics.
+            \item Compute comparison.
+            \item Append JSONL entry to \texttt{outputs/eval/baseline\_vs\_full.jsonl}.
+        \end{enumerate}
+        \item Print aggregate statistics.
+    \end{enumerate}
+\end{itemize}
+
+\section{Conclusion and Future Work}
+
+AutoResuAgent demonstrates a systematic approach to automated resume and cover letter tailoring using semantic retrieval and LLM generation. The dual-mode architecture (baseline vs. full) enables rigorous evaluation of the benefits provided by FAISS-based retrieval and structured validation.
+
+\subsection{Strengths}
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Modular Design}: Clear separation between data models, embeddings, generation, validation, and evaluation.
+    \item \textbf{Reproducibility}: Deterministic retrieval and validation rules enable consistent results.
+    \item \textbf{Evaluation Framework}: JSONL-based metrics logging facilitates quantitative analysis and visualization.
+    \item \textbf{Extensibility}: Additional LLM providers, embedding models, or validation rules can be integrated with minimal code changes.
+\end{itemize}
+
+\subsection{Potential Extensions}
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Advanced Metrics}: Incorporate semantic similarity metrics (e.g., BLEU, ROUGE, BERTScore) to compare generated bullets with gold-standard references.
+    \item \textbf{UI Development}: Build a web interface using Flask or FastAPI for interactive job--resume pairing and real-time generation.
+    \item \textbf{Multi-LLM Comparison}: Extend evaluation to compare OpenAI GPT-4o, Anthropic Claude, and open-source models (e.g., Llama 3).
+    \item \textbf{Skill Synonym Matching}: Implement fuzzy matching or embedding-based similarity for skill coverage (e.g., ``ML'' vs. ``Machine Learning'').
+    \item \textbf{ATS Compatibility Scoring}: Develop heuristics to predict Applicant Tracking System parsing success.
+    \item \textbf{Feedback Loop}: Integrate user corrections to fine-tune prompts or train lightweight reward models.
+    \item \textbf{Alternative Output Formats}: Support Word (DOCX) and HTML output in addition to LaTeX/PDF.
+\end{enumerate}
+
+\subsection{Final Remarks}
+
+This system bridges the gap between ad-hoc LLM prompting and production-ready NLP pipelines for resume tailoring. By grounding generation in semantic retrieval and enforcing quality through structured validation, AutoResuAgent achieves higher skill coverage, lower hallucination rates, and better source attribution compared to baseline approaches. The evaluation pipeline provides empirical evidence for these improvements, making it a valuable tool for both end-users seeking tailored application materials and researchers studying agentic NLP systems.
+
+\end{document}

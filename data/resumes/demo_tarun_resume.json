@@ -1,0 +1,130 @@
+{
+    "candidate_id": "demo-user-01",
+    "name": "Tarun Bommawar",
+    "email": "bommawartarun027@gmail.com",
+    "phone": "(571) 672-2400",
+    "location": "Fairfax, VA",
+    "linkedin_url": "linkedin.com/in/tarun-bommawar",
+    "github_url": "github.com/tarun-bommawar",
+    "education": [
+        {
+            "institution": "George Mason University",
+            "degree": "Master of Science in Computer Science",
+            "location": "Fairfax, VA",
+            "start_date": "Aug 2024",
+            "end_date": "May 2026",
+            "gpa": "3.72/4.0"
+        },
+        {
+            "institution": "GH Raisoni Institute of Engineering and Technology",
+            "degree": "Bachelor of Technology in Computer Science",
+            "location": "India",
+            "start_date": "Jul 2020",
+            "end_date": "May 2024",
+            "gpa": "3.8/4.0"
+        }
+    ],
+    "skills": [
+        "Python",
+        "Java",
+        "C++",
+        "SQL",
+        "JavaScript",
+        "React",
+        "Spring Boot",
+        "TensorFlow",
+        "PyTorch",
+        "scikit-learn",
+        "Node.js",
+        "AWS (EC2, S3, Lambda)",
+        "Docker",
+        "Kubernetes",
+        "Terraform",
+        "Jenkins",
+        "CI/CD",
+        "Git",
+        "PostgreSQL",
+        "MongoDB"
+    ],
+    "experiences": [
+        {
+            "id": "exp-1",
+            "role": "Full Stack Developer Intern",
+            "company": "IntelliCloud Apps",
+            "location": "Hyderabad, India",
+            "start_date": "Dec 2023",
+            "end_date": "May 2024",
+            "bullets": [
+                "Designed and implemented RESTful APIs and microservices in Python and React, optimizing application response times by 30%.",
+                "Managed MySQL and Oracle databases for backend systems, writing complex SQL queries to enhance business intelligence analytics.",
+                "Built interactive PowerBI dashboards to visualize KPI monitoring reports, improving client decision-making efficiency.",
+                "Automated testing pipelines using Docker and Jenkins, ensuring code quality and stability for production releases."
+            ]
+        },
+        {
+            "id": "exp-2",
+            "role": "DevOps Intern",
+            "company": "Rostris Verse Pvt Ltd",
+            "location": "Remote",
+            "start_date": "Jul 2022",
+            "end_date": "Aug 2022",
+            "bullets": [
+                "Automated web server deployments (Apache/Nginx) using Ansible playbooks across AWS and GCP environments.",
+                "Developed Bash and Python scripts to monitor server health and GPU utilization, reducing diagnostic time by 40%.",
+                "Configured Hadoop and Hive clusters for distributed data processing tasks.",
+                "Implemented CI/CD pipelines via Jenkins to maintain consistent multi-cloud deployments."
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "id": "proj-1",
+            "title": "AutoResuAgent: Agentic NLP System",
+            "tech_stack": [
+                "Python",
+                "LangChain",
+                "FAISS",
+                "Sentence-BERT",
+                "OpenAI API"
+            ],
+            "bullets": [
+                "Developed an end-to-end agentic NLP pipeline to automate resume tailoring, improving skill-coverage accuracy by 15% using semantic retrieval.",
+                "Integrated asynchronous concurrency to process 10+ applications in parallel, achieving a 10x throughput gain.",
+                "Implemented Pydantic schema validation to reduce LLM hallucinations by 30%."
+            ],
+            "description": "A technical project focused on AutoResuAgent: Agentic NLP System using Python, LangChain, FAISS."
+        },
+        {
+            "id": "proj-2",
+            "title": "AI-Based Code Autograder",
+            "tech_stack": [
+                "Python",
+                "GPT-4 API",
+                "SQL",
+                "REST"
+            ],
+            "bullets": [
+                "Built an intelligent grading engine using GPT-4 and Python that evaluates student code assignments and provides JSON feedback.",
+                "Reduced manual grading time by 80% while maintaining 95% accuracy through automated analysis."
+            ],
+            "description": "A technical project focused on AI-Based Code Autograder using Python, GPT-4 API, SQL."
+        },
+        {
+            "id": "proj-3",
+            "title": "RL Load Balancer",
+            "tech_stack": [
+                "Python",
+                "TensorFlow",
+                "AWS",
+                "Docker",
+                "Kubernetes"
+            ],
+            "bullets": [
+                "Developed a reinforcement learning-based system (DQN) to distribute network traffic dynamically across servers.",
+                "Leveraged GPU acceleration for training, achieving 40% latency reduction.",
+                "Deployed microservices on Kubernetes with real-time performance monitoring."
+            ],
+            "description": "A technical project focused on RL Load Balancer using Python, TensorFlow, AWS."
+        }
+    ]
+}

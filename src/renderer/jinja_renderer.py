@@ -93,6 +93,8 @@ def render_resume_tex(
         "candidate_email": escape_latex(resume.email),
         "candidate_phone": escape_latex(resume.phone) if resume.phone else None,
         "candidate_location": escape_latex(resume.location) if resume.location else None,
+        "candidate_linkedin_url": getattr(resume, "linkedin_url", None),
+        "candidate_github_url": getattr(resume, "github_url", None),
         "summary": (
             escape_latex(getattr(resume, "summary", ""))
             if getattr(resume, "summary", "")
@@ -119,6 +121,7 @@ def render_resume_tex(
                 "description": escape_latex(proj.description) if proj.description else None,
                 "tech_stack": [escape_latex(t) for t in (proj.tech_stack or [])],
                 "link": proj.link,  # Don't escape URL
+                "github_url": getattr(proj, "github_url", None), # Don't escape URL
                 "bullets": [escape_latex(b) for b in (proj.bullets or [])],
             }
             for proj in (getattr(resume, "projects", []) or [])

@@ -1,0 +1,24 @@
+job_id: job-2025-31
+title: Senior iOS Engineer
+company: Apple
+location: Cupertino, CA
+seniority: Senior
+required_skills:
+- Swift
+- SwiftUI
+- Objective-C
+- XCTest
+- CoreML
+responsibilities:
+- Architect and build advanced features for the iOS ecosystem.
+- Optimize performance for smooth 120Hz scrolling and animations.
+- Collaborate with design teams to implement pixel-perfect UIs.
+- Integrate on-device machine learning models for intelligent features.
+- Mentor junior engineers and conduct code reviews.
+nice_to_have_skills:
+- C++
+- Metal
+- Combine
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-01'

@@ -1,0 +1,27 @@
+job_id: job-2025-03
+title: Senior Deep Learning Engineer (Inference)
+company: NVIDIA
+location: Santa Clara, CA
+seniority: Senior
+required_skills:
+- C++
+- CUDA
+- Python
+- TensorRT
+- LLM Optimization
+responsibilities:
+- Optimize inference kernels for trillion-parameter models on Blackwell architecture
+  GPUs.
+- Implement techniques like speculative decoding and KV-cache compression to reduce
+  latency.
+- Architect scalable serving solutions for high-throughput agentic workflows.
+- Profile and analyze deep learning workloads to identify system bottlenecks.
+- Collaborate with research partners to integrate novel attention mechanisms into
+  production kernels.
+nice_to_have_skills:
+- Triton Inference Server
+- MPI/NCCL
+- Assembly optimization
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-10'

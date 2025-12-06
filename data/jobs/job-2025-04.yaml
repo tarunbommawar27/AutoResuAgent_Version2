@@ -1,0 +1,27 @@
+job_id: job-2025-04
+title: Backend Engineer, Agentic Commerce
+company: Stripe
+location: Seattle, WA
+seniority: Mid-Level
+required_skills:
+- Java
+- Go
+- Distributed Systems
+- API Design
+- Temporal/Workflow Engines
+responsibilities:
+- Build the backend infrastructure supporting autonomous AI agents that perform financial
+  transactions.
+- Design idempotent payment APIs that handle high-concurrency requests from automated
+  systems.
+- Ensure 99.999% reliability for critical money movement services.
+- Implement fraud detection hooks specifically designed for non-human transaction
+  patterns.
+- Scale database sharding strategies to accommodate growing agent-driven traffic.
+nice_to_have_skills:
+- Ruby
+- Machine Learning familiarity
+- AWS Lambda
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-05'

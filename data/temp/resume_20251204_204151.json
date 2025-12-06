@@ -1,0 +1,129 @@
+{
+  "candidate_id": "cand-2023-10-04-bommawar",
+  "name": "TARUN BOMMAWAR",
+  "email": "bommawartarun027@gmail.com",
+  "phone": "(571) 672-2400",
+  "location": "Fairfax, VA",
+  "linkedin_url": null,
+  "github_url": null,
+  "skills": [
+    "Python",
+    "Java",
+    "C++",
+    "C#",
+    "R",
+    "SQL",
+    "JavaScript",
+    "Shell Scripting",
+    "React",
+    "Spring Boot",
+    "TensorFlow",
+    "PyTorch",
+    "scikit-learn",
+    "Node.js",
+    "Express.js",
+    "PowerBI",
+    "Confluence",
+    "Jira",
+    "Docker",
+    "Kubernetes",
+    "Terraform",
+    "Jenkins",
+    "Linux",
+    "AWS",
+    "GCP",
+    "MySQL",
+    "PostgreSQL",
+    "MongoDB",
+    "Oracle",
+    "Hadoop",
+    "Hive",
+    "Databricks",
+    "Machine Learning",
+    "Deep Learning",
+    "Data Analytics",
+    "Business Intelligence",
+    "Agile",
+    "RESTful APIs",
+    "Web Services",
+    "CI/CD",
+    "Secure Coding",
+    "Git",
+    "NLP",
+    "FAISS",
+    "Langchain",
+    "Sentence-BERT",
+    "Ansible"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Full Stack Developer Intern",
+      "company": "IntelliCloud Apps",
+      "location": "Hyderabad, India",
+      "start_date": "Dec 2023",
+      "end_date": "May 2024",
+      "bullets": [
+        "Designed and maintained scalable data processing pipelines using Hadoop and Hive, enhancing automation and reducing manual effort by 50%.",
+        "Implemented CI/CD pipelines with Jenkins for multi-cloud deployments, ensuring consistent integration and reducing deployment time by 40%.",
+        "Developed RESTful APIs and microservices in Python, optimizing response times by 30% and enhancing data-driven application performance.",
+        "Automated testing pipelines using Docker and Jenkins, improving build stability and increasing code quality metrics by 25%.",
+        "Leveraged GPU acceleration for machine learning models, achieving a 40% reduction in training latency and optimizing resource utilization.",
+        "Built an intelligent grading engine using GPT-4 API, automating evaluation processes and reducing manual grading time by 80% with 95% accuracy.",
+        "Developed an NLP pipeline to automate resume tailoring, achieving a 15% increase in skill-coverage accuracy through advanced semantic retrieval.",
+        "Collaborated with cross-functional teams in Agile environments to integrate ML capabilities into production systems, enhancing overall system efficiency."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "George Mason University",
+      "degree": "Master of Science in Computer Science",
+      "location": null,
+      "start_date": null,
+      "end_date": "2026",
+      "gpa": "3.72/4.0"
+    },
+    {
+      "institution": "GH Raisoni Institute of Engineering and Technology",
+      "degree": "Bachelor of Technology in Computer and Information Science",
+      "location": null,
+      "start_date": null,
+      "end_date": "2024",
+      "gpa": "8.29/10.0"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "AutoResuAgent - Automated Resume Tailoring System",
+      "description": "Built end-to-end NLP pipeline using Sentence-BERT and FAISS for semantic retrieval of relevant experiences.",
+      "tech_stack": [
+        "Sentence-BERT",
+        "FAISS",
+        "GPT-4",
+        "LaTeX"
+      ],
+      "link": null,
+      "bullets": [
+        "Integrated LLM (GPT-4/Claude) for generating tailored resume bullets and cover letters.",
+        "Implemented validation layer with hallucination detection and skill coverage metrics.",
+        "Created LaTeX rendering pipeline for professional PDF output."
+      ]
+    },
+    {
+      "id": "proj-2",
+      "title": "Cloud-Based Data Fragmentation System",
+      "description": "Designed secure data fragmentation algorithm for enhanced cloud storage security.",
+      "tech_stack": [
+        "Cloud Storage",
+        "Distributed Systems"
+      ],
+      "link": null,
+      "bullets": [
+        "Implemented distributed storage across multiple cloud providers.",
+        "Published research findings in International Journal IJARSCT."
+      ]
+    }
+  ]
+}

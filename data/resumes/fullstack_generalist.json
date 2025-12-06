@@ -1,0 +1,84 @@
+{
+  "candidate_id": "cand-005",
+  "name": "Riley Davis",
+  "email": "riley.d@example.com",
+  "location": "Austin, TX",
+  "skills": [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "PostgreSQL",
+    "GraphQL",
+    "AWS",
+    "Docker",
+    "Next.js",
+    "Tailwind CSS",
+    "Prisma",
+    "Stripe API",
+    "Vercel"
+  ],
+  "experiences": [
+    {
+      "id": "exp-1",
+      "role": "Founding Engineer",
+      "company": "QuickShip (Techstars '23)",
+      "start_date": "2022-06-01",
+      "end_date": null,
+      "bullets": [
+        "Built the MVP from scratch using Next.js and Node.js, enabling the startup to secure $1.5M in seed funding",
+        "Owned the full feature lifecycle, from product requirements to deployment, shipping 15+ major features in 12 months",
+        "Implemented a scalable subscription billing system using Stripe, processing $50k+ in monthly recurring revenue",
+        "Managed cloud infrastructure on AWS, optimizing costs by using serverless functions (Lambda) for sporadic workloads"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Full Stack Engineer",
+      "company": "WebSolutions Agency",
+      "start_date": "2020-05-01",
+      "end_date": "2022-05-01",
+      "bullets": [
+        "Delivered 10+ custom web applications for clients in retail and logistics, consistently meeting tight deadlines",
+        "Refactored a legacy Angular codebase to React, improving page load speeds by 50% and boosting SEO rankings",
+        "Collaborated directly with clients to define technical requirements and provide weekly progress updates"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "SaaS Boilerplate",
+      "tech_stack": [
+        "Next.js",
+        "Supabase",
+        "Stripe",
+        "Tailwind"
+      ],
+      "description": "Created a popular open-source starter kit for SaaS applications, including authentication, billing, and database setup, with 500+ GitHub stars.",
+      "bullets": [
+        "Created open-source SaaS starter kit with 500+ GitHub stars"
+      ]
+    },
+    {
+      "id": "proj-2",
+      "title": "Inventory Management System",
+      "tech_stack": [
+        "React",
+        "Express",
+        "PostgreSQL"
+      ],
+      "description": "Custom inventory tool for a local warehouse that automated stock tracking and alert generation, replacing Excel-based workflows.",
+      "bullets": [
+        "Built custom inventory system automating warehouse stock tracking"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.A. in Economics (Minor in CS)",
+      "institution": "University of Texas at Austin",
+      "graduation_year": 2020
+    }
+  ]
+}

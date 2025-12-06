@@ -116,17 +116,23 @@ class OpenAILLMClient(BaseLLMClient):
 
     async def generate(
         self,
+        prompt: Optional[str] = None,
         *,
-        system_prompt: str,
-        user_prompt: str,
-        json_mode: bool = True,
+        system_prompt: Optional[str] = None,
+        user_prompt: Optional[str] = None,
+        json_mode: bool = False,
     ) -> str:
         """
         Generate text using OpenAI's API.
 
+        Supports two calling patterns:
+        1. Simple: generate(prompt) - Single-turn generation
+        2. Advanced: generate(system_prompt=..., user_prompt=..., json_mode=...)
+
         Args:
-            system_prompt: System instruction
-            user_prompt: User message
+            prompt: Single prompt for simple generation (positional)
+            system_prompt: System instruction (keyword-only)
+            user_prompt: User message (keyword-only)
             json_mode: If True, use JSON response format
 
         Returns:
@@ -135,10 +141,22 @@ class OpenAILLMClient(BaseLLMClient):
         Raises:
             Exception: If API call fails
         """
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ]
+        # Handle both calling patterns
+        if prompt is not None:
+            # Simple pattern: generate(prompt)
+            messages = [
+                {"role": "user", "content": prompt}
+            ]
+        elif system_prompt is not None and user_prompt is not None:
+            # Advanced pattern: generate(system_prompt=..., user_prompt=...)
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ]
+        else:
+            raise ValueError(
+                "Either provide 'prompt' (simple) or both 'system_prompt' and 'user_prompt' (advanced)"
+            )
 
         # Build API call parameters
         params = {

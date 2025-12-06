@@ -1,0 +1,25 @@
+job_id: job-2025-16
+title: Senior Frontend Engineer
+company: Linear
+location: Remote
+seniority: Senior
+required_skills:
+- TypeScript
+- React
+- Electron
+- CSS/Styled Components
+- Local-first Architecture
+responsibilities:
+- Build high-performance, native-feeling user interfaces for Linear's issue tracking
+  app.
+- Implement offline-first capabilities using local databases (Sync engine).
+- Design and build AI-assisted features that feel magical but unobtrusive.
+- Optimize rendering performance to maintain 60fps on all interactions.
+- Contribute to the design system and maintain high visual standards.
+nice_to_have_skills:
+- WebGL
+- Prosemirror
+- GraphQL
+extra_metadata:
+  employment_type: Full-time
+  posted_on: '2025-11-02'

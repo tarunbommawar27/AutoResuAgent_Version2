@@ -1,0 +1,13 @@
+# Web Application Dependencies for AutoResuAgent
+# Install with: pip install -r requirements-web.txt
+
+# FastAPI and Server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# CORS Support
+python-dotenv==1.0.0
+
+# Core AutoResuAgent dependencies should already be installed
+# This file only includes the additional web-specific packages

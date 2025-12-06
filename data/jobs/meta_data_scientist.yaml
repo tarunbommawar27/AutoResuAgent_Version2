@@ -1,0 +1,26 @@
+job_id: "job-006"
+title: "Data Scientist, Product Analytics"
+company: "Meta"
+location: "Menlo Park, CA"
+seniority: "Mid-Level"
+required_skills:
+  - SQL
+  - Python
+  - A/B Testing
+  - Statistical Analysis
+  - Product Analytics
+  - Data Visualization
+responsibilities:
+  - "Partner with Product Managers and Engineers to define success metrics for new features."
+  - "Design and analyze rigorous A/B tests to drive product decision-making."
+  - "Perform deep-dive exploratory analysis to understand user behavior trends."
+  - "Build automated dashboards to monitor key product health metrics."
+  - "Develop causal inference models to estimate the impact of product changes."
+  - "Communicate insights effectively to both technical and non-technical stakeholders."
+nice_to_have_skills:
+  - "R"
+  - "Presto/Hive"
+  - "Scikit-learn"
+extra_metadata:
+  employment_type: "Full-time"
+  posted_on: "2024-11-10"
