@@ -287,6 +287,34 @@ Example Output Format:
 
         return json_text
 
+    def _escape_latex(self, text: str) -> str:
+        """
+        Escape special LaTeX characters to prevent compilation errors.
+
+        Args:
+            text: Raw text that may contain special characters
+
+        Returns:
+            Text with LaTeX special characters properly escaped
+        """
+        if not text:
+            return ""
+
+        # Escape special LaTeX characters
+        text = str(text)
+        text = text.replace('\\', '\\textbackslash{}')  # Must be first
+        text = text.replace('&', '\\&')
+        text = text.replace('%', '\\%')
+        text = text.replace('$', '\\$')
+        text = text.replace('#', '\\#')
+        text = text.replace('_', '\\_')
+        text = text.replace('{', '\\{')
+        text = text.replace('}', '\\}')
+        text = text.replace('~', '\\textasciitilde{}')
+        text = text.replace('^', '\\textasciicircum{}')
+
+        return text
+
     async def generate_resume_latex(
         self,
         candidate_data: dict,
@@ -295,110 +323,272 @@ Example Output Format:
         company: str = "Target Company"
     ) -> str:
         """
-        Generate professional LaTeX resume from tailored bullets.
+        Generate professional LaTeX resume using Jack Ryan template format.
+
+        Uses "Merge & Replace" logic: tailored bullets are mapped to existing experiences
+        and projects by their source IDs, replacing original bullets while maintaining
+        the candidate's actual work history.
+
+        CRITICAL: Does NOT create fake experience entries using target company/job title.
+        Only iterates through candidate's actual experiences from candidate_data['experiences'].
 
         Args:
             candidate_data: Candidate profile dict (from CandidateProfile)
-            tailored_bullets: List of tailored bullet dicts with 'text' field
-            job_title: Target job title
-            company: Target company name
+            tailored_bullets: List of tailored bullet dicts with 'text', 'source_experience_id',
+                            and/or 'source_project_id' fields
+            job_title: Target job title (NOT USED - kept for API compatibility)
+            company: Target company name (NOT USED - kept for API compatibility)
 
         Returns:
-            LaTeX source code ready to compile
+            LaTeX source code ready to compile (Jack Ryan template format)
 
         Example:
             >>> latex = await parser.generate_resume_latex(
             ...     candidate_data=resume.dict(),
-            ...     tailored_bullets=[{"text": "Built ML system..."}, ...],
+            ...     tailored_bullets=[
+            ...         {"text": "Built ML system...", "source_experience_id": "exp-1"},
+            ...         {"text": "Deployed pipeline...", "source_experience_id": "exp-1"}
+            ...     ],
             ...     job_title="ML Engineer",
-            ...     company="Google"
+            ...     company="Cisco"  # Will NOT appear in resume
             ... )
         """
-        logger.info(f"Generating LaTeX resume for {candidate_data.get('name', 'Unknown')}...")
+        logger.info(f"Generating Jack Ryan LaTeX resume for {candidate_data.get('name', 'Unknown')}...")
 
-        # Format bullets as text list
-        bullets_text = "\n".join([f"- {b.get('text', '')}" for b in tailored_bullets])
+        # Extract candidate info
+        name = candidate_data.get('name', 'Candidate Name')
+        email = candidate_data.get('email', 'email@example.com')
+        phone = candidate_data.get('phone', '(555) 555-5555')
+        location = candidate_data.get('location', 'City, State')
+        linkedin_url = candidate_data.get('linkedin_url', '')
+        github_url = candidate_data.get('github_url', '')
 
-        # Format skills
-        skills = candidate_data.get('skills', [])
-        skills_text = ', '.join(skills[:20]) if skills else "Python, JavaScript, SQL"
+        # Format contact links (make clickable if URL exists)
+        linkedin_link = f"\\href{{https://{linkedin_url}}}{{linkedin.com/in/{linkedin_url.split('/')[-1]}}}" if linkedin_url else ""
+        github_link = f"\\href{{https://{github_url}}}{{github.com/{github_url.split('/')[-1]}}}" if github_url else ""
+
+        # Build contact line
+        contact_parts = [email, phone]
+        if linkedin_link:
+            contact_parts.append(linkedin_link)
+        if github_link:
+            contact_parts.append(github_link)
+        contact_line = " $|$ ".join(contact_parts)
 
         # Format education
         education = candidate_data.get('education', [])
-        education_text = ""
+        education_latex = ""
         for edu in education:
-            education_text += f"{edu.get('degree', 'Degree')} - {edu.get('institution', 'University')}\n"
+            institution = self._escape_latex(edu.get('institution', 'University'))
+            degree = self._escape_latex(edu.get('degree', 'Degree'))
+            edu_location = self._escape_latex(edu.get('location', ''))
+            start = edu.get('start_date', '')
+            end = edu.get('end_date', 'Present')
+            gpa = edu.get('gpa', '')
 
-        # Format projects
+            education_latex += f"    \\resumeSubheading\n"
+            education_latex += f"      {{{institution}}}{{{edu_location}}}\n"
+            education_latex += f"      {{{degree}}}{{{start} -- {end}}}\n"
+            if gpa:
+                education_latex += f"      \\resumeItem{{GPA: {gpa}}}\n"
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # MERGE & REPLACE LOGIC FOR EXPERIENCES
+        # ═══════════════════════════════════════════════════════════════════════
+        # Step 1: Create mapping of source_experience_id -> list of tailored bullets
+        experience_bullets_map = {}
+        for bullet in tailored_bullets:
+            if isinstance(bullet, dict):
+                source_exp_id = bullet.get('source_experience_id')
+                if source_exp_id:
+                    if source_exp_id not in experience_bullets_map:
+                        experience_bullets_map[source_exp_id] = []
+                    experience_bullets_map[source_exp_id].append(bullet.get('text', ''))
+
+        # Step 2: Iterate ONLY through candidate's actual experiences
+        # CRITICAL: Do NOT create any fake experience using job_title or company parameters
+        experience_latex = ""
+        experiences = candidate_data.get('experiences', [])
+
+        for exp in experiences:  # Only actual experiences, no fake entries
+            exp_id = exp.get('id', '')
+            exp_company = self._escape_latex(exp.get('company', 'Company'))
+            exp_title = self._escape_latex(exp.get('title', 'Role'))
+            exp_location = self._escape_latex(exp.get('location', ''))
+            exp_start = exp.get('start_date', '')
+            exp_end = exp.get('end_date', 'Present')
+
+            # Step 3: Check if there are tailored bullets for this experience
+            if exp_id and exp_id in experience_bullets_map:
+                # Use tailored bullets (mapped by source_experience_id)
+                bullets_to_use = experience_bullets_map[exp_id]
+            else:
+                # Fallback to original bullets
+                bullets_to_use = exp.get('bullets', [])
+
+            # Step 4: Render LaTeX using Jack Ryan template
+            experience_latex += f"    \\resumeSubheading\n"
+            experience_latex += f"      {{{exp_company}}}{{{exp_location}}}\n"
+            experience_latex += f"      {{{exp_title}}}{{{exp_start} -- {exp_end}}}\n"
+
+            if bullets_to_use:
+                experience_latex += f"      \\resumeItemListStart\n"
+                for bullet in bullets_to_use[:5]:  # Max 5 bullets per experience
+                    # Escape special LaTeX characters using helper
+                    bullet_text = self._escape_latex(str(bullet))
+                    experience_latex += f"        \\resumeItem{{{bullet_text}}}\n"
+                experience_latex += f"      \\resumeItemListEnd\n"
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # MERGE & REPLACE LOGIC FOR PROJECTS
+        # ═══════════════════════════════════════════════════════════════════════
+        # Step 1: Create mapping of source_project_id -> list of tailored bullets
+        project_bullets_map = {}
+        for bullet in tailored_bullets:
+            if isinstance(bullet, dict):
+                source_proj_id = bullet.get('source_project_id')
+                if source_proj_id:
+                    if source_proj_id not in project_bullets_map:
+                        project_bullets_map[source_proj_id] = []
+                    project_bullets_map[source_proj_id].append(bullet.get('text', ''))
+
+        # Step 2: Iterate ONLY through candidate's actual projects
         projects = candidate_data.get('projects', [])
-        projects_text = ""
-        for proj in projects[:3]:  # Limit to 3 projects
-            projects_text += f"**{proj.get('title', 'Project')}**: {proj.get('description', '')}\n"
-            for bullet in proj.get('bullets', [])[:2]:  # 2 bullets per project
-                projects_text += f"- {bullet}\n"
+        projects_latex = ""
+        for proj in projects[:3]:  # Limit to top 3 projects
+            proj_id = proj.get('id', '')
+            proj_title = self._escape_latex(proj.get('title', 'Project'))
+            proj_desc = self._escape_latex(proj.get('description', ''))
+            proj_tech = proj.get('technologies', [])
 
-        prompt = f"""Generate a professional, ATS-friendly LaTeX resume. Return ONLY the LaTeX code, no explanations.
+            # Step 3: Check if there are tailored bullets for this project
+            if proj_id and proj_id in project_bullets_map:
+                # Use tailored bullets (mapped by source_project_id)
+                bullets_to_use = project_bullets_map[proj_id]
+            else:
+                # Fallback to original bullets
+                bullets_to_use = proj.get('bullets', [])
 
-CANDIDATE INFO:
-Name: {candidate_data.get('name', 'Candidate Name')}
-Email: {candidate_data.get('email', 'email@example.com')}
-Phone: {candidate_data.get('phone', '(555) 555-5555')}
-Location: {candidate_data.get('location', 'City, State')}
-LinkedIn: {candidate_data.get('linkedin_url', '')}
-GitHub: {candidate_data.get('github_url', '')}
+            # Escape technologies
+            tech_str = ', '.join([self._escape_latex(t) for t in proj_tech]) if proj_tech else ''
 
-TARGET JOB: {job_title} at {company}
+            # Step 4: Render LaTeX using Jack Ryan template
+            projects_latex += f"    \\resumeSubheading\n"
+            projects_latex += f"      {{{proj_title}}}{{\\textit{{{tech_str}}}}}\n"
+            projects_latex += f"      {{{proj_desc}}}{{}}\n"
+            if bullets_to_use:
+                projects_latex += f"      \\resumeItemListStart\n"
+                for bullet in bullets_to_use[:3]:  # Max 3 bullets per project
+                    # Escape special LaTeX characters using helper
+                    bullet_text = self._escape_latex(str(bullet))
+                    projects_latex += f"        \\resumeItem{{{bullet_text}}}\n"
+                projects_latex += f"      \\resumeItemListEnd\n"
 
-TAILORED BULLETS (use these in experience section):
-{bullets_text}
+        # Format skills
+        skills = candidate_data.get('skills', [])
+        skills_latex = ""
+        if skills:
+            # Escape and limit skills
+            escaped_skills = [self._escape_latex(skill) for skill in skills[:20]]
+            skills_text = ', '.join(escaped_skills)
+            skills_latex = f"    \\resumeItem{{\\textbf{{Languages \\& Technologies}}: {skills_text}}}"
 
-SKILLS: {skills_text}
+        # Build complete LaTeX document
+        latex_document = f"""\\documentclass[letterpaper,11pt]{{article}}
 
-EDUCATION:
-{education_text if education_text else "Bachelor of Science in Computer Science"}
+\\usepackage{{latexsym}}
+\\usepackage[empty]{{fullpage}}
+\\usepackage{{titlesec}}
+\\usepackage{{marvosym}}
+\\usepackage[usenames,dvipsnames]{{color}}
+\\usepackage{{verbatim}}
+\\usepackage{{enumitem}}
+\\usepackage[hidelinks]{{hyperref}}
+\\usepackage{{fancyhdr}}
+\\usepackage[english]{{babel}}
+\\usepackage{{tabularx}}
 
-PROJECTS:
-{projects_text if projects_text else "No projects listed"}
+\\pagestyle{{fancy}}
+\\fancyhf{{}} % clear all header and footer fields
+\\fancyfoot{{}}
+\\renewcommand{{\\headrulewidth}}{{0pt}}
+\\renewcommand{{\\footrulewidth}}{{0pt}}
 
-REQUIREMENTS:
-1. Use standard article or moderncv document class
-2. Clean, professional layout (no fancy graphics)
-3. Header: Name, contact info (email, phone, location, LinkedIn, GitHub)
-4. Sections: EDUCATION, EXPERIENCE, PROJECTS, TECHNICAL SKILLS
-5. In EXPERIENCE section, use the TAILORED BULLETS provided above
-6. Keep formatting simple for ATS compatibility
-7. Use standard LaTeX packages (geometry, enumitem, hyperref)
-8. 1-page format preferred
+% Adjust margins
+\\addtolength{{\\oddsidemargin}}{{-0.5in}}
+\\addtolength{{\\evensidemargin}}{{-0.5in}}
+\\addtolength{{\\textwidth}}{{1in}}
+\\addtolength{{\\topmargin}}{{-.5in}}
+\\addtolength{{\\textheight}}{{1.0in}}
 
-Return ONLY the complete LaTeX document starting with \\documentclass and ending with \\end{{document}}.
-Do NOT include markdown code blocks or explanations."""
+\\urlstyle{{same}}
 
-        try:
-            response = await self.llm.generate(prompt)
+\\raggedbottom
+\\raggedright
+\\setlength{{\\tabcolsep}}{{0in}}
 
-            # Clean up response
-            latex_text = response.strip()
-            if latex_text.startswith("```latex"):
-                latex_text = latex_text[8:]
-            if latex_text.startswith("```tex"):
-                latex_text = latex_text[6:]
-            if latex_text.startswith("```"):
-                latex_text = latex_text[3:]
-            if latex_text.endswith("```"):
-                latex_text = latex_text[:-3]
-            latex_text = latex_text.strip()
+% Sections formatting
+\\titleformat{{\\section}}{{
+  \\vspace{{-4pt}}\\scshape\\raggedright\\large
+}}{{}}{{0em}}{{}}[\\color{{black}}\\titlerule \\vspace{{-5pt}}]
 
-            # Basic validation - check for required LaTeX commands
-            if "\\documentclass" not in latex_text or "\\end{document}" not in latex_text:
-                logger.error("Generated LaTeX is missing document structure")
-                raise ValueError("Generated LaTeX is missing required document structure")
+% Custom commands
+\\newcommand{{\\resumeItem}}[1]{{
+  \\item\\small{{
+    #1 \\vspace{{-2pt}}
+  }}
+}}
 
-            logger.info(f"✅ Successfully generated LaTeX resume ({len(latex_text)} chars)")
-            return latex_text
+\\newcommand{{\\resumeSubheading}}[4]{{
+  \\vspace{{-1pt}}\\item
+    \\begin{{tabular*}}{{0.97\\textwidth}}[t]{{l@{{\\extracolsep{{\\fill}}}}r}}
+      \\textbf{{#1}} & #2 \\\\
+      \\textit{{\\small#3}} & \\textit{{\\small #4}} \\\\
+    \\end{{tabular*}}\\vspace{{-5pt}}
+}}
 
-        except Exception as e:
-            logger.error(f"LaTeX resume generation error: {e}")
-            raise
+\\newcommand{{\\resumeSubHeadingListStart}}{{\\begin{{itemize}}[leftmargin=0.15in, label={{}}]}}
+\\newcommand{{\\resumeSubHeadingListEnd}}{{\\end{{itemize}}}}
+\\newcommand{{\\resumeItemListStart}}{{\\begin{{itemize}}}}
+\\newcommand{{\\resumeItemListEnd}}{{\\end{{itemize}}\\vspace{{-5pt}}}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\\begin{{document}}
+
+%----------HEADING----------
+\\begin{{center}}
+    \\textbf{{\\Huge \\scshape {name}}} \\\\ \\vspace{{1pt}}
+    \\small {contact_line}
+\\end{{center}}
+
+%-----------EDUCATION-----------
+\\section{{Education}}
+  \\resumeSubHeadingListStart
+{education_latex}  \\resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\\section{{Experience}}
+  \\resumeSubHeadingListStart
+{experience_latex}  \\resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\\section{{Projects}}
+  \\resumeSubHeadingListStart
+{projects_latex}  \\resumeSubHeadingListEnd
+
+%-----------TECHNICAL SKILLS-----------
+\\section{{Technical Skills}}
+  \\resumeSubHeadingListStart
+{skills_latex}
+  \\resumeSubHeadingListEnd
+
+%-------------------------------------------
+\\end{{document}}"""
+
+        logger.info(f"✅ Successfully generated Jack Ryan LaTeX resume ({len(latex_document)} chars)")
+        return latex_document
 
     async def generate_cover_letter_latex(
         self,
