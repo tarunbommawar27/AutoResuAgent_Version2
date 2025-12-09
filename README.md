@@ -2,6 +2,9 @@
 
 AutoResuAgent is an intelligent resume tailoring system that uses advanced NLP and LLMs to automatically customize resumes for specific job postings. It analyzes job descriptions, extracts relevant experiences from your resume, and generates tailored bullets and cover letters optimized for ATS systems.
 
+## 🎥 Demo Video
+
+Watch AutoResuAgent in action: [Click here to watch ](https://drive.google.com/file/d/13ZppnzB_Y3PIcnT7qRne24_UrsUD9J0c/view?usp=sharing)
 ## Features
 
 - **Smart Parsing**: Paste raw job postings and resumes - AI automatically structures the data
