@@ -13,7 +13,7 @@ anthropic>=0.25.0
 pydantic>=2.5.0
 pydantic-settings>=2.1.0
 pyyaml>=6.0
-
+pydantic[email]
 # Async & HTTP
 aiohttp>=3.9.0
 asyncio
